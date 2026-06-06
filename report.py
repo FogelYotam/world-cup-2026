@@ -274,11 +274,7 @@ def render_html(predictions: list[dict], fantasy_result: dict,
 
     (config.OUTPUT_DIR / "report.html").write_text(html, encoding="utf-8")
     (config.OUTPUT_DIR / "index.html").write_text(html, encoding="utf-8")
-    # docs/ — התיקייה ש-GitHub Pages מגיש ממנה (לכתובת ציבורית מתעדכנת)
-    docs_dir = config.BASE_DIR / "docs"
-    docs_dir.mkdir(exist_ok=True)
-    (docs_dir / "index.html").write_text(html, encoding="utf-8")
-    log.info("דוח HTML נשמר ב-output/ וב-docs/")
+    log.info("דוח HTML נשמר ב-output/")
     return html
 
 

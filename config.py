@@ -39,11 +39,6 @@ GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "").strip()
 MAIL_TO = os.getenv("MAIL_TO", "").strip()
 REPORT_PUBLIC_URL = os.getenv("REPORT_PUBLIC_URL", "").strip()
 
-# --- פרסום אוטומטי ל-GitHub Pages (docs/index.html) ---
-GIT_AUTO_PUBLISH = os.getenv("GIT_AUTO_PUBLISH", "").strip().lower() in (
-    "1", "true", "yes", "on"
-)
-
 # --- פרמטרים של המודל ---
 HOME_ADVANTAGE = 0.25          # תוספת לכושר התקפי ביתי (פואסון)
 DEFAULT_GOALS_FOR = 1.3        # ערך fallback ממוצע שערים למשחק

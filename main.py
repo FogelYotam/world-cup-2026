@@ -13,7 +13,6 @@ import config
 import fantasy
 import planner
 import predictor
-import publish
 import report
 import scraper
 import state
@@ -119,10 +118,6 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
         # מייל נשלח רק אם טלגרם לא מוגדר, וכגיבוי
         if not sent_telegram and html and config.mail_enabled():
             report.send_email(html)
-
-    # פרסום אוטומטי לכתובת הציבורית (GitHub Pages) אם הופעל ב-.env
-    if config.GIT_AUTO_PUBLISH:
-        publish.publish_docs(message=f"Daily report {utils.now_iso()[:10]}")
 
     state.save_state(snapshot)
     log.info("=== סיום ריצה ===")

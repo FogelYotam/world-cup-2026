@@ -1,0 +1,232 @@
+"""
+מנוע חיזוי לניחושי 365 — מבוסס מודל פואסון.
+
+לכל משחק מחושב צפי שערים (xG) לכל נבחרת לפי כושר התקפי/הגנתי,
+יתרון ביתיות, פציעות, ודאות הרכב וחשיבות המשחק. מתוך מטריצת
+הסתברויות פואסון נגזרים: תוצאה מומלצת, 3 חלופות, הסתברויות 1X2,
+ציון אמון והסבר קצר.
+"""
+from __future__ import annotations
+
+from math import exp, factorial
+
+import config
+import utils
+
+log = utils.get_logger("predictor")
+
+LEAGUE_AVG_GOALS = 1.35  # ממוצע שערים לקבוצה במשחק טורניר
+
+
+# --------------------------------------------------------------------------- #
+# פואסון
+# --------------------------------------------------------------------------- #
+def poisson_pmf(k: int, lam: float) -> float:
+    """הסתברות פואסון ל-k אירועים בהינתן תוחלת lam."""
+    if lam <= 0:
+        return 1.0 if k == 0 else 0.0
+    return (lam ** k) * exp(-lam) / factorial(k)
+
+
+def expected_goals(home: dict, away: dict, context: dict | None) -> tuple[float, float]:
+    """מחשב צפי שערים לכל נבחרת לפי כושר, יתרון ביתי והתאמות."""
+    context = context or {}
+
+    h_attack = _safe(home.get("goals_for"), config.DEFAULT_GOALS_FOR) / LEAGUE_AVG_GOALS
+    h_defense = _safe(home.get("goals_against"), config.DEFAULT_GOALS_AGAINST) / LEAGUE_AVG_GOALS
+    a_attack = _safe(away.get("goals_for"), config.DEFAULT_GOALS_FOR) / LEAGUE_AVG_GOALS
+    a_defense = _safe(away.get("goals_against"), config.DEFAULT_GOALS_AGAINST) / LEAGUE_AVG_GOALS
+
+    home_adv = context.get("home_advantage", config.HOME_ADVANTAGE)
+
+    home_xg = h_attack * a_defense * LEAGUE_AVG_GOALS * (1 + home_adv)
+    away_xg = a_attack * h_defense * LEAGUE_AVG_GOALS
+
+    # התאמת פציעות: כל פציעה מורידה מעט מצפי השערים של הצד שנפגע
+    injuries = context.get("injury_count", 0) or 0
+    penalty = min(0.15 * injuries, 0.6)
+    home_xg *= max(0.4, 1 - penalty / 2)
+    away_xg *= max(0.4, 1 - penalty / 2)
+
+    # שלבי נוק-אאוט נוטים לתוצאות הדוקות יותר
+    if _is_knockout(context.get("stage")):
+        home_xg *= 0.9
+        away_xg *= 0.9
+
+    return round(home_xg, 3), round(away_xg, 3)
+
+
+# --------------------------------------------------------------------------- #
+# מטריצת הסתברויות
+# --------------------------------------------------------------------------- #
+def score_matrix(home_xg: float, away_xg: float, max_goals: int) -> list[list[float]]:
+    """מטריצת הסתברות לכל תוצאה i:j עד max_goals שערים לכל צד."""
+    home_p = [poisson_pmf(i, home_xg) for i in range(max_goals + 1)]
+    away_p = [poisson_pmf(j, away_xg) for j in range(max_goals + 1)]
+    return [[home_p[i] * away_p[j] for j in range(max_goals + 1)] for i in range(max_goals + 1)]
+
+
+def blend_probabilities(model: dict, market: dict | None, weight: float) -> dict:
+    """ממזג הסתברויות 1X2 של המודל עם קונצנזוס השוק לפי משקל (weight=חלק השוק)."""
+    keys = ("home_win", "draw", "away_win")
+    if not market or not all(k in market for k in keys):
+        return dict(model)
+    w = max(0.0, min(1.0, weight))
+    blended = {k: (1 - w) * model.get(k, 0.0) + w * market.get(k, 0.0) for k in keys}
+    total = sum(blended.values()) or 1.0
+    return {k: round(blended[k] / total, 4) for k in keys}
+
+
+def _favorite(probs: dict) -> str:
+    return max(("home_win", "draw", "away_win"), key=lambda k: probs.get(k, 0.0))
+
+
+def outcome_probabilities(matrix: list[list[float]]) -> dict:
+    """הסתברויות 1X2 מתוך המטריצה."""
+    home_win = draw = away_win = 0.0
+    for i, row in enumerate(matrix):
+        for j, p in enumerate(row):
+            if i > j:
+                home_win += p
+            elif i == j:
+                draw += p
+            else:
+                away_win += p
+    total = home_win + draw + away_win or 1.0
+    return {
+        "home_win": round(home_win / total, 4),
+        "draw": round(draw / total, 4),
+        "away_win": round(away_win / total, 4),
+    }
+
+
+def ranked_scorelines(matrix: list[list[float]], top: int = 4) -> list[dict]:
+    """התוצאות המדויקות בעלות ההסתברות הגבוהה ביותר."""
+    cells = [
+        {"score": f"{i}-{j}", "home": i, "away": j, "prob": round(p, 4)}
+        for i, row in enumerate(matrix)
+        for j, p in enumerate(row)
+    ]
+    cells.sort(key=lambda c: c["prob"], reverse=True)
+    return cells[:top]
+
+
+# --------------------------------------------------------------------------- #
+# ציון אמון והסבר
+# --------------------------------------------------------------------------- #
+def confidence_score(probs: dict, scorelines: list[dict], context: dict | None) -> int:
+    """ציון אמון 0-100 לפי בולטות התוצאה, פער הפייבוריט וודאות ההרכב."""
+    context = context or {}
+    favorite_edge = max(probs.values()) - sorted(probs.values())[-2]
+    top_score_prob = scorelines[0]["prob"] if scorelines else 0
+
+    base = 0.5 * favorite_edge + 0.5 * (top_score_prob / 0.15)
+    base = min(base, 1.0)
+
+    if context.get("lineup_confidence") == "low":
+        base *= 0.8
+    if (context.get("injury_count", 0) or 0) >= 4:
+        base *= 0.9
+
+    return int(round(base * 100))
+
+
+def _explain(home_name, away_name, home_xg, away_xg, probs, best, context) -> str:
+    """הסבר קצר בעברית."""
+    if probs["home_win"] >= probs["away_win"] and probs["home_win"] >= probs["draw"]:
+        lean = f"יתרון ל{home_name}"
+    elif probs["away_win"] >= probs["draw"]:
+        lean = f"יתרון ל{away_name}"
+    else:
+        lean = "נטייה לתיקו"
+    note = ""
+    if context and (context.get("injury_count", 0) or 0) >= 3:
+        note = " הרכב מוחלש בשל פציעות."
+    return (
+        f"{lean}. צפי שערים {home_xg:.2f}-{away_xg:.2f}, "
+        f"תוצאה סבירה {best['score']}.{note}"
+    )
+
+
+# --------------------------------------------------------------------------- #
+# חיזוי משחק בודד
+# --------------------------------------------------------------------------- #
+def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
+    """מחזיר חיזוי מלא למשחק אחד."""
+    home_name = match.get("home_team")
+    away_name = match.get("away_team")
+    home = teams_by_name.get(home_name, {})
+    away = teams_by_name.get(away_name, {})
+    context = dict(match.get("context") or {})
+    context.setdefault("stage", match.get("stage"))
+
+    home_xg, away_xg = expected_goals(home, away, context)
+    matrix = score_matrix(home_xg, away_xg, config.MAX_GOALS_GRID)
+    model_probs = outcome_probabilities(matrix)
+
+    market_probs = match.get("market_probabilities")
+    probs = blend_probabilities(model_probs, market_probs, config.MARKET_BLEND_WEIGHT)
+    market_agrees = (
+        _favorite(model_probs) == _favorite(market_probs) if market_probs else None
+    )
+
+    scorelines = ranked_scorelines(matrix, top=4)
+    best = scorelines[0] if scorelines else {"score": "1-1"}
+    confidence = confidence_score(probs, scorelines, context)
+    # אם השוק חולק על המודל לגבי הפייבוריט — מורידים ביטחון
+    if market_agrees is False:
+        confidence = int(round(confidence * 0.8))
+
+    return {
+        "match_id": match.get("match_id"),
+        "home_team": home_name,
+        "away_team": away_name,
+        "date": match.get("date"),
+        "kickoff": match.get("kickoff"),
+        "stage": match.get("stage"),
+        "expected_goals": {"home": home_xg, "away": away_xg},
+        "recommended_score": best["score"],
+        "alternatives": [s["score"] for s in scorelines[1:4]],
+        "scoreline_probabilities": scorelines,
+        "outcome_probabilities": probs,
+        "model_probabilities": model_probs,
+        "market_probabilities": market_probs,
+        "market_sources": (market_probs or {}).get("sources") if market_probs else None,
+        "market_agrees": market_agrees,
+        "confidence": confidence,
+        "explanation": _explain(home_name, away_name, home_xg, away_xg, probs, best, context),
+    }
+
+
+def predict_all(db: dict) -> list[dict]:
+    """מחזיר חיזוי לכל המשחקים ב-DB. מסנן לפי סף אמון אם הוגדר."""
+    teams_by_name = {t.get("team_name"): t for t in db.get("teams", [])}
+    predictions = []
+    for match in db.get("matches", []):
+        try:
+            pred = predict_match(match, teams_by_name)
+        except Exception as exc:  # noqa: BLE001
+            log.error("חיזוי נכשל למשחק %s: %s", match.get("match_id"), exc)
+            continue
+        if pred["confidence"] >= config.MIN_CONFIDENCE:
+            predictions.append(pred)
+    log.info("הופקו %d חיזויים", len(predictions))
+    return predictions
+
+
+# --------------------------------------------------------------------------- #
+# עזרים
+# --------------------------------------------------------------------------- #
+def _safe(value, fallback: float) -> float:
+    try:
+        v = float(value)
+        return v if v > 0 else fallback
+    except (TypeError, ValueError):
+        return fallback
+
+
+def _is_knockout(stage) -> bool:
+    if not stage:
+        return False
+    s = str(stage).lower()
+    return any(k in s for k in ("knockout", "round of", "quarter", "semi", "final", "16"))

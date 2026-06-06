@@ -1,0 +1,28 @@
+# Secrets — never commit
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Logs
+logs/
+*.log
+
+# Local data backups
+data/*.bak
+data/db.backup.json
+
+# Screenshots received/tested locally (not for the repo)
+data/*.jpg
+data/*.png
+data/intake_*
+
+# Local-only render output (הכתובת הציבורית מוגשת מ-docs/)
+output/
+
+# .env דוגמאות מותר, אבל לא הסודות עצמם
+.env.local

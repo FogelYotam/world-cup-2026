@@ -1,0 +1,85 @@
+{
+  "note": "עודכן מצילום הרכב שנשלח לבוט (FIFA World Cup Fantasy, מחזור 1).",
+  "budget": 100.0,
+  "bank": 0.0,
+  "free_transfers": 0,
+  "captain": "Haaland",
+  "vice_captain": "Olise",
+  "squad": [
+    {
+      "player_name": "Kobel",
+      "team": "Switzerland",
+      "position": "GK"
+    },
+    {
+      "player_name": "Muñoz",
+      "team": "Colombia",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Kimmich",
+      "team": "Germany",
+      "position": "DEF"
+    },
+    {
+      "player_name": "O'Reilly",
+      "team": "England",
+      "position": "DEF"
+    },
+    {
+      "player_name": "De Cuyper",
+      "team": "Belgium",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Wirtz",
+      "team": "Germany",
+      "position": "MID"
+    },
+    {
+      "player_name": "Sabitzer",
+      "team": "Austria",
+      "position": "MID"
+    },
+    {
+      "player_name": "Olise",
+      "team": "France",
+      "position": "MID"
+    },
+    {
+      "player_name": "Bruno Fernandes",
+      "team": "Portugal",
+      "position": "MID"
+    },
+    {
+      "player_name": "Haaland",
+      "team": "Norway",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Oyarzabal",
+      "team": "Spain",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Alexander-Arnold",
+      "team": "England",
+      "position": "GK"
+    },
+    {
+      "player_name": "Davies",
+      "team": "Canada",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Havertz",
+      "team": "Germany",
+      "position": "FWD"
+    },
+    {
+      "player_name": "McTominay",
+      "team": "Scotland",
+      "position": "MID"
+    }
+  ]
+}

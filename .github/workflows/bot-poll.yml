@@ -1,0 +1,53 @@
+name: Bot Poll
+
+# בודק את הבוט בטלגרם ומגיב אוטומטית (צילומי הרכב/ניחושים + שאלות מנחות).
+# ברירת מחדל: כל 15 דקות. שים לב למכסת הדקות החינמית (ראה README_DEPLOY).
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: wc2026-bot      # לא רץ במקביל לדוח היומי / להרצה אחרת
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bot once
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: "utf-8"
+        run: python telegram_intake.py --bot
+
+      - name: Persist state
+        if: always()
+        run: |
+          git config user.name "wc2026-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*.json || true
+          if git diff --cached --quiet; then
+            echo "no state changes"
+          else
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git commit -m "chore: bot state update [skip ci]"
+            git push
+          fi

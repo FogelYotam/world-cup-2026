@@ -1,0 +1,53 @@
+name: Daily Report
+
+# דוח יומי מלא ב-11:00 שעון ישראל (קיץ) = 08:00 UTC.
+# רץ על השרתים של GitHub — לא תלוי במחשב שלך.
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch: {}   # מאפשר הרצה ידנית מכפתור ב-GitHub
+
+concurrency:
+  group: wc2026-bot      # לא רץ במקביל ל-bot-poll (מונע התנגשויות)
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write     # כדי לשמור חזרה את data/ (מודל נלמד, my_team)
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run daily report
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: "utf-8"
+        run: python main.py --days 3
+
+      - name: Persist learned data
+        if: always()
+        run: |
+          git config user.name "wc2026-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*.json || true
+          if git diff --cached --quiet; then
+            echo "no data changes"
+          else
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git commit -m "chore: daily state update [skip ci]"
+            git push
+          fi

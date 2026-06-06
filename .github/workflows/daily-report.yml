@@ -14,6 +14,7 @@ concurrency:
 jobs:
   report:
     runs-on: ubuntu-latest
+    timeout-minutes: 12   # בלם בטיחות — לא נתקע לנצח גם אם מקור חיצוני איטי
     permissions:
       contents: write     # כדי לשמור חזרה את data/ (מודל נלמד, my_team)
     steps:

@@ -1,10 +1,10 @@
 name: Bot Poll
 
 # בודק את הבוט בטלגרם ומגיב אוטומטית (צילומי הרכב/ניחושים + שאלות מנחות).
-# ברירת מחדל: כל 15 דקות. שים לב למכסת הדקות החינמית (ראה README_DEPLOY).
+# כל 5 דקות (ריפו Public → דקות Actions ללא הגבלה).
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch: {}
 
 concurrency:
@@ -14,6 +14,7 @@ concurrency:
 jobs:
   poll:
     runs-on: ubuntu-latest
+    timeout-minutes: 8    # בלם בטיחות — הבוט לא נתקע בין ריצות
     permissions:
       contents: write
     steps:

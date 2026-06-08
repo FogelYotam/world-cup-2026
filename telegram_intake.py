@@ -383,6 +383,15 @@ def _find_prediction(preds: list[dict], home: str, away: str) -> dict | None:
     return None
 
 
+def _parse_score(s):
+    """ממיר מחרוזת תוצאה כמו '2-1' לזוג מספרים (2, 1). (None, None) בכשל."""
+    try:
+        parts = str(s).replace(":", "-").split("-")
+        return int(parts[0]), int(parts[1])
+    except (ValueError, IndexError, TypeError):
+        return None, None
+
+
 def _handle_fixtures(parsed: dict) -> None:
     """מעבד לוח משחקים/ניחושים: משווה למודל ומחזיר המלצה."""
     matches = parsed.get("matches") if isinstance(parsed, dict) else None
@@ -390,11 +399,13 @@ def _handle_fixtures(parsed: dict) -> None:
         _send_message("⚠️ לא זיהיתי משחקים בתמונה. נסה צילום ברור של לוח המשחקים.")
         return
     import predictor
+    import predictions_log
     db = utils.load_json(config.DB_PATH, default={}) or {}
     preds = predictor.predict_all(db)
 
     lines = ["<b>🎯 ניחושי המודל מול שלך</b>"]
     found = 0
+    entries: list[dict] = []   # לשמירת הניחושים שלך למעקב לאורך זמן
     for m in matches:
         if not isinstance(m, dict):
             continue
@@ -407,6 +418,19 @@ def _handle_fixtures(parsed: dict) -> None:
         uh, ua = m.get("user_home_goals"), m.get("user_away_goals")
         if uh is not None and ua is not None:
             lines.append(f"• הניחוש שלך: {uh}-{ua}")
+        # מודל מיושר לכיוון home/away של התמונה (לשמירה במעקב)
+        mh = ma = None
+        if p:
+            ph, pa = _parse_score(p.get("recommended_score"))
+            if _norm(p.get("home_team")) == _norm(home):
+                mh, ma = ph, pa
+            else:
+                mh, ma = pa, ph
+        entries.append({
+            "home": home, "away": away, "date": m.get("date"),
+            "user_home": uh, "user_away": ua,
+            "model_home": mh, "model_away": ma,
+        })
         if not p:
             lines.append("• אין למודל ניחוש למשחק הזה עדיין.")
             continue
@@ -436,6 +460,17 @@ def _handle_fixtures(parsed: dict) -> None:
     if found:
         lines.append("")
         lines.append("<i>המודל רץ על נתונים מתעדכנים; ככל שנכנסות תוצאות אמת — מדויק יותר.</i>")
+
+    # שמירת הניחושים שלך + הצגת אחוז הפגיעה המצטבר (אם יש משחקים שהוכרעו)
+    try:
+        predictions_log.record_predictions(entries)
+        summary_txt = predictions_log.format_summary_he()
+        if summary_txt:
+            lines.append("")
+            lines.append(summary_txt)
+    except Exception as exc:  # noqa: BLE001
+        log.error("שמירת מעקב הניחושים נכשלה: %s", exc)
+
     _send_message("\n".join(lines))
     # אין שאלות המשך ללוח-משחקים
     state = _load_state()
@@ -510,10 +545,13 @@ def _maybe_refresh_model(gemini) -> None:
     if not getattr(gemini, "enabled", False):
         return
     try:
+        import predictions_log
         db = utils.load_json(config.DB_PATH, default={}) or {}
         added = scraper.ingest_results(gemini, db)
         scraper._enrich_fantasy_data(gemini, db)
         utils.save_json(config.DB_PATH, db)
+        # סידור ניחושי המשתמש מול התוצאות האמיתיות שנכנסו
+        predictions_log.settle_with_results(db.get("results", []))
         state["last_refresh"] = utils.now_iso()
         _save_state(state)
         log.info("רענון מודל בוצע (%d תוצאות חדשות)", added)

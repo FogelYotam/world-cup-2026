@@ -518,3 +518,47 @@ def test_report_within_days_fallback_when_undated():
              {"home_team": "C", "away_team": "D"}]
     # אין תאריכים כלל → מחזיר הכל (לא חוסם בגלל נתונים חסרים)
     assert len(report._within_days(preds, 2)) == 2
+
+
+# --------------------------------------------------------------------------- #
+# מעקב ניחושי המשתמש מול תוצאות אמת
+# --------------------------------------------------------------------------- #
+def test_predictions_log_record_settle_summary(monkeypatch, tmp_path):
+    import predictions_log
+    monkeypatch.setattr(predictions_log, "_PATH", tmp_path / "my_predictions.json")
+    # שני ניחושים: אחד מנצח נכון לא-מדויק, אחד מדויק
+    predictions_log.record_predictions([
+        {"home": "Spain", "away": "Brazil", "date": "2026-06-12",
+         "user_home": 2, "user_away": 1, "model_home": 1, "model_away": 1},
+        {"home": "France", "away": "Japan", "date": "2026-06-12",
+         "user_home": 3, "user_away": 0, "model_home": 2, "model_away": 0},
+    ])
+    # תוצאות אמת: Spain 3-0 (משתמש ניחש מנצח נכון, לא מדויק; מודל תיקו - שגוי)
+    #            France 3-0 (משתמש מדויק; מודל מנצח נכון לא מדויק)
+    n = predictions_log.settle_with_results([
+        {"home": "Spain", "away": "Brazil", "home_goals": 3, "away_goals": 0},
+        {"home": "France", "away": "Japan", "home_goals": 3, "away_goals": 0},
+    ])
+    assert n == 2
+    s = predictions_log.summary()
+    assert s["settled"] == 2
+    assert s["user_outcome"] == (2, 2)   # שני ניצחונות בית — שניהם נכונים
+    assert s["user_exact"] == (1, 2)     # רק France 3-0 מדויק
+    assert s["model_outcome"] == (1, 2)  # Spain תיקו שגוי, France ניצחון נכון
+    assert s["model_exact"] == (0, 2)
+
+
+def test_predictions_log_handles_flipped_orientation(monkeypatch, tmp_path):
+    import predictions_log
+    monkeypatch.setattr(predictions_log, "_PATH", tmp_path / "p.json")
+    predictions_log.record_predictions([
+        {"home": "Italy", "away": "Germany", "user_home": 0, "user_away": 2,
+         "model_home": 1, "model_away": 1},
+    ])
+    # התוצאה מגיעה בכיוון הפוך (Germany בבית) — חייב להתיישר נכון
+    predictions_log.settle_with_results([
+        {"home": "Germany", "away": "Italy", "home_goals": 2, "away_goals": 0},
+    ])
+    s = predictions_log.summary()
+    assert s["settled"] == 1
+    assert s["user_exact"] == (1, 1)     # 0-2 לטובת Germany = מדויק

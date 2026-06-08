@@ -464,6 +464,16 @@ def build_telegram_text(predictions: list[dict], fantasy_result: dict,
         lines.append("<b>🏆 FIFA Fantasy</b>")
         lines.append("אין מספיק נתונים להמלצת הרכב.")
 
+    # מעקב דיוק הניחושים שלך מול המודל (אם יש משחקים שהוכרעו)
+    try:
+        import predictions_log
+        acc = predictions_log.format_summary_he()
+        if acc:
+            lines.append("")
+            lines.append(acc)
+    except Exception:  # noqa: BLE001
+        pass
+
     text = "\n".join(lines)
     return text[: _TG_LIMIT - 1]
 

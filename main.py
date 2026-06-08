@@ -74,9 +74,9 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
     predictions = predictor.predict_all(db)
     fantasy_result = fantasy.build_fantasy(db, predictions)
 
-    # תכנון פנטזי כמה מחזורים קדימה (סגל קבוע + הרכב/קפטן מתחלפים)
+    # פנטזי למחזור הקרוב בלבד (דוח קצר וממוקד)
     try:
-        plan = planner.build_plan(db, num_matchdays=days_ahead)
+        plan = planner.build_plan(db, num_matchdays=1)
     except Exception as exc:  # noqa: BLE001
         log.error("בניית תוכנית המחזורים נכשלה: %s", exc)
         plan = {"available": False}

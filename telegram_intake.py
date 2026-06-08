@@ -549,37 +549,47 @@ def run_bot_once(poll_timeout: int = 15) -> dict:
     handled = 0
     for upd in updates:
         new_offset = max(new_offset, int(upd.get("update_id", 0)) + 1)
-        msg = upd.get("message") or {}
-        chat_id = str((msg.get("chat") or {}).get("id"))
-        if config.TELEGRAM_CHAT_ID and chat_id != str(config.TELEGRAM_CHAT_ID):
-            continue
-
-        file_id = _image_file_id(msg)
-        if file_id:
-            if not getattr(gemini, "enabled", False):
-                _send_message("⚠️ קריאת תמונות זמנית לא זמינה (מכסת Gemini). נסה מאוחר יותר.")
+        # הודעה בודדת בעייתית לעולם לא מפילה את כל הריצה
+        try:
+            msg = upd.get("message") or {}
+            chat_id = str((msg.get("chat") or {}).get("id"))
+            if config.TELEGRAM_CHAT_ID and chat_id != str(config.TELEGRAM_CHAT_ID):
                 continue
-            try:
-                img, mime = _download_file(file_id)
-            except Exception as exc:  # noqa: BLE001
-                log.error("הורדת תמונה נכשלה: %s", exc)
-                _send_message("⚠️ לא הצלחתי להוריד את התמונה. נסה שוב.")
-                continue
-            parsed = classify_image(gemini, img, mime) or {}
-            kind = parsed.get("kind")
-            if kind == "lineup":
-                _handle_lineup(parsed)
-            elif kind == "fixtures":
-                _handle_fixtures(parsed)
-            else:
-                _send_message("🤔 לא הצלחתי לזהות אם זו תמונת הרכב או לוח משחקים. "
-                              "שלח צילום ברור יותר.")
-            handled += 1
-            continue
 
-        text = (msg.get("text") or "").strip()
-        if text and _handle_text(text):
-            handled += 1
+            file_id = _image_file_id(msg)
+            if file_id:
+                if not getattr(gemini, "enabled", False):
+                    _send_message("⚠️ קריאת תמונות זמנית לא זמינה (מכסת Gemini היומית "
+                                  "אזלה). נסה שוב מאוחר יותר.")
+                    continue
+                try:
+                    img, mime = _download_file(file_id)
+                except Exception as exc:  # noqa: BLE001
+                    log.error("הורדת תמונה נכשלה: %s", exc)
+                    _send_message("⚠️ לא הצלחתי להוריד את התמונה. נסה לשלוח שוב.")
+                    continue
+                parsed = classify_image(gemini, img, mime) or {}
+                kind = parsed.get("kind")
+                if kind == "lineup":
+                    _handle_lineup(parsed)
+                elif kind == "fixtures":
+                    _handle_fixtures(parsed)
+                else:
+                    _send_message(
+                        "🤔 לא הצלחתי לקרוא את התמונה — ייתכן שהיא לא חדה מספיק, "
+                        "או שמכסת Gemini אזלה לרגע. נסה לשלוח שוב צילום ברור של "
+                        "מסך ההרכב או לוח המשחקים."
+                    )
+                handled += 1
+                continue
+
+            text = (msg.get("text") or "").strip()
+            if text and _handle_text(text):
+                handled += 1
+        except Exception as exc:  # noqa: BLE001
+            log.error("טיפול בהודעה (update %s) נכשל: %s",
+                      upd.get("update_id"), exc)
+            continue
 
     if new_offset != offset:
         _save_offset(new_offset)

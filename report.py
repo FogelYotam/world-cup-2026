@@ -139,7 +139,7 @@ _TEMPLATE = Template(
   {% endif %}
 
   {% if plan.available %}
-  <h2>🏆 FIFA Fantasy — תוכנית רב-מחזורית</h2>
+  <h2>🏆 FIFA Fantasy — המחזור הקרוב</h2>
   <div class="card">
     <div>סגל קבוע של 15 · <span class="muted">2 שוערים · 5 הגנה · 5 קישור · 3 חלוץ · מקס' 3 לנבחרת</span>
       · עלות: <span class="pill">{{ plan.squad_cost }}M</span></div>
@@ -433,27 +433,22 @@ def build_telegram_text(predictions: list[dict], fantasy_result: dict,
 
     lines.append("")
     _append_personal_advice(lines, advice)
-    if plan and plan.get("available"):
-        lines.append("<b>🏆 FIFA Fantasy — תוכנית רב-מחזורית</b>")
-        lines.append(f"<i>סגל קבוע של 15 (2 שוערים · 5 הגנה · 5 קישור · 3 חלוץ) · "
-                     f"עלות {plan.get('squad_cost')}M · מקס' 3 לנבחרת</i>")
-        for md in plan["matchdays"]:
-            cap = (md.get("captain") or {}).get("player_name", "—")
-            vice = (md.get("vice_captain") or {}).get("player_name", "—")
-            rng = md.get("date_range") or ""
-            lines.append("")
-            lines.append(
-                f"<b>📅 מחזור {md['matchday']}</b> · {escape(rng)} · "
-                f"מערך {md['formation']} · 👑 <b>{escape(str(cap))}</b> (סגן {escape(str(vice))})"
-            )
-            lines.append(f"הרכב: {_group_lineup(md['lineup'])}")
-            bench = md.get("bench") or []
-            if bench:
-                lines.append(f"🪑 ספסל: {_group_lineup(bench)}")
+    if plan and plan.get("available") and plan.get("matchdays"):
+        # רק המחזור הקרוב (לא תוכנית רב-מחזורית) — דוח קצר
+        md = plan["matchdays"][0]
+        cap = (md.get("captain") or {}).get("player_name", "—")
+        vice = (md.get("vice_captain") or {}).get("player_name", "—")
+        rng = md.get("date_range") or ""
+        lines.append(f"<b>🏆 FIFA Fantasy — המחזור הקרוב</b> "
+                     f"<i>(15 שחקנים · {plan.get('squad_cost')}M)</i>")
+        lines.append(
+            f"📅 {escape(rng)} · מערך {md['formation']} · "
+            f"👑 <b>{escape(str(cap))}</b> (סגן {escape(str(vice))})"
+        )
+        lines.append(f"הרכב: {_group_lineup(md['lineup'])}")
         avoid = ", ".join(escape(str(a["player_name"]))
                           for a in fantasy_result.get("avoid", [])[:3])
         if avoid:
-            lines.append("")
             lines.append(f"⚠️ להימנע: {avoid}")
     elif fantasy_result.get("available"):
         e = fantasy_result["starting_eleven"]

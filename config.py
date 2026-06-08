@@ -63,10 +63,10 @@ ODDS_CHANGE_THRESHOLD = 0.10      # שינוי בהסתברות הפייבורי
 ODDS_REVEAL_HOURS = 2             # המלצת ההימור נחשפת רק כך וכך שעות לפני פתיחה
 
 # --- מקורות פנטזי מומלצים (לאיסוף טפסים/מחירים/בעלות/xG) ---
+# הרשימה שבחר המשתמש — מקורות אלה נמסרים ל-Gemini לחיפוש מעוגן.
 FANTASY_SOURCES = [
-    "Fantasy Football Scout", "FBref", "Sofascore", "WhoScored",
-    "Opta/StatsBomb", "FotMob", "RotoWire", "Fantasy Football Hub",
-    "Reddit r/FantasyPL", "official FIFA Fantasy stats",
+    "Fantasy Football Scout", "WhoScored", "FBref", "Flashscore",
+    "Reddit r/FantasyPL", "FotMob", "#FPL on Twitter/X",
 ]
 
 # --- מקורות נתונים ---

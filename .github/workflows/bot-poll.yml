@@ -1,10 +1,11 @@
 name: Bot Poll
 
 # בודק את הבוט בטלגרם ומגיב אוטומטית (צילומי הרכב/ניחושים + שאלות מנחות).
-# כל 5 דקות (ריפו Public → דקות Actions ללא הגבלה).
+# הרצה אמינה: טריגר חיצוני (cron-job.org) קורא ל-workflow_dispatch כל 15 דק'.
+# התזמון הפנימי של GitHub נשאר רק כגיבוי (לא אמין לתדירות גבוהה).
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch: {}
 
 concurrency:

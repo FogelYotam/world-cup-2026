@@ -3,79 +3,80 @@
   "squad_snapshot": [
     {
       "player_name": "Kobel",
-      "team": "QAT",
+      "team": "",
       "position": "GK"
     },
     {
-      "player_name": "Davies",
-      "team": "BIH",
+      "player_name": "Galindez",
+      "team": "",
+      "position": "GK"
+    },
+    {
+      "player_name": "Varela",
+      "team": "",
       "position": "DEF"
     },
     {
       "player_name": "Kimmich",
-      "team": "CUW",
+      "team": "",
       "position": "DEF"
     },
     {
       "player_name": "Cucurella",
-      "team": "CPV",
+      "team": "",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Muñoz",
+      "team": "",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Nuno Men...",
+      "team": "",
       "position": "DEF"
     },
     {
       "player_name": "McTominay",
-      "team": "HAI",
+      "team": "",
       "position": "MID"
     },
     {
       "player_name": "Wirtz",
-      "team": "CUW",
+      "team": "",
       "position": "MID"
     },
     {
       "player_name": "Olise",
-      "team": "SEN",
+      "team": "",
       "position": "MID"
     },
     {
-      "player_name": "Bruno Fernandes",
-      "team": "COD",
+      "player_name": "Bruno Fer...",
+      "team": "",
+      "position": "MID"
+    },
+    {
+      "player_name": "Sabitzer",
+      "team": "",
       "position": "MID"
     },
     {
       "player_name": "Haaland",
-      "team": "IRQ",
+      "team": "",
       "position": "FWD"
     },
     {
       "player_name": "Oyarzabal",
-      "team": "CPV",
+      "team": "",
       "position": "FWD"
     },
     {
       "player_name": "Havertz",
-      "team": "CUW",
+      "team": "",
       "position": "FWD"
-    },
-    {
-      "player_name": "Alexander-Arnold",
-      "team": "JOR",
-      "position": "GK"
-    },
-    {
-      "player_name": "Muñoz",
-      "team": "UZB",
-      "position": "DEF"
-    },
-    {
-      "player_name": "Sabitzer",
-      "team": "JOR",
-      "position": "MID"
-    },
-    {
-      "player_name": "João Cancelo",
-      "team": "COD",
-      "position": "DEF"
     }
   ],
-  "captain": "Haaland"
+  "captain": "Haaland",
+  "pending": "lineup_questions"
 }

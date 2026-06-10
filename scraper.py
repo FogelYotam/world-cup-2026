@@ -110,6 +110,22 @@ class GeminiClient:
             return parsed
         return default
 
+    def ask_text(self, prompt: str, default: str = "", retries: int = 1) -> str:
+        """שיחה חופשית — מחזיר טקסט חופשי (לא JSON). לשיח על ההרכב בבוט."""
+        if not self.enabled:
+            return default
+        for attempt in range(retries + 1):
+            try:
+                resp = self._model.generate_content(prompt)
+                return (resp.text or "").strip() or default
+            except Exception as exc:  # noqa: BLE001
+                if _is_rate_limit(exc) and attempt < retries:
+                    time.sleep(5 * (attempt + 1))
+                    continue
+                log.error("צ'אט Gemini נכשל: %s", str(exc).split(chr(10))[0])
+                return default
+        return default
+
     def ask_json_image(self, prompt: str, image_bytes: bytes,
                        mime_type: str = "image/jpeg", default=None,
                        retries: int = 2):

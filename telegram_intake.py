@@ -317,17 +317,8 @@ def classify_image(gemini, image_bytes: bytes, mime: str) -> dict | None:
 # --------------------------------------------------------------------------- #
 # מטפל בתמונת הרכב — שומר, מפיק המלצה אישית, ושואל שאלות מנחות
 # --------------------------------------------------------------------------- #
-_GUIDING_QUESTIONS = (
-    "<b>❓ שאלות מנחות (ענה קצר, שורה לכל שאלה):</b>\n"
-    "1️⃣ סגנון: (א) סולידי · (ב) אגרסיבי\n"
-    "2️⃣ קפטן: (א) להשאיר את הבחירה · (ב) לשקול חלופה\n"
-    "3️⃣ כמה חילופים חופשיים יש לך? (0/1/2 או 'חופשי')\n"
-    "4️⃣ יש שחקן שלא תחליף? (שם / 'אין')"
-)
-
-
 def _handle_lineup(parsed: dict) -> None:
-    """מעבד תמונת הרכב: שמירה + המלצה אישית + שאלות מנחות."""
+    """מעבד תמונת הרכב: שמירה + המלצה אישית + הזמנה לשיח חופשי."""
     prev = utils.load_json(config.MY_TEAM_PATH, default={}) or {}
     my_team, err = _to_my_team(parsed, prev)
     if err:
@@ -358,11 +349,14 @@ def _handle_lineup(parsed: dict) -> None:
     except Exception as exc:  # noqa: BLE001
         log.error("הפקת המלצה אישית בבוט נכשלה: %s", exc)
 
-    # שאלות מנחות + שמירת מצב שיחה
-    _send_message(_GUIDING_QUESTIONS)
+    # הזמנה לשיח חופשי עם Gemini על ההרכב (במקום שאלות מובנות)
+    _send_message(
+        "💬 עכשיו אפשר לשאול אותי בחופשיות כל דבר על ההרכב — "
+        "מי לקפטן, איזה חילוף שווה, מי בסיכון, מערך מומלץ וכו'. פשוט כתוב."
+    )
     state = _load_state()
-    state["pending"] = "lineup_questions"
-    state["squad_snapshot"] = my_team["squad"]
+    state["pending"] = "lineup_chat"
+    state["squad"] = my_team["squad"]
     state["captain"] = my_team.get("captain")
     _save_state(state)
 
@@ -479,57 +473,36 @@ def _handle_fixtures(parsed: dict) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# מטפל בתשובות טקסט קצרות לשאלות המנחות
+# שיח חופשי על ההרכב מול Gemini (במקום שאלות מובנות)
 # --------------------------------------------------------------------------- #
-def _interpret_answers(text: str) -> dict:
-    """מפרש תשובה קצרה (רב-שורתית) לשאלות המנחות."""
-    parts = [p.strip() for p in text.replace(",", "\n").splitlines() if p.strip()]
-    ans: dict = {}
-    if len(parts) >= 1:
-        ans["style"] = "aggressive" if parts[0].startswith(("ב", "b", "B")) else "solid"
-    if len(parts) >= 2:
-        ans["captain_alt"] = parts[1].startswith(("ב", "b", "B"))
-    if len(parts) >= 3:
-        low = parts[2]
-        if "חופ" in low or "free" in low.lower():
-            ans["free_transfers"] = "unlimited"
-        else:
-            digits = "".join(c for c in low if c.isdigit())
-            ans["free_transfers"] = digits or low
-    if len(parts) >= 4:
-        ans["untouchable"] = None if parts[3] in ("אין", "-", "none") else parts[3]
-    return ans
-
-
 def _handle_text(text: str) -> bool:
-    """מטפל בתשובת טקסט אם יש שאלות פתוחות. מחזיר True אם טופל."""
+    """מנתב טקסט חופשי לשיחה עם Gemini בהקשר הקבוצה שלך. True אם טופל."""
     state = _load_state()
-    if state.get("pending") != "lineup_questions":
-        return False
-    a = _interpret_answers(text)
+    squad = state.get("squad") or []
+    if state.get("pending") != "lineup_chat" and not squad:
+        return False   # אין הקשר הרכב — לא מטפלים בטקסט
 
-    lines = ["<b>🔧 חידוד לפי התשובות שלך</b>"]
-    if a.get("style") == "aggressive":
-        lines.append("• סגנון אגרסיבי: שחק את השחקנים מול היריבות החלשות, שקול מערך התקפי "
-                     "(3-4-3) וסטאק של 2-3 שחקנים מאותו משחק קל.")
-    else:
-        lines.append("• סגנון סולידי: העדף שחקנים מובטחי-דקות עם פיקסצ'ר נוח; הימנע מהימורי רוטציה.")
-    if a.get("captain_alt"):
-        lines.append("• קפטן: שקול דיפרנציאל מהמשחק הקל ביותר שלך (תקרה גבוהה) במקום הבחירה הנוכחית.")
-    else:
-        cap = state.get("captain") or "הבחירה הנוכחית"
-        lines.append(f"• קפטן: נשארים עם <b>{cap}</b> — בחירה בטוחה.")
-    ft = a.get("free_transfers")
-    if ft == "unlimited":
-        lines.append("• חילופים חופשיים עד הדדליין → כל שינוי בחינם, נצל לסדר את כל ההרכב.")
-    elif ft:
-        lines.append(f"• עם {ft} חילופים חופשיים — מקד את השינוי בחוליה החלשה ביותר בלבד.")
-    if a.get("untouchable"):
-        lines.append(f"• {a['untouchable']} נשאר בסגל בכל מקרה.")
+    gemini = scraper.GeminiClient()
+    if not getattr(gemini, "enabled", False):
+        _send_message("⚠️ השיח עם Gemini זמנית לא זמין (מכסת היום אזלה). נסה מאוחר יותר.")
+        return True
 
-    _send_message("\n".join(lines))
-    state.pop("pending", None)
-    _save_state(state)
+    squad_str = ", ".join(
+        f"{p.get('player_name')} ({p.get('team')}, {p.get('position')})"
+        for p in squad
+    ) or "לא ידועה"
+    cap = state.get("captain") or "—"
+    prompt = (
+        "אתה יועץ FIFA Fantasy מומחה למונדיאל 2026. ענה בעברית, תכליתי ופרקטי "
+        "(עד 6 שורות), בהתבסס על נתונים עדכניים ממקורות הפנטזי המובילים. "
+        f"קבוצת המשתמש: {squad_str}. קפטן נוכחי: {cap}.\n"
+        f"שאלת המשתמש: {text}"
+    )
+    answer = gemini.ask_text(prompt, default="")
+    if answer:
+        _send_message(answer[:3500])
+    else:
+        _send_message("🤔 לא הצלחתי לענות כרגע — נסה לנסח אחרת או מאוחר יותר.")
     return True
 
 

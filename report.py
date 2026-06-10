@@ -56,6 +56,14 @@ _TEMPLATE = Template(
   .risk-medium { color:#fbbf24; }
   .risk-low { color:#4ade80; }
   .muted { color:#64748b; }
+  .pitch { background:linear-gradient(160deg,#15803d,#166534); border-radius:14px;
+           padding:18px 8px; margin:14px 0; box-shadow:inset 0 0 0 3px rgba(255,255,255,.15); }
+  .pitch-row { display:flex; justify-content:space-around; flex-wrap:wrap; gap:8px; margin:12px 0; }
+  .player { background:#0f172a; border:2px solid #e2e8f0; border-radius:10px;
+            padding:6px 8px; text-align:center; min-width:74px; }
+  .player .pname { font-weight:bold; color:#f1f5f9; font-size:.85em; }
+  .player .pmeta { color:#94a3b8; font-size:.75em; margin-top:2px; }
+  .player.cap { border-color:#fbbf24; box-shadow:0 0 8px rgba(251,191,36,.5); }
   footer { margin-top:40px; color:#64748b; font-size:.85em; text-align:center; }
 </style>
 </head>
@@ -64,8 +72,8 @@ _TEMPLATE = Template(
   <h1>⚽ מונדיאל 2026 — דוח יומי</h1>
   <div class="date">{{ date_str }}</div>
 
-  <h2>ניחושי משחקים — היומיים הקרובים</h2>
-  <div class="muted" style="margin-bottom:8px">מוצגים רק משחקי {{ window_days }} הימים הקרובים. המלצת ההימור נחשפת כ-{{ reveal_hours }} שעות לפני פתיחת כל משחק.</div>
+  <h2>ניחושי משחקים — {{ match_count }} המשחקים הקרובים</h2>
+  <div class="muted" style="margin-bottom:8px">מוצגים {{ match_count }} המשחקים הקרובים. המלצת ההימור נחשפת כ-{{ reveal_hours }} שעות לפני פתיחת כל משחק.</div>
   {% if predictions %}
     {% for p in predictions %}
     <div class="card">
@@ -95,26 +103,34 @@ _TEMPLATE = Template(
       · 👑 קפטן מומלץ: <span class="cap">{{ advice.recommended_captain.player_name if advice.recommended_captain else '—' }}</span>
       · סגן: <span class="vice">{{ advice.recommended_vice.player_name if advice.recommended_vice else '—' }}</span>
       {% if advice.captain_change %}<span class="muted">(שינוי מ-{{ advice.owner_captain }})</span>{% endif %}</div>
-    <table>
-      <tr><th>עמדה</th><th>שחקן</th><th>נבחרת</th><th>EP</th></tr>
-      {% for pl in advice.starting_eleven %}
-      <tr><td>{{ pl.position }}</td><td>{{ pl.player_name }}</td><td>{{ pl.team }}</td><td>{{ pl.expected_points }}</td></tr>
+    {% if advice_pitch %}
+    <div class="pitch">
+      {% for pos, players in advice_pitch %}
+      <div class="pitch-row">
+        {% for pl in players %}
+        {% set is_cap = advice.recommended_captain and pl.player_name == advice.recommended_captain.player_name %}
+        <div class="player{% if is_cap %} cap{% endif %}">
+          <div class="pname">{{ pl.player_name }}{% if is_cap %} 👑{% endif %}</div>
+          <div class="pmeta">{{ pl.team }} · EP {{ pl.expected_points }}</div>
+        </div>
+        {% endfor %}
+      </div>
       {% endfor %}
-    </table>
+    </div>
+    {% endif %}
     <div class="muted" style="margin-top:8px">🪑 ספסל: {% for b in advice.bench %}{{ b.position }} {{ b.player_name }}{% if not loop.last %} · {% endif %}{% endfor %}</div>
   </div>
-  {% if advice.transfers %}
+  {% if advice.transfer_options %}
   <div class="card">
-    <strong>🔁 חילופים מומלצים</strong> <span class="muted">(חופשיים: {{ advice.free_transfers }})</span>
+    <strong>🔁 מועמדי חילוף לפי עמדה</strong>
+    <span class="muted">(לכל עמדה — החלש בסגל מול 2 המועמדים הטובים)</span>
     <table>
-      <tr><th></th><th>החוצה</th><th>פנימה</th><th>+EP</th><th>עלות</th></tr>
-      {% for t in advice.transfers %}
+      <tr><th>עמדה</th><th>החוצה</th><th>מועמדים להחלפה (EP · רווח)</th></tr>
+      {% for opt in advice.transfer_options %}
       <tr>
-        <td>{% if t.urgent %}⚠️{% endif %}</td>
-        <td class="risk-high">{{ t.out.player_name }}</td>
-        <td class="cap">{{ t.in.player_name }}</td>
-        <td>+{{ t.gain }}</td>
-        <td class="muted">{% if t.is_free %}חינם{% else %}−{{ t.point_hit }} נק'{% endif %}</td>
+        <td>{{ opt.position }}</td>
+        <td class="risk-high">{{ opt.out.player_name }} <span class="muted">({{ opt.out.expected_points }})</span></td>
+        <td>{% for c in opt.candidates %}<span class="cap">{{ c.player_name }}</span> <span class="muted">({{ c.team }}, EP {{ c.expected_points }}, +{{ c.gain }})</span>{% if not loop.last %} · {% endif %}{% endfor %}</td>
       </tr>
       {% endfor %}
     </table>
@@ -245,6 +261,37 @@ def _within_days(predictions: list[dict], days: int, now=None) -> list[dict]:
     return sel if any_dated else list(predictions)
 
 
+def _upcoming(predictions: list[dict], n: int, now=None) -> list[dict]:
+    """N המשחקים הקרובים מהיום והלאה, ממוינים לפי שעת פתיחה/תאריך.
+    אם אין משחקים עתידיים — מחזיר את האחרונים; אם אין תאריכים — N הראשונים."""
+    now = now or datetime.now()
+    today = now.date()
+    dated = []
+    for p in predictions:
+        d = utils._parse_dt(p.get("kickoff")) or utils._parse_dt(p.get("date"))
+        if d:
+            dated.append((d, p))
+    if dated:
+        future = sorted((dp for dp in dated if dp[0].date() >= today),
+                        key=lambda x: x[0])
+        sel = [p for _, p in future][:n]
+        if sel:
+            return sel
+        return [p for _, p in sorted(dated, key=lambda x: x[0])][:n]
+    return list(predictions or [])[:n]
+
+
+_PITCH_ORDER = ("FWD", "MID", "DEF", "GK")   # מלמעלה (התקפה) למטה (שוער)
+
+
+def _pitch_rows(lineup: list[dict]) -> list[tuple]:
+    """מקבץ הרכב לשורות מערך על המגרש: חלוץ למעלה, שוער למטה."""
+    by = {"GK": [], "DEF": [], "MID": [], "FWD": []}
+    for p in lineup or []:
+        by.setdefault(p.get("position"), []).append(p)
+    return [(pos, by[pos]) for pos in _PITCH_ORDER if by[pos]]
+
+
 def render_html(predictions: list[dict], fantasy_result: dict,
                 plan: dict | None = None, advice: dict | None = None) -> str:
     """מרנדר את דוח ה-HTML ושומר אותו ל-output/. מחזיר את ה-HTML."""
@@ -258,16 +305,23 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         p["is_today"] = bool(_dt and _dt.date() == today)
         p["reveal_label"] = _kickoff_label(p) or (p.get("date") or "")
 
-    # מציגים בדוח רק את משחקי היומיים הקרובים
-    window = _within_days(predictions, config.REPORT_WINDOW_DAYS, now)
+    # מציגים בדוח את 5 המשחקים הקרובים
+    match_count = config.REPORT_UPCOMING_COUNT
+    window = _upcoming(predictions, match_count, now)
+
+    # ההרכב האישי כמערך על המגרש
+    advice_pitch = None
+    if advice and advice.get("available"):
+        advice_pitch = _pitch_rows(advice.get("starting_eleven"))
 
     html = _TEMPLATE.render(
         predictions=window,
         fantasy=fantasy_result,
         plan=plan or {},
         advice=advice or {},
+        advice_pitch=advice_pitch,
         reveal_hours=config.ODDS_REVEAL_HOURS,
-        window_days=config.REPORT_WINDOW_DAYS,
+        match_count=match_count,
         date_str=now.strftime("%d/%m/%Y"),
         generated_at=now.strftime("%d/%m/%Y %H:%M"),
     )
@@ -340,18 +394,18 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     if advice.get("bench"):
         lines.append(f"🪑 ספסל: {_group_lineup(advice['bench'])}")
 
-    transfers = advice.get("transfers") or []
-    if transfers:
-        ft = advice.get("free_transfers", 0)
-        lines.append(f"<b>🔁 חילופים מומלצים</b> (חופשיים: {ft}):")
-        for t in transfers:
-            tag = "חינם" if t.get("is_free") else f"−{t.get('point_hit',4)} נק'"
-            urgent = "⚠️ " if t.get("urgent") else ""
-            lines.append(
-                f"{urgent}החוצה {escape(str(t['out']['player_name']))} → "
-                f"פנימה <b>{escape(str(t['in']['player_name']))}</b> "
-                f"(+{t['gain']} EP · {tag})"
+    options = advice.get("transfer_options") or []
+    if options:
+        lines.append("<b>🔁 מועמדי חילוף לפי עמדה</b> (החלש בסגל ← 2 מועמדים):")
+        labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
+        for opt in options:
+            outp = escape(str(opt["out"]["player_name"]))
+            cands = " · ".join(
+                f"<b>{escape(str(c['player_name']))}</b> (+{c['gain']})"
+                for c in opt["candidates"]
             )
+            lines.append(f"{labels.get(opt['position'], opt['position'])}: "
+                         f"החוצה {outp} ← {cands}")
     flags = advice.get("flags") or []
     if flags:
         names = ", ".join(escape(str(f["player_name"])) for f in flags[:4])

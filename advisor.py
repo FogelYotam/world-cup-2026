@@ -197,6 +197,59 @@ def _position_picks(my_scored: list[dict], scored: list[dict],
     return picks
 
 
+def transfer_options(my_scored: list[dict], scored: list[dict],
+                     bank: float = 0.0, per_pos: int | None = None) -> list[dict]:
+    """לכל עמדה (GK/DEF/MID/FWD): השחקן החלש בסגל (out) + עד N מועמדי החלפה
+    הטובים ביותר מחוץ לסגל (in), בכפוף לתקציב ולמכסת הנבחרת."""
+    per_pos = per_pos or getattr(config, "TRANSFER_CANDIDATES_PER_POS", 2)
+    squad_ident = _squad_identity(my_scored)
+    nation = _nation_counts(my_scored)
+
+    pool_by_pos: dict[str, list[dict]] = {}
+    for s in scored:
+        if _in_identity(s["player_name"], s["team"], squad_ident):
+            continue
+        if s.get("suspension_status") in ("suspended", "banned"):
+            continue
+        pool_by_pos.setdefault(s["position"], []).append(s)
+    for lst in pool_by_pos.values():
+        lst.sort(key=lambda x: x.get("expected_points", 0), reverse=True)
+
+    options: list[dict] = []
+    for pos in ("GK", "DEF", "MID", "FWD"):
+        in_pos = [p for p in my_scored if p.get("position") == pos]
+        if not in_pos:
+            continue
+        out_p = min(in_pos, key=lambda x: x.get("expected_points", 0))
+        cands = []
+        for cand in pool_by_pos.get(pos, []):
+            after = nation.get(cand["team"], 0) - (1 if cand["team"] == out_p["team"] else 0)
+            if after >= fantasy.MAX_PER_NATION:
+                continue
+            if (cand.get("price") or 0) - (out_p.get("price") or 0) > bank + 1e-9:
+                continue
+            cands.append(cand)
+            if len(cands) >= per_pos:
+                break
+        if not cands:
+            continue
+        options.append({
+            "position": pos,
+            "out": {
+                "player_name": out_p["player_name"], "team": out_p["team"],
+                "expected_points": round(out_p.get("expected_points", 0) or 0, 1),
+            },
+            "candidates": [{
+                "player_name": c["player_name"], "team": c["team"],
+                "expected_points": round(c.get("expected_points", 0) or 0, 1),
+                "price": c.get("price"),
+                "gain": round((c.get("expected_points", 0) or 0)
+                              - (out_p.get("expected_points", 0) or 0), 1),
+            } for c in cands],
+        })
+    return options
+
+
 def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
                  matchday: int | None = None) -> dict:
     """מפיק חבילת המלצות אישית. scored = שחקנים מנוקדים למחזור הרלוונטי."""
@@ -241,6 +294,7 @@ def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
             "transfers": transfers[:4],
             "flags": flags,
             "position_picks": _position_picks(my_scored, scored),
+            "transfer_options": transfer_options(my_scored, scored, bank),
         }
     except Exception as exc:  # noqa: BLE001
         log.error("יועץ הפנטזי האישי נכשל: %s", exc)

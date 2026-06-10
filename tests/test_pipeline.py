@@ -562,3 +562,16 @@ def test_predictions_log_handles_flipped_orientation(monkeypatch, tmp_path):
     s = predictions_log.summary()
     assert s["settled"] == 1
     assert s["user_exact"] == (1, 1)     # 0-2 לטובת Germany = מדויק
+
+
+# --------------------------------------------------------------------------- #
+# מחולל התיעוד האוטומטי
+# --------------------------------------------------------------------------- #
+def test_docgen_block_has_inventory():
+    import docgen
+    block = docgen.build_block()
+    assert docgen.BEGIN in block and docgen.END in block
+    assert "**Modules (" in block
+    assert "**Tests:**" in block
+    # מודול ידוע אמור להופיע ברשימה
+    assert "`predictions_log.py`" in block

@@ -7,13 +7,13 @@ how to run/deploy, and the non-obvious gotchas.
 A Hebrew (RTL) system for the 2026 FIFA World Cup that:
 1. **Predicts match results** — 1X2 + exact score + confidence (Poisson model blended with market odds).
 2. **Advises FIFA Fantasy** — legal 15-man squad, captain, per-position picks, transfers, relative to the user's real team.
-3. **Telegram bot** — the user sends a screenshot (lineup or predictions); the bot reads it (Gemini Vision), replies with advice/comparison + short guiding questions, and reads short text replies.
+3. **Telegram bot** — the user sends a screenshot (lineup or predictions); the bot reads it (Gemini Vision), replies with advice/comparison, then lets the user **chat freely with Gemini** about the lineup (no structured questions).
 4. **Learns** — ingests real results to refine team strength, and tracks the user's prediction accuracy vs the model over the tournament.
 
 Runs fully in the cloud (GitHub Actions) — no PC required.
 
 ## Architecture (modules)
-- `config.py` — settings; loads `.env`. Key knobs: `REPORT_WINDOW_DAYS` (=2), `POSITION_PICKS_PER_POS`, `MARKET_BLEND_WEIGHT`, `ODDS_REVEAL_HOURS`.
+- `config.py` — settings; loads `.env`. Key knobs: `REPORT_UPCOMING_COUNT` (=5 matches in the report), `POSITION_PICKS_PER_POS`, `TRANSFER_CANDIDATES_PER_POS` (=2), `MARKET_BLEND_WEIGHT`, `ODDS_REVEAL_HOURS`.
   - `FANTASY_SOURCES` — site/feed names handed to Gemini as grounded-search hints for prices/form/xG (e.g. *Fantasy Football Scout, WhoScored, FBref, Flashscore, Reddit r/FantasyPL, FotMob, #FPL on Twitter/X*). Gemini does not scrape each site — it uses them to steer its Google-grounded search.
   - `ODDS_SOURCES` — bookmaker/model names for the consensus odds query (e.g. *Bet365, Pinnacle, Opta supercomputer, ...*).
 - `utils.py` — logging (file is UTF-8), `load_json`/`save_json` (atomic), `_parse_dt`, `safe_get`.
@@ -21,12 +21,12 @@ Runs fully in the cloud (GitHub Actions) — no PC required.
 - `predictor.py` — Poisson model; `predict_all(db)`; blends consensus odds.
 - `odds.py` — consensus odds aggregation across sources.
 - `fantasy.py` — squad rules (2 GK/5 DEF/5 MID/3 FWD, max 3/nation, 100M); `score_players`, `build_fantasy`, `estimate_price`, form/availability filtering, budget-reserve greedy pick.
-- `advisor.py` — personal advice from `data/my_team.json`. Tolerant name matching (surname + accent-strip via `_make_resolver`/`_squad_identity`). Outputs starting XI, captain, `position_picks`, `suggest_transfers`.
+- `advisor.py` — personal advice from `data/my_team.json`. Tolerant name matching (surname + accent-strip via `_make_resolver`/`_squad_identity`). Outputs starting XI, captain, `position_picks`, `transfer_options` (per position: weakest out + 2 candidates), `suggest_transfers`.
 - `planner.py` — fantasy plan; called with `num_matchdays=1` (upcoming matchday only — keeps the report short).
 - `predictions_log.py` — saves the user's predicted scores, settles them against real results, computes hit-rate (outcome + exact) for user **and** model. File: `data/my_predictions.json`.
-- `report.py` — jinja2 HTML report + Telegram message (`build_telegram_text`) + email fallback. `_within_days` filters predictions to the next `REPORT_WINDOW_DAYS`.
+- `report.py` — jinja2 HTML report + Telegram message (`build_telegram_text`) + email fallback. `_upcoming` shows the next `REPORT_UPCOMING_COUNT` matches; `_pitch_rows` renders the lineup as a formation on a CSS pitch.
 - `state.py` — cadence / change-detection (decides whether to send).
-- `telegram_intake.py` — the autonomous bot. `run_bot_once()` (cloud entry via `--bot`), `classify_image` (one Vision call: lineup vs fixtures), `_handle_lineup`, `_handle_fixtures`, `_handle_text` (guiding-question replies), `_maybe_refresh_model` (gated ~every 5h: ingest results + enrich + settle predictions). Also `process_incoming` (legacy photo-only).
+- `telegram_intake.py` — the autonomous bot. `run_bot_once()` (cloud entry via `--bot`), `classify_image` (one Vision call: lineup vs fixtures), `_handle_lineup`, `_handle_fixtures`, `_handle_text` (free Gemini chat about the lineup via `GeminiClient.ask_text`), `_maybe_refresh_model` (gated ~every 5h: ingest results + enrich + settle predictions). Also `process_incoming` (legacy photo-only).
 - `main.py` — pipeline entry: `run()` → intake → scrape → predict → fantasy → plan → advice → report → telegram.
 
 ## Data files (`data/`, committed & cloud-synced)

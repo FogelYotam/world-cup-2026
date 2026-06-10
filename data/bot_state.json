@@ -77,5 +77,83 @@
       "position": "FWD"
     }
   ],
-  "captain": "Haaland"
+  "captain": "Haaland",
+  "pending": "lineup_chat",
+  "squad": [
+    {
+      "player_name": "Kobel",
+      "team": "QAT",
+      "position": "GK"
+    },
+    {
+      "player_name": "Varela",
+      "team": "KSA",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Kimmich",
+      "team": "CUW",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Cucurella",
+      "team": "CPV",
+      "position": "DEF"
+    },
+    {
+      "player_name": "McTominay",
+      "team": "HAI",
+      "position": "MID"
+    },
+    {
+      "player_name": "Wirtz",
+      "team": "CUW",
+      "position": "MID"
+    },
+    {
+      "player_name": "Olise",
+      "team": "SEN",
+      "position": "MID"
+    },
+    {
+      "player_name": "Bruno Fer_",
+      "team": "COD",
+      "position": "MID"
+    },
+    {
+      "player_name": "Haaland",
+      "team": "IRQ",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Oyarzabal",
+      "team": "CPV",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Havertz",
+      "team": "CUW",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Galindez",
+      "team": "CIV",
+      "position": "GK"
+    },
+    {
+      "player_name": "Muñoz",
+      "team": "UZB",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Nuno Men_",
+      "team": "COD",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Sabitzer",
+      "team": "JOR",
+      "position": "MID"
+    }
+  ]
 }

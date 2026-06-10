@@ -2,84 +2,84 @@
   "note": "עודכן מצילום הרכב שנשלח לבוט (FIFA World Cup Fantasy, מחזור 1).",
   "budget": 100.0,
   "bank": 0.0,
-  "free_transfers": 4,
+  "free_transfers": 0,
   "captain": "Haaland",
   "vice_captain": "Olise",
   "squad": [
     {
       "player_name": "Kobel",
-      "team": "",
-      "position": "GK"
-    },
-    {
-      "player_name": "Galindez",
-      "team": "",
+      "team": "QAT",
       "position": "GK"
     },
     {
       "player_name": "Varela",
-      "team": "",
+      "team": "KSA",
       "position": "DEF"
     },
     {
       "player_name": "Kimmich",
-      "team": "",
+      "team": "CUW",
       "position": "DEF"
     },
     {
       "player_name": "Cucurella",
-      "team": "",
-      "position": "DEF"
-    },
-    {
-      "player_name": "Muñoz",
-      "team": "",
-      "position": "DEF"
-    },
-    {
-      "player_name": "Nuno Men...",
-      "team": "",
+      "team": "CPV",
       "position": "DEF"
     },
     {
       "player_name": "McTominay",
-      "team": "",
+      "team": "HAI",
       "position": "MID"
     },
     {
       "player_name": "Wirtz",
-      "team": "",
+      "team": "CUW",
       "position": "MID"
     },
     {
       "player_name": "Olise",
-      "team": "",
+      "team": "SEN",
       "position": "MID"
     },
     {
-      "player_name": "Bruno Fer...",
-      "team": "",
-      "position": "MID"
-    },
-    {
-      "player_name": "Sabitzer",
-      "team": "",
+      "player_name": "Bruno Fer_",
+      "team": "COD",
       "position": "MID"
     },
     {
       "player_name": "Haaland",
-      "team": "",
+      "team": "IRQ",
       "position": "FWD"
     },
     {
       "player_name": "Oyarzabal",
-      "team": "",
+      "team": "CPV",
       "position": "FWD"
     },
     {
       "player_name": "Havertz",
-      "team": "",
+      "team": "CUW",
       "position": "FWD"
+    },
+    {
+      "player_name": "Galindez",
+      "team": "CIV",
+      "position": "GK"
+    },
+    {
+      "player_name": "Muñoz",
+      "team": "UZB",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Nuno Men_",
+      "team": "COD",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Sabitzer",
+      "team": "JOR",
+      "position": "MID"
     }
   ]
 }

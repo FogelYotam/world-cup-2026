@@ -6,7 +6,7 @@ on:
   workflow_dispatch: {}   # נקרא ע"י Apps Script (וגם הרצה ידנית מכפתור)
 
 concurrency:
-  group: wc2026-bot      # לא רץ במקביל ל-bot-poll (מונע התנגשויות)
+  group: wc2026-daily    # קבוצה נפרדת — שלא ייחנק ע"י ריצות הבוט התכופות
   cancel-in-progress: false
 
 jobs:

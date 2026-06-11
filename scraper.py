@@ -35,6 +35,7 @@ class GeminiClient:
 
     def __init__(self) -> None:
         self._model = None
+        self._quota_exhausted = False   # ברגע שאזלה המכסה — לא מנסים שוב בריצה זו
         if not config.gemini_enabled():
             log.warning("Gemini מושבת (אין מפתח) — נשתמש רק ב-scraping ו-fallback")
             return
@@ -84,7 +85,7 @@ class GeminiClient:
 
     def ask_json(self, prompt: str, default=None, retries: int = 2):
         """שולח prompt ומצפה ל-JSON. מנסה שוב עם backoff על rate-limit."""
-        if not self.enabled:
+        if not self.enabled or self._quota_exhausted:
             return default
         full = (
             prompt
@@ -95,11 +96,15 @@ class GeminiClient:
                 resp = self._model.generate_content(full)
                 text = (resp.text or "").strip()
             except Exception as exc:  # noqa: BLE001
-                if _is_rate_limit(exc) and attempt < retries:
-                    wait = 5 * (attempt + 1)
-                    log.warning("Gemini rate-limit — ממתין %ds (ניסיון %d)", wait, attempt + 1)
-                    time.sleep(wait)
-                    continue
+                if _is_rate_limit(exc):
+                    if attempt < retries:
+                        wait = 5 * (attempt + 1)
+                        log.warning("Gemini rate-limit — ממתין %ds (ניסיון %d)", wait, attempt + 1)
+                        time.sleep(wait)
+                        continue
+                    self._quota_exhausted = True
+                    log.warning("מכסת Gemini אזלה — מדלג על שאר קריאות Gemini בריצה זו")
+                    return default
                 log.error("קריאת Gemini נכשלה: %s", str(exc).split(chr(10))[0])
                 return default
 
@@ -112,16 +117,18 @@ class GeminiClient:
 
     def ask_text(self, prompt: str, default: str = "", retries: int = 1) -> str:
         """שיחה חופשית — מחזיר טקסט חופשי (לא JSON). לשיח על ההרכב בבוט."""
-        if not self.enabled:
+        if not self.enabled or self._quota_exhausted:
             return default
         for attempt in range(retries + 1):
             try:
                 resp = self._model.generate_content(prompt)
                 return (resp.text or "").strip() or default
             except Exception as exc:  # noqa: BLE001
-                if _is_rate_limit(exc) and attempt < retries:
-                    time.sleep(5 * (attempt + 1))
-                    continue
+                if _is_rate_limit(exc):
+                    if attempt < retries:
+                        time.sleep(5 * (attempt + 1))
+                        continue
+                    self._quota_exhausted = True
                 log.error("צ'אט Gemini נכשל: %s", str(exc).split(chr(10))[0])
                 return default
         return default
@@ -130,7 +137,7 @@ class GeminiClient:
                        mime_type: str = "image/jpeg", default=None,
                        retries: int = 2):
         """שולח prompt + תמונה (Gemini Vision) ומצפה ל-JSON. retry על rate-limit."""
-        if not self.enabled:
+        if not self.enabled or self._quota_exhausted:
             return default
         full = prompt + "\n\nהחזר אך ורק JSON תקין, ללא טקסט נוסף וללא הסברים."
         parts = [full, {"mime_type": mime_type, "data": image_bytes}]
@@ -139,12 +146,14 @@ class GeminiClient:
                 resp = self._model.generate_content(parts)
                 text = (resp.text or "").strip()
             except Exception as exc:  # noqa: BLE001
-                if _is_rate_limit(exc) and attempt < retries:
-                    wait = 5 * (attempt + 1)
-                    log.warning("Gemini rate-limit (תמונה) — ממתין %ds (ניסיון %d)",
-                                wait, attempt + 1)
-                    time.sleep(wait)
-                    continue
+                if _is_rate_limit(exc):
+                    if attempt < retries:
+                        wait = 5 * (attempt + 1)
+                        log.warning("Gemini rate-limit (תמונה) — ממתין %ds (ניסיון %d)",
+                                    wait, attempt + 1)
+                        time.sleep(wait)
+                        continue
+                    self._quota_exhausted = True
                 log.error("קריאת Gemini (תמונה) נכשלה: %s", str(exc).split(chr(10))[0])
                 return default
             parsed = _extract_json(text)

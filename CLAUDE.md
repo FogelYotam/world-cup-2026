@@ -18,7 +18,7 @@ Runs fully in the cloud (GitHub Actions) — no PC required.
   - `ODDS_SOURCES` — bookmaker/model names for the consensus odds query (e.g. *Bet365, Pinnacle, Opta supercomputer, ...*).
 - `utils.py` — logging (file is UTF-8), `load_json`/`save_json` (atomic), `_parse_dt`, `safe_get`.
 - `scraper.py` — data collection via **Gemini grounded search**. `GeminiClient` (`ask_json`, `ask_json_image` for Vision). Fetches matches/teams/match-context/fantasy pool. `ingest_results()` learns from finished scores (EWMA into team goals). `_enrich_fantasy_data()` pulls prices/form/xG from `FANTASY_SOURCES`.
-- `predictor.py` — Poisson model; `predict_all(db)`; blends consensus odds.
+- `predictor.py` — Poisson model; `predict_all(db)`; blends consensus odds. The `recommended_score` **maximises expected points** under the group's scoring (`config.PREDICTION_SCORING`) via `ranked_by_expected_points` — not just the most-probable score (kept as `most_likely_score`). Each prediction carries `recommended_ep`.
 - `odds.py` — consensus odds aggregation across sources.
 - `fantasy.py` — squad rules (2 GK/5 DEF/5 MID/3 FWD, max 3/nation, 100M); `score_players`, `build_fantasy`, `estimate_price`, form/availability filtering, budget-reserve greedy pick.
 - `advisor.py` — personal advice from `data/my_team.json`. Tolerant name matching (surname + accent-strip via `_make_resolver`/`_squad_identity`). Outputs starting XI, captain, `position_picks`, `transfer_options` (per position: weakest out + 2 candidates), `suggest_transfers`.
@@ -100,6 +100,6 @@ _Auto-updated: 2026-06-11_
 
 **Data files:** `bot_state.json`, `db.json`, `my_team.json`, `state.json`, `telegram_offset.json`
 **Workflows:** `bot-poll.yml` (`*/15 * * * *`); `daily-report.yml` (dispatch only)
-**Tests:** 48
+**Tests:** 51
 <!-- AUTO:END -->
 

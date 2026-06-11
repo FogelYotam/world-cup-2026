@@ -112,6 +112,56 @@ def ranked_scorelines(matrix: list[list[float]], top: int = 4) -> list[dict]:
 
 
 # --------------------------------------------------------------------------- #
+# אופטימיזציה לפי שיטת הניקוד של קבוצת הניחושים (תוחלת נקודות)
+# --------------------------------------------------------------------------- #
+def _sign(h: int, a: int) -> int:
+    return (h > a) - (h < a)   # 1 ביתי, -1 חוץ, 0 תיקו
+
+
+def match_points(ph: int, pa: int, ah: int, aa: int, scoring: dict) -> float:
+    """נקודות (תלויות-ניחוש) על ניחוש ph-pa כשהתוצאה בפועל ah-aa."""
+    if ph == ah and pa == aa:
+        return scoring.get("exact", 3)
+    dp, da = _sign(ph, pa), _sign(ah, aa)
+    if dp == da:                       # כיוון נכון (כולל תיקו נכון)
+        return scoring.get("direction", 1)
+    if dp != 0 and da != 0 and dp == -da:   # תוצאה הפוכה ממש
+        return scoring.get("reversed", -1)
+    return 0.0                         # כיוון שגוי אך לא הפוך (אחד תיקו)
+
+
+def expected_points(ph: int, pa: int, matrix: list[list[float]], scoring: dict) -> float:
+    """תוחלת הנקודות התלויות-ניחוש על פני כל התוצאות האפשריות."""
+    return sum(
+        p * match_points(ph, pa, i, j, scoring)
+        for i, row in enumerate(matrix) for j, p in enumerate(row)
+    )
+
+
+def expected_goals_bonus(matrix: list[list[float]], scoring: dict) -> float:
+    """תוחלת בונוס השערים (לא תלוי בניחוש) — קבוע לכל ההמלצות."""
+    val = scoring.get("goals_bonus", 0)
+    if not val:
+        return 0.0
+    thr = scoring.get("goals_bonus_threshold", 3)
+    p = sum(p for i, row in enumerate(matrix)
+            for j, p in enumerate(row) if i + j > thr)
+    return p * val
+
+
+def ranked_by_expected_points(matrix: list[list[float]], scoring: dict,
+                              max_goals: int, top: int = 4) -> list[dict]:
+    """כל הניחושים מדורגים לפי תוחלת נקודות (הבחירה המשתלמת ביותר)."""
+    cands = [
+        {"score": f"{ph}-{pa}", "home": ph, "away": pa,
+         "ep": round(expected_points(ph, pa, matrix, scoring), 3)}
+        for ph in range(max_goals + 1) for pa in range(max_goals + 1)
+    ]
+    cands.sort(key=lambda c: c["ep"], reverse=True)
+    return cands[:top]
+
+
+# --------------------------------------------------------------------------- #
 # ציון אמון והסבר
 # --------------------------------------------------------------------------- #
 def confidence_score(probs: dict, scorelines: list[dict], context: dict | None) -> int:
@@ -131,7 +181,8 @@ def confidence_score(probs: dict, scorelines: list[dict], context: dict | None) 
     return int(round(base * 100))
 
 
-def _explain(home_name, away_name, home_xg, away_xg, probs, best, context) -> str:
+def _explain(home_name, away_name, home_xg, away_xg, probs,
+             recommended, most_likely, recommended_ep, context) -> str:
     """הסבר קצר בעברית."""
     if probs["home_win"] >= probs["away_win"] and probs["home_win"] >= probs["draw"]:
         lean = f"יתרון ל{home_name}"
@@ -142,9 +193,10 @@ def _explain(home_name, away_name, home_xg, away_xg, probs, best, context) -> st
     note = ""
     if context and (context.get("injury_count", 0) or 0) >= 3:
         note = " הרכב מוחלש בשל פציעות."
+    likely_note = "" if recommended == most_likely else f" (הכי סביר: {most_likely})"
     return (
-        f"{lean}. צפי שערים {home_xg:.2f}-{away_xg:.2f}, "
-        f"תוצאה סבירה {best['score']}.{note}"
+        f"{lean}. צפי שערים {home_xg:.2f}-{away_xg:.2f}. "
+        f"המלצה לניקוד: {recommended} — תוחלת {recommended_ep} נק'{likely_note}.{note}"
     )
 
 
@@ -177,6 +229,14 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
     if market_agrees is False:
         confidence = int(round(confidence * 0.8))
 
+    # ההמלצה נבחרת כך שתמקסם תוחלת נקודות תחת שיטת הניקוד של הקבוצה
+    scoring = getattr(config, "PREDICTION_SCORING", {})
+    ev_ranked = ranked_by_expected_points(matrix, scoring, config.MAX_GOALS_GRID)
+    ev_best = ev_ranked[0] if ev_ranked else best
+    bonus_ep = expected_goals_bonus(matrix, scoring)
+    recommended = ev_best["score"]
+    recommended_ep = round(ev_best.get("ep", 0.0) + bonus_ep, 2)
+
     return {
         "match_id": match.get("match_id"),
         "home_team": home_name,
@@ -185,8 +245,10 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
         "kickoff": match.get("kickoff"),
         "stage": match.get("stage"),
         "expected_goals": {"home": home_xg, "away": away_xg},
-        "recommended_score": best["score"],
-        "alternatives": [s["score"] for s in scorelines[1:4]],
+        "recommended_score": recommended,            # ממוקסם לפי תוחלת נקודות
+        "recommended_ep": recommended_ep,            # תוחלת הנקודות של ההמלצה
+        "most_likely_score": best["score"],          # התוצאה הסבירה ביותר (לעיון)
+        "alternatives": [s["score"] for s in ev_ranked[1:4]],
         "scoreline_probabilities": scorelines,
         "outcome_probabilities": probs,
         "model_probabilities": model_probs,
@@ -194,7 +256,8 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
         "market_sources": (market_probs or {}).get("sources") if market_probs else None,
         "market_agrees": market_agrees,
         "confidence": confidence,
-        "explanation": _explain(home_name, away_name, home_xg, away_xg, probs, best, context),
+        "explanation": _explain(home_name, away_name, home_xg, away_xg,
+                                probs, recommended, best["score"], recommended_ep, context),
     }
 
 

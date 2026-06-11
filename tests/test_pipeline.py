@@ -575,3 +575,38 @@ def test_docgen_block_has_inventory():
     assert "**Tests:**" in block
     # מודול ידוע אמור להופיע ברשימה
     assert "`predictions_log.py`" in block
+
+
+# --------------------------------------------------------------------------- #
+# אופטימיזציה לפי שיטת הניקוד (תוחלת נקודות)
+# --------------------------------------------------------------------------- #
+def test_match_points_tiers():
+    s = {"exact": 3, "direction": 1, "reversed": -1}
+    assert predictor.match_points(2, 1, 2, 1, s) == 3    # מדויק
+    assert predictor.match_points(2, 1, 1, 0, s) == 1    # כיוון נכון, לא מדויק
+    assert predictor.match_points(2, 1, 0, 1, s) == -1   # תוצאה הפוכה
+    assert predictor.match_points(1, 1, 2, 0, s) == 0    # ניחשת תיקו, נצחון בית
+    assert predictor.match_points(2, 0, 1, 1, s) == 0    # ניחשת נצחון, תיקו
+
+
+def test_ev_optimal_favors_favorite_winning():
+    matrix = predictor.score_matrix(1.9, 0.6, config.MAX_GOALS_GRID)
+    ev = predictor.ranked_by_expected_points(
+        matrix, config.PREDICTION_SCORING, config.MAX_GOALS_GRID)
+    top = ev[0]
+    assert top["home"] > top["away"]   # ניצחון ביתי, לא תיקו
+    # תוחלת הנקודות של הבחירה לא נמוכה מזו של הסביר-ביותר
+    likely = predictor.ranked_scorelines(matrix)[0]
+    ep_likely = predictor.expected_points(
+        likely["home"], likely["away"], matrix, config.PREDICTION_SCORING)
+    assert top["ep"] >= ep_likely - 1e-9
+
+
+def test_predict_match_exposes_ev_fields():
+    match = {"home_team": "A", "away_team": "B"}
+    teams = {"A": {"goals_for": 2.2, "goals_against": 0.8},
+             "B": {"goals_for": 0.9, "goals_against": 1.6}}
+    pred = predictor.predict_match(match, teams)
+    assert pred["recommended_score"]
+    assert "recommended_ep" in pred
+    assert "most_likely_score" in pred

@@ -1,11 +1,9 @@
 name: Daily Report
 
-# דוח יומי מלא ב-11:00 שעון ישראל (קיץ) = 08:00 UTC.
-# רץ על השרתים של GitHub — לא תלוי במחשב שלך.
+# דוח יומי מלא. מופעל אמין ע"י טריגר חיצוני (Google Apps Script) פעם ביום
+# בסביבות 11:00 שעון ישראל — התזמון הפנימי של GitHub אינו אמין ולכן הוסר.
 on:
-  schedule:
-    - cron: "0 8 * * *"
-  workflow_dispatch: {}   # מאפשר הרצה ידנית מכפתור ב-GitHub
+  workflow_dispatch: {}   # נקרא ע"י Apps Script (וגם הרצה ידנית מכפתור)
 
 concurrency:
   group: wc2026-bot      # לא רץ במקביל ל-bot-poll (מונע התנגשויות)
@@ -37,7 +35,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PYTHONUTF8: "1"
           PYTHONIOENCODING: "utf-8"
-        run: python main.py --days 3
+        run: python main.py --days 3 --force
 
       - name: Refresh CLAUDE.md inventory
         if: always()
@@ -50,9 +48,13 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/*.json CLAUDE.md || true
           if git diff --cached --quiet; then
-            echo "no data changes"
-          else
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            git commit -m "chore: daily state update [skip ci]"
-            git push
+            echo "no changes"; exit 0
           fi
+          git commit -m "chore: daily state update [skip ci]"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push; then
+              echo "pushed"; exit 0
+            fi
+            echo "push retry $i"; sleep 5
+          done
+          echo "push failed after retries"; exit 1

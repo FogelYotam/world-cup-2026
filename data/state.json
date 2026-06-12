@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-11T09:44:03.849728+00:00",
+  "generated_at": "2026-06-12T08:59:09.452952+00:00",
   "fixtures": [
     "A1",
     "A2",
@@ -27,11 +27,13 @@
     "L2"
   ],
   "injured": [
+    "Ansu Fati|Spain",
     "Cristian Romero|Argentina",
-    "Lamine Yamal|Spain",
-    "Lionel Messi|Argentina",
+    "Jurrien Timber|Netherlands",
     "Marc-Andre ter Stegen|Germany",
-    "Mikel Merino|Spain"
+    "Mikel Merino|Spain",
+    "Reece James|England",
+    "Takehiro Tomiyasu|Japan"
   ],
   "odds": {
     "A1": {

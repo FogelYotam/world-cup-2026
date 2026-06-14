@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T08:58:07.914557+00:00",
+  "generated_at": "2026-06-14T08:58:59.021870+00:00",
   "fixtures": [
     "A1",
     "A2",
@@ -29,6 +29,10 @@
   "injured": [
     "Ansu Fati|Spain",
     "Cristian Romero|Argentina",
+    "Ederson|Brazil",
+    "Frenkie de Jong|Netherlands",
+    "Gavi|Spain",
+    "Ivan Perisic|Croatia",
     "Jurrien Timber|Netherlands",
     "Marc-Andre ter Stegen|Germany",
     "Mikel Merino|Spain",
@@ -42,7 +46,7 @@
     },
     "A2": {
       "favorite": "home_win",
-      "prob": 0.4
+      "prob": 0.367
     },
     "B1": {
       "favorite": "home_win",

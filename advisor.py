@@ -174,7 +174,7 @@ def _position_picks(my_scored: list[dict], scored: list[dict],
     for s in list(scored) + list(my_scored):
         k = _key(s.get("player_name"), s.get("team"))
         cur = merged.get(k)
-        if cur is None or s.get("expected_points", 0) > cur.get("expected_points", 0):
+        if cur is None or (s.get("expected_points") or 0) > (cur.get("expected_points") or 0):
             merged[k] = s
 
     by_pos: dict[str, list[dict]] = {"GK": [], "DEF": [], "MID": [], "FWD": []}
@@ -185,7 +185,7 @@ def _position_picks(my_scored: list[dict], scored: list[dict],
 
     picks: dict[str, list[dict]] = {}
     for pos, lst in by_pos.items():
-        lst.sort(key=lambda x: x.get("expected_points", 0), reverse=True)
+        lst.sort(key=lambda x: x.get("expected_points") or 0, reverse=True)
         picks[pos] = [{
             "player_name": p.get("player_name"),
             "team": p.get("team"),
@@ -213,14 +213,14 @@ def transfer_options(my_scored: list[dict], scored: list[dict],
             continue
         pool_by_pos.setdefault(s["position"], []).append(s)
     for lst in pool_by_pos.values():
-        lst.sort(key=lambda x: x.get("expected_points", 0), reverse=True)
+        lst.sort(key=lambda x: x.get("expected_points") or 0, reverse=True)
 
     options: list[dict] = []
     for pos in ("GK", "DEF", "MID", "FWD"):
         in_pos = [p for p in my_scored if p.get("position") == pos]
         if not in_pos:
             continue
-        out_p = min(in_pos, key=lambda x: x.get("expected_points", 0))
+        out_p = min(in_pos, key=lambda x: x.get("expected_points") or 0)
         cands = []
         for cand in pool_by_pos.get(pos, []):
             after = nation.get(cand["team"], 0) - (1 if cand["team"] == out_p["team"] else 0)
@@ -277,11 +277,11 @@ def differential_picks(my_scored: list[dict], scored: list[dict],
             continue
         cands.append((own, s))
 
-    cands.sort(key=lambda t: t[1].get("expected_points", 0), reverse=True)
+    cands.sort(key=lambda t: t[1].get("expected_points") or 0, reverse=True)
     return [{
         "player_name": s["player_name"], "team": s["team"],
         "position": s.get("position"),
-        "expected_points": round(s.get("expected_points", 0) or 0, 1),
+        "expected_points": round(s.get("expected_points") or 0, 1),
         "ownership": round(own, 1),
         "price": s.get("price"),
     } for own, s in cands[:count]]

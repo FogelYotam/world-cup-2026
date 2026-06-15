@@ -520,6 +520,18 @@ def test_differential_picks_low_ownership_only():
     assert all(d["ownership"] < 5.0 for d in diffs)
 
 
+def test_differential_picks_handles_none_expected_points():
+    # בריכה גולמית עם expected_points=None לא אמורה להפיל את המיון
+    pool = [
+        {"player_name": "X", "team": "A", "position": "MID",
+         "expected_points": None, "ownership": 2.0, "suspension_status": "available"},
+        {"player_name": "Y", "team": "B", "position": "FWD",
+         "expected_points": None, "ownership": 1.0, "suspension_status": "available"},
+    ]
+    diffs = advisor.differential_picks([], pool, max_ownership=5.0, count=3)
+    assert len(diffs) == 2   # לא קורס; מחזיר את שניהם
+
+
 def test_report_within_days_filters_window():
     import report
     now = datetime(2026, 6, 11, 9, 0)

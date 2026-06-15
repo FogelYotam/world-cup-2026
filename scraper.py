@@ -329,6 +329,50 @@ def fetch_fantasy_player_pool(gemini: GeminiClient, limit: int = 120) -> list[di
     return pool
 
 
+def fetch_differentials(gemini: GeminiClient, per_pos: int = 5) -> dict:
+    """מאתר את שחקני ה-DIFFERENTIAL הטובים ביותר לכל עמדה — בעלות נמוכה (<5%)
+    אך ערך גבוה — מתוך כל מאגר ה-FIFA Fantasy (48 נבחרות, מעל 1000 שחקנים).
+    מחזיר {GK:[...], DEF:[...], MID:[...], FWD:[...]}. best-effort."""
+    if not getattr(gemini, "enabled", False):
+        return {}
+    sources = ", ".join(config.FANTASY_SOURCES)
+    thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
+    prompt = (
+        f"סרוק את כל מאגר השחקנים של {config.COMPETITION} Fantasy — 48 נבחרות, "
+        f"מעל 1000 שחקנים — בהתבסס על המקורות: {sources}. "
+        f"מצא את שחקני ה-DIFFERENTIAL הטובים ביותר לכל עמדה: שחקנים שבעלות "
+        f"(ownership) שלהם מתחת ל-{thr}% אך עם ערך גבוה (כושר, פיקסצ'רים קלים, "
+        f"תפקיד מובטח, בעיטות עונשין/קרן). החזר עד {per_pos} לכל עמדה. "
+        "JSON בלבד: {\"GK\":[{\"name\":str,\"team\":str,\"ownership\":number,"
+        "\"price\":number,\"expected_points\":number,\"reason\":str}],"
+        "\"DEF\":[...],\"MID\":[...],\"FWD\":[...]}"
+    )
+    raw = gemini.ask_json(prompt, default=None)
+    if not isinstance(raw, dict):
+        log.warning("שליפת דיפרנציאלים: לא התקבל מידע שמיש")
+        return {}
+    out: dict[str, list] = {}
+    for pos in ("GK", "DEF", "MID", "FWD"):
+        items = raw.get(pos) or []
+        rows = []
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            name = it.get("name") or it.get("player_name")
+            if not name:
+                continue
+            rows.append({
+                "player_name": name, "team": it.get("team"), "position": pos,
+                "ownership": _num(it.get("ownership"), None),
+                "price": _num(it.get("price"), None),
+                "expected_points": _num(it.get("expected_points"), None),
+                "reason": it.get("reason"),
+            })
+        out[pos] = rows
+    log.info("שליפת דיפרנציאלים: %s", {k: len(v) for k, v in out.items()})
+    return out
+
+
 # --------------------------------------------------------------------------- #
 # ריענון פציעות לנתונים קיימים (לפני תחילת המונדיאל / כשאין משחקים חדשים)
 # --------------------------------------------------------------------------- #
@@ -527,6 +571,7 @@ def collect(days_ahead: int = 3) -> dict:
         if pool:
             db["players"] = _dedupe_players(list(db.get("players", [])) + pool)
         _enrich_fantasy_data(gemini, db)
+        db["differentials"] = fetch_differentials(gemini) or db.get("differentials", {})
         odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
         odds_mod.attach_to_matches(existing, odds_map)
         utils.save_json(config.DB_PATH, db)
@@ -557,6 +602,9 @@ def collect(days_ahead: int = 3) -> dict:
 
     # העשרה בנתוני פנטזי מהאתרים המומלצים (מחיר/בעלות/כושר/xG)
     _enrich_fantasy_data(gemini, db)
+
+    # דיפרנציאלים לכל עמדה — מתוך כל מאגר ה-1000+ שחקנים
+    db["differentials"] = fetch_differentials(gemini) or db.get("differentials", {})
 
     utils.save_json(config.DB_PATH, db)
     log.info(

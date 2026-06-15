@@ -138,20 +138,23 @@ _TEMPLATE = Template(
     </table>
   </div>
   {% endif %}
-  {% if advice.differentials %}
+  {% set diffs = advice.differentials %}
+  {% if diffs and (diffs.GK or diffs.DEF or diffs.MID or diffs.FWD) %}
   <div class="card">
-    <strong>🎯 דיפרנציאלים — בעלות נמוכה</strong>
-    <span class="muted">(פחות מ-{{ diff_threshold }}% מהמנהלים בחרו · שווה לשקול לצרף)</span>
+    <strong>🎯 דיפרנציאלים מומלצים לפי עמדה</strong>
+    <span class="muted">(בעלות &lt; {{ diff_threshold }}% · מתוך כל מאגר ה-48 נבחרות · שווה לשקול לצרף)</span>
     <table>
       <tr><th>עמדה</th><th>שחקן</th><th>נבחרת</th><th>בעלות</th><th>EP</th></tr>
-      {% for d in advice.differentials %}
-      <tr><td>{{ d.position }}</td><td>➕ {{ d.player_name }}</td><td>{{ d.team }}</td>
-        <td>{{ d.ownership }}%</td><td>{{ d.expected_points }}</td></tr>
+      {% for pos in ['GK','DEF','MID','FWD'] %}
+      {% for d in diffs[pos] %}
+      <tr><td>{{ pos }}</td><td>➕ {{ d.player_name }}</td><td>{{ d.team }}</td>
+        <td>{% if d.ownership is not none %}{{ d.ownership }}%{% else %}—{% endif %}</td><td>{{ d.expected_points }}</td></tr>
+      {% endfor %}
       {% endfor %}
     </table>
   </div>
   {% else %}
-  <div class="card muted">🎯 דיפרנציאלים (בעלות &lt; {{ diff_threshold }}%) יופיעו כשייכנסו נתוני בעלות מהאתרים (Fantasy Football Scout וכו').</div>
+  <div class="card muted">🎯 דיפרנציאלים (בעלות &lt; {{ diff_threshold }}%) יופיעו כשייכנסו נתוני בעלות מהאתרים.</div>
   {% endif %}
   {% endif %}
 
@@ -413,16 +416,21 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
         names = ", ".join(escape(str(f["player_name"])) for f in flags[:4])
         lines.append(f"⚠️ בעייתי בסגל שלך: {names}")
 
-    diffs = advice.get("differentials") or []
+    diffs = advice.get("differentials") or {}
     thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
-    if diffs:
-        lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% — שווה לשקול לצרף):")
-        for d in diffs:
-            lines.append(
-                f"➕ {escape(str(d['player_name']))} ({d.get('position','')}, "
-                f"{escape(str(d.get('team','')))}) · בעלות {d.get('ownership')}% · "
-                f"EP {d.get('expected_points')}"
-            )
+    pos_labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
+    if any(diffs.get(p) for p in ("GK", "DEF", "MID", "FWD")):
+        lines.append(f"<b>🎯 דיפרנציאלים לפי עמדה</b> (בעלות &lt; {thr}% — שווה לצרף):")
+        for pos in ("GK", "DEF", "MID", "FWD"):
+            items = diffs.get(pos) or []
+            if not items:
+                continue
+            parts = []
+            for d in items:
+                own = d.get("ownership")
+                own_tag = f" {own}%" if own is not None else ""
+                parts.append(f"{escape(str(d['player_name']))}{own_tag}")
+            lines.append(f"{pos_labels[pos]}: " + " · ".join(parts))
     else:
         lines.append(f"<i>🎯 דיפרנציאלים (בעלות &lt; {thr}%) יופיעו כשייכנסו נתוני בעלות מהאתרים.</i>")
     lines.append("")

@@ -512,24 +512,42 @@ def test_differential_picks_low_ownership_only():
         {"player_name": "NoOwn", "team": "E", "position": "FWD",
          "expected_points": 8.0, "ownership": None, "suspension_status": "available"},
     ]
-    diffs = advisor.differential_picks([], pool, max_ownership=5.0, count=3)
-    names = [d["player_name"] for d in diffs]
-    assert "Star" not in names          # בעלות גבוהה — לא דיפרנציאל
-    assert "NoOwn" not in names          # אין נתון בעלות
-    assert names == ["Hidden1", "Hidden2", "Hidden3"]   # מדורג לפי EP
-    assert all(d["ownership"] < 5.0 for d in diffs)
+    diffs = advisor.differential_picks([], pool, max_ownership=5.0)
+    all_names = [d["player_name"] for pos in diffs for d in diffs[pos]]
+    assert "Star" not in all_names       # בעלות גבוהה — לא דיפרנציאל
+    assert "NoOwn" not in all_names       # אין נתון בעלות
+    assert set(all_names) == {"Hidden1", "Hidden2", "Hidden3"}
+    # כל אחד בעמדה שלו
+    assert diffs["MID"][0]["player_name"] == "Hidden1"
+    assert diffs["FWD"][0]["player_name"] == "Hidden2"
+    assert diffs["DEF"][0]["player_name"] == "Hidden3"
+    assert all(d["ownership"] < 5.0 for pos in diffs for d in diffs[pos])
 
 
 def test_differential_picks_handles_none_expected_points():
-    # בריכה גולמית עם expected_points=None לא אמורה להפיל את המיון
     pool = [
         {"player_name": "X", "team": "A", "position": "MID",
          "expected_points": None, "ownership": 2.0, "suspension_status": "available"},
         {"player_name": "Y", "team": "B", "position": "FWD",
          "expected_points": None, "ownership": 1.0, "suspension_status": "available"},
     ]
-    diffs = advisor.differential_picks([], pool, max_ownership=5.0, count=3)
-    assert len(diffs) == 2   # לא קורס; מחזיר את שניהם
+    diffs = advisor.differential_picks([], pool, max_ownership=5.0)
+    assert sum(len(v) for v in diffs.values()) == 2   # לא קורס; שניהם
+
+
+def test_differentials_for_user_prefers_db_and_excludes_squad():
+    db_diffs = {
+        "MID": [{"player_name": "GemA", "team": "X", "ownership": 2.0,
+                 "expected_points": 6.0, "price": 7.0, "reason": "fixtures"},
+                {"player_name": "Owned", "team": "Y", "ownership": 1.0,
+                 "expected_points": 5.0}],
+        "FWD": [], "DEF": [], "GK": [],
+    }
+    my_scored = [{"player_name": "Owned", "team": "Y", "position": "MID"}]
+    out = advisor.differentials_for_user(db_diffs, my_scored, [])
+    names = [d["player_name"] for pos in out for d in out[pos]]
+    assert "GemA" in names          # מ-DB
+    assert "Owned" not in names      # כבר בסגל → מסונן
 
 
 def test_report_within_days_filters_window():

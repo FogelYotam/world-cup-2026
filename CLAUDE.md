@@ -21,7 +21,7 @@ Runs fully in the cloud (GitHub Actions) — no PC required.
 - `predictor.py` — Poisson model; `predict_all(db)`; blends consensus odds. The `recommended_score` **maximises expected points** under the group's scoring (`config.PREDICTION_SCORING`) via `ranked_by_expected_points` — not just the most-probable score (kept as `most_likely_score`). Each prediction carries `recommended_ep`.
 - `odds.py` — consensus odds aggregation across sources.
 - `fantasy.py` — squad rules (2 GK/5 DEF/5 MID/3 FWD, max 3/nation, 100M); `score_players`, `build_fantasy`, `estimate_price`, form/availability filtering, budget-reserve greedy pick.
-- `advisor.py` — personal advice from `data/my_team.json`. Tolerant name matching (surname + accent-strip via `_make_resolver`/`_squad_identity`). Outputs starting XI, captain, `transfer_options` (per position: weakest out + 2 candidates), `suggest_transfers`, and `differentials` (3 low-ownership <5% picks — shown in the report **instead of** the old `position_picks`; needs `ownership` data from the fantasy fetch).
+- `advisor.py` — personal advice from `data/my_team.json`. Tolerant name matching (surname + accent-strip via `_make_resolver`/`_squad_identity`). Outputs starting XI, captain, `transfer_options` (per position: weakest out + 2 candidates), `suggest_transfers`, and `differentials` (low-ownership <5% picks **per position** GK/DEF/MID/FWD — from `scraper.fetch_differentials` which scans the full 48-nation pool; `differentials_for_user` excludes squad players and falls back to pool filtering). Shown in the report **instead of** the old `position_picks`.
 - `planner.py` — fantasy plan; called with `num_matchdays=1` (upcoming matchday only — keeps the report short).
 - `predictions_log.py` — saves the user's predicted scores, settles them against real results, computes hit-rate (outcome + exact) for user **and** model. File: `data/my_predictions.json`.
 - `report.py` — jinja2 HTML report + Telegram message (`build_telegram_text`) + email fallback. `_within_days` shows all matches in the next `REPORT_UPCOMING_DAYS` (=5) days; `_pitch_rows` renders the lineup as a formation on a CSS pitch.
@@ -100,6 +100,6 @@ _Auto-updated: 2026-06-15_
 
 **Data files:** `bot_state.json`, `db.json`, `db_2.json`, `my_team.json`, `state.json`, `telegram_offset.json`
 **Workflows:** `bot-poll.yml` (`*/15 * * * *`); `daily-report.yml` (dispatch only)
-**Tests:** 52
+**Tests:** 54
 <!-- AUTO:END -->
 

@@ -250,41 +250,78 @@ def transfer_options(my_scored: list[dict], scored: list[dict],
     return options
 
 
+_POSITIONS = ("GK", "DEF", "MID", "FWD")
+
+
 def differential_picks(my_scored: list[dict], scored: list[dict],
                        max_ownership: float | None = None,
-                       count: int | None = None) -> list[dict]:
-    """שחקני דיפרנציאל — בעלות נמוכה (< הסף %) ותוחלת נקודות גבוהה, מחוץ לסגל.
-    דורש נתוני ownership; אם אין — מחזיר רשימה ריקה."""
+                       per_pos: int | None = None) -> dict:
+    """שחקני דיפרנציאל **לכל עמדה** — בעלות נמוכה (< הסף %) וערך גבוה, מחוץ לסגל.
+    מחזיר {GK:[...], DEF:[...], MID:[...], FWD:[...]}. דורש נתוני ownership."""
     max_own = (max_ownership if max_ownership is not None
                else getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0))
-    count = count or getattr(config, "DIFFERENTIAL_COUNT", 3)
+    per_pos = per_pos or getattr(config, "DIFFERENTIAL_PER_POS", 3)
     squad_ident = _squad_identity(my_scored)
 
-    cands = []
+    by_pos: dict[str, list] = {p: [] for p in _POSITIONS}
     for s in scored:
+        pos = s.get("position")
+        if pos not in by_pos:
+            continue
         if _in_identity(s["player_name"], s["team"], squad_ident):
             continue
         if s.get("suspension_status") in ("suspended", "banned"):
             continue
-        own = s.get("ownership")
-        if own is None:
-            continue
         try:
-            own = float(own)
+            own = float(s.get("ownership"))
         except (TypeError, ValueError):
             continue
         if own >= max_own:
             continue
-        cands.append((own, s))
+        by_pos[pos].append((own, s))
 
-    cands.sort(key=lambda t: t[1].get("expected_points") or 0, reverse=True)
-    return [{
-        "player_name": s["player_name"], "team": s["team"],
-        "position": s.get("position"),
-        "expected_points": round(s.get("expected_points") or 0, 1),
-        "ownership": round(own, 1),
-        "price": s.get("price"),
-    } for own, s in cands[:count]]
+    out: dict[str, list] = {}
+    for pos, cands in by_pos.items():
+        cands.sort(key=lambda t: t[1].get("expected_points") or 0, reverse=True)
+        out[pos] = [{
+            "player_name": s["player_name"], "team": s["team"], "position": pos,
+            "expected_points": round(s.get("expected_points") or 0, 1),
+            "ownership": round(own, 1), "price": s.get("price"),
+        } for own, s in cands[:per_pos]]
+    return out
+
+
+def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
+                           scored: list[dict]) -> dict:
+    """דיפרנציאלים לכל עמדה — מעדיף את השליפה הממוקדת מה-DB (כל המאגר);
+    מסנן שחקנים שכבר בסגל; נופל לבריכת השחקנים אם אין שליפה ייעודית."""
+    per_pos = getattr(config, "DIFFERENTIAL_PER_POS", 3)
+    max_own = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
+    if isinstance(db_diffs, dict) and any(db_diffs.get(p) for p in _POSITIONS):
+        squad_ident = _squad_identity(my_scored)
+        out: dict[str, list] = {}
+        for pos in _POSITIONS:
+            rows = []
+            for it in (db_diffs.get(pos) or []):
+                if not isinstance(it, dict) or not it.get("player_name"):
+                    continue
+                if _in_identity(it.get("player_name"), it.get("team"), squad_ident):
+                    continue
+                own = it.get("ownership")
+                if own is not None and own >= max_own:
+                    continue
+                rows.append({
+                    "player_name": it.get("player_name"), "team": it.get("team"),
+                    "position": pos,
+                    "expected_points": round(it.get("expected_points") or 0, 1),
+                    "ownership": round(own, 1) if own is not None else None,
+                    "price": it.get("price"), "reason": it.get("reason"),
+                })
+                if len(rows) >= per_pos:
+                    break
+            out[pos] = rows
+        return out
+    return differential_picks(my_scored, scored)
 
 
 def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
@@ -332,7 +369,9 @@ def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
             "flags": flags,
             "position_picks": _position_picks(my_scored, scored),
             "transfer_options": transfer_options(my_scored, scored, bank),
-            "differentials": differential_picks(my_scored, scored),
+            "differentials": differentials_for_user(
+                db.get("differentials") if isinstance(db, dict) else None,
+                my_scored, scored),
         }
     except Exception as exc:  # noqa: BLE001
         log.error("יועץ הפנטזי האישי נכשל: %s", exc)

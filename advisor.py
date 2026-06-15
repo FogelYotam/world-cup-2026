@@ -251,17 +251,29 @@ def transfer_options(my_scored: list[dict], scored: list[dict],
 
 
 _POSITIONS = ("GK", "DEF", "MID", "FWD")
+_DEFAULT_DIFF_COUNTS = {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3}
+
+
+def _nailed(s) -> int:
+    """מובטח-דקות? 1 אם כן, 0 אם סיכון מינוטים גבוה / לא צפוי בהרכב."""
+    if s.get("expected_start") is False:
+        return 0
+    if s.get("minutes_risk") == "high":
+        return 0
+    return 1
 
 
 def differential_picks(my_scored: list[dict], scored: list[dict],
                        max_ownership: float | None = None,
-                       per_pos: int | None = None) -> dict:
-    """שחקני דיפרנציאל **לכל עמדה** — בעלות נמוכה (< הסף %) וערך גבוה, מחוץ לסגל.
-    מחזיר {GK:[...], DEF:[...], MID:[...], FWD:[...]}. דורש נתוני ownership."""
+                       counts: dict | None = None) -> dict:
+    """שחקני דיפרנציאל **לכל עמדה** — בעלות נמוכה (< הסף %), מובטחי-דקות קודם.
+    כמות לכל עמדה לפי config.DIFFERENTIAL_COUNTS (3 GK / 5 DEF / 5 MID / 3 FWD)."""
     max_own = (max_ownership if max_ownership is not None
                else getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0))
-    per_pos = per_pos or getattr(config, "DIFFERENTIAL_PER_POS", 3)
+    counts = counts or getattr(config, "DIFFERENTIAL_COUNTS", _DEFAULT_DIFF_COUNTS)
     squad_ident = _squad_identity(my_scored)
+    squad_surnames = {_surname(p.get("player_name"))
+                      for p in my_scored if p.get("player_name")}
 
     by_pos: dict[str, list] = {p: [] for p in _POSITIONS}
     for s in scored:
@@ -269,6 +281,8 @@ def differential_picks(my_scored: list[dict], scored: list[dict],
         if pos not in by_pos:
             continue
         if _in_identity(s["player_name"], s["team"], squad_ident):
+            continue
+        if _surname(s.get("player_name")) in squad_surnames:
             continue
         if s.get("suspension_status") in ("suspended", "banned"):
             continue
@@ -282,12 +296,14 @@ def differential_picks(my_scored: list[dict], scored: list[dict],
 
     out: dict[str, list] = {}
     for pos, cands in by_pos.items():
-        cands.sort(key=lambda t: t[1].get("expected_points") or 0, reverse=True)
+        # מובטחי-דקות קודם, ואז לפי תוחלת נקודות
+        cands.sort(key=lambda t: (_nailed(t[1]), t[1].get("expected_points") or 0),
+                   reverse=True)
         out[pos] = [{
             "player_name": s["player_name"], "team": s["team"], "position": pos,
             "expected_points": round(s.get("expected_points") or 0, 1),
             "ownership": round(own, 1), "price": s.get("price"),
-        } for own, s in cands[:per_pos]]
+        } for own, s in cands[:counts.get(pos, 3)]]
     return out
 
 
@@ -295,7 +311,7 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
                            scored: list[dict]) -> dict:
     """דיפרנציאלים לכל עמדה — מעדיף את השליפה הממוקדת מה-DB (כל המאגר);
     מסנן שחקנים שכבר בסגל; נופל לבריכת השחקנים אם אין שליפה ייעודית."""
-    per_pos = getattr(config, "DIFFERENTIAL_PER_POS", 3)
+    counts = getattr(config, "DIFFERENTIAL_COUNTS", _DEFAULT_DIFF_COUNTS)
     max_own = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
     if isinstance(db_diffs, dict) and any(db_diffs.get(p) for p in _POSITIONS):
         squad_ident = _squad_identity(my_scored)
@@ -304,7 +320,7 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
                           for p in my_scored if p.get("player_name")}
         out: dict[str, list] = {}
         for pos in _POSITIONS:
-            rows = []
+            cands = []
             for it in (db_diffs.get(pos) or []):
                 if not isinstance(it, dict) or not it.get("player_name"):
                     continue
@@ -315,16 +331,16 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
                 own = it.get("ownership")
                 if own is not None and own >= max_own:
                     continue
-                rows.append({
-                    "player_name": it.get("player_name"), "team": it.get("team"),
-                    "position": pos,
-                    "expected_points": round(it.get("expected_points") or 0, 1),
-                    "ownership": round(own, 1) if own is not None else None,
-                    "price": it.get("price"), "reason": it.get("reason"),
-                })
-                if len(rows) >= per_pos:
-                    break
-            out[pos] = rows
+                cands.append(it)
+            # מובטחי-דקות קודם (שמירה על סדר המקור בתוך אותה רמה)
+            cands.sort(key=_nailed, reverse=True)
+            out[pos] = [{
+                "player_name": it.get("player_name"), "team": it.get("team"),
+                "position": pos,
+                "expected_points": round(it.get("expected_points") or 0, 1),
+                "ownership": round(it["ownership"], 1) if it.get("ownership") is not None else None,
+                "price": it.get("price"), "reason": it.get("reason"),
+            } for it in cands[:counts.get(pos, 3)]]
         return out
     return differential_picks(my_scored, scored)
 

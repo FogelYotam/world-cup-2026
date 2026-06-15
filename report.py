@@ -141,7 +141,7 @@ _TEMPLATE = Template(
   {% if diff_pitch.rows %}
   <div class="card">
     <strong>🎯 דיפרנציאלים מומלצים</strong>
-    <span class="muted">(בעלות &lt; {{ diff_threshold }}% · 2 לעמדה על המגרש + 1 בספסל)</span>
+    <span class="muted">(בעלות &lt; {{ diff_threshold }}% · מובטחי-דקות · 3 שוערים / 5 הגנה / 5 קישור / 3 חלוץ)</span>
     <div class="pitch">
       {% for pos, players in diff_pitch.rows %}
       <div class="pitch-row">
@@ -161,82 +161,6 @@ _TEMPLATE = Template(
   {% else %}
   <div class="card muted">🎯 דיפרנציאלים (בעלות &lt; {{ diff_threshold }}%) יופיעו כשייכנסו נתוני בעלות מהאתרים.</div>
   {% endif %}
-  {% endif %}
-
-  {% if plan.available %}
-  <h2>🏆 FIFA Fantasy — המחזור הקרוב</h2>
-  <div class="card">
-    <div>סגל קבוע של 15 · <span class="muted">2 שוערים · 5 הגנה · 5 קישור · 3 חלוץ · מקס' 3 לנבחרת</span>
-      · עלות: <span class="pill">{{ plan.squad_cost }}M</span></div>
-  </div>
-  {% for md in plan.matchdays %}
-  <div class="card">
-    <div class="match-head">📅 מחזור {{ md.matchday }} <span class="muted">· {{ md.date_range }}</span>
-      · <span class="pill">{{ md.formation }}</span>
-      · 👑 <span class="cap">{{ md.captain.player_name if md.captain else '—' }}</span>
-      <span class="muted">(סגן {{ md.vice_captain.player_name if md.vice_captain else '—' }})</span></div>
-    <table>
-      <tr><th>עמדה</th><th>שחקן</th><th>נבחרת</th><th>EP</th></tr>
-      {% for pl in md.lineup %}
-      <tr><td>{{ pl.position }}</td><td>{{ pl.player_name }}</td><td>{{ pl.team }}</td><td>{{ pl.expected_points }}</td></tr>
-      {% endfor %}
-    </table>
-    <div class="muted" style="margin-top:8px">🪑 ספסל: {% for b in md.bench %}{{ b.position }} {{ b.player_name }}{% if not loop.last %} · {% endif %}{% endfor %}</div>
-  </div>
-  {% endfor %}
-  {% endif %}
-
-  <h2>FIFA Fantasy — הרכב מומלץ</h2>
-  {% if fantasy.available %}
-    {% set e = fantasy.starting_eleven %}
-    <div class="card">
-      <div>מערך: <span class="pill">{{ e.formation }}</span>
-        · צפי נקודות (כולל קפטן): <span class="score">{{ e.total_expected_points }}</span>
-        · עלות: <span class="pill">{{ e.total_cost }}M</span></div>
-      <table>
-        <tr><th>עמדה</th><th>שחקן</th><th>נבחרת</th><th>EP</th><th>סיכון</th><th>חלופה</th></tr>
-        {% for pl in e.lineup %}
-        <tr>
-          <td>{{ pl.position }}</td>
-          <td>{{ pl.player_name }}
-            {% if pl.player_name == e.captain.player_name %}<span class="cap">(C)</span>{% endif %}
-            {% if e.vice_captain and pl.player_name == e.vice_captain.player_name %}<span class="vice">(V)</span>{% endif %}
-          </td>
-          <td>{{ pl.team }}</td>
-          <td>{{ pl.expected_points }}</td>
-          <td class="risk-{{ pl.minutes_risk }}">{{ pl.minutes_risk }}</td>
-          <td class="muted">{% if pl.alternative %}{{ pl.alternative.player_name }}
-            <span class="pill">{{ pl.alternative.expected_points }}</span>{% else %}—{% endif %}</td>
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-
-    {% if e.bench %}
-    <div class="card">
-      <strong>ספסל ({{ e.bench | length }}):</strong>
-      <div class="probs">
-        {% for b in e.bench %}{{ b.position }} {{ b.player_name }} ({{ b.team }}, EP {{ b.expected_points }}){% if not loop.last %} · {% endif %}{% endfor %}
-      </div>
-      <div class="muted" style="margin-top:6px;font-size:.85em">סגל מלא: 15 שחקנים · 2 שוערים, 5 הגנה, 5 קישור, 3 חלוץ · מקס' 3 לנבחרת</div>
-    </div>
-    {% endif %}
-
-    <div class="card">
-      <strong>מועמדים להבאה (מחוץ לסגל):</strong>
-      <div class="probs">
-        {% for t in fantasy.transfers %}{{ t.player_name }} ({{ t.team }}, EP {{ t.expected_points }}){% if not loop.last %} · {% endif %}{% endfor %}
-      </div>
-    </div>
-
-    <div class="card">
-      <strong class="risk-high">שחקנים להימנע מהם:</strong>
-      <div class="probs">
-        {% for a in fantasy.avoid %}{{ a.player_name }} ({{ a.team }}, {{ a.injury_status }}){% if not loop.last %} · {% endif %}{% endfor %}
-      </div>
-    </div>
-  {% else %}
-    <div class="card muted">אין מספיק נתוני שחקנים להמלצת הרכב.</div>
   {% endif %}
 
   <footer>הופק אוטומטית · {{ generated_at }}</footer>
@@ -302,16 +226,14 @@ def _pitch_rows(lineup: list[dict]) -> list[tuple]:
 
 
 def _differentials_split(diffs: dict | None) -> dict:
-    """מחלק דיפרנציאלים לכל עמדה: 2 על המגרש (rows) + 1 בספסל (bench)."""
+    """כל הדיפרנציאלים לכל עמדה על המגרש (3 שוערים / 5 הגנה / 5 קישור / 3 חלוץ)."""
     diffs = diffs or {}
-    rows, bench = [], []
+    rows = []
     for pos in _PITCH_ORDER:                 # FWD מלמעלה, GK למטה
         items = diffs.get(pos) or []
-        if items[:2]:
-            rows.append((pos, items[:2]))
-        if len(items) >= 3:
-            bench.append(items[2])           # כולל שדה position
-    return {"rows": rows, "bench": bench}
+        if items:
+            rows.append((pos, items))
+    return {"rows": rows, "bench": []}
 
 
 def render_html(predictions: list[dict], fantasy_result: dict,
@@ -441,7 +363,7 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
     pos_labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
     if any(diffs.get(p) for p in ("GK", "DEF", "MID", "FWD")):
-        lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% · 2 מגרש + 1 ספסל לעמדה):")
+        lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% · מובטחי-דקות):")
 
         def _diff_tag(d):
             own = d.get("ownership")
@@ -452,10 +374,8 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
             items = diffs.get(pos) or []
             if not items:
                 continue
-            line = f"{pos_labels[pos]}: " + " · ".join(_diff_tag(d) for d in items[:2])
-            if len(items) >= 3:
-                line += f" | 🪑 {_diff_tag(items[2])}"
-            lines.append(line)
+            lines.append(f"{pos_labels[pos]}: "
+                         + " · ".join(_diff_tag(d) for d in items))
     else:
         lines.append(f"<i>🎯 דיפרנציאלים (בעלות &lt; {thr}%) יופיעו כשייכנסו נתוני בעלות מהאתרים.</i>")
     lines.append("")
@@ -522,36 +442,6 @@ def build_telegram_text(predictions: list[dict], fantasy_result: dict,
 
     lines.append("")
     _append_personal_advice(lines, advice)
-    if plan and plan.get("available") and plan.get("matchdays"):
-        # רק המחזור הקרוב (לא תוכנית רב-מחזורית) — דוח קצר
-        md = plan["matchdays"][0]
-        cap = (md.get("captain") or {}).get("player_name", "—")
-        vice = (md.get("vice_captain") or {}).get("player_name", "—")
-        rng = md.get("date_range") or ""
-        lines.append(f"<b>🏆 FIFA Fantasy — המחזור הקרוב</b> "
-                     f"<i>(15 שחקנים · {plan.get('squad_cost')}M)</i>")
-        lines.append(
-            f"📅 {escape(rng)} · מערך {md['formation']} · "
-            f"👑 <b>{escape(str(cap))}</b> (סגן {escape(str(vice))})"
-        )
-        lines.append(f"הרכב: {_group_lineup(md['lineup'])}")
-        avoid = ", ".join(escape(str(a["player_name"]))
-                          for a in fantasy_result.get("avoid", [])[:3])
-        if avoid:
-            lines.append(f"⚠️ להימנע: {avoid}")
-    elif fantasy_result.get("available"):
-        e = fantasy_result["starting_eleven"]
-        cap = e.get("captain", {}).get("player_name", "—")
-        vice = (e.get("vice_captain") or {}).get("player_name", "—")
-        lines.append("<b>🏆 FIFA Fantasy</b>")
-        lines.append(f"מערך {e['formation']} · צפי {e['total_expected_points']} נק'")
-        lines.append(f"👑 קפטן: <b>{escape(str(cap))}</b> · סגן: {escape(str(vice))}")
-        lines.append(f"הרכב: {_group_lineup(e['lineup'])}")
-        if e.get("bench"):
-            lines.append(f"🪑 ספסל: {_group_lineup(e['bench'])}")
-    else:
-        lines.append("<b>🏆 FIFA Fantasy</b>")
-        lines.append("אין מספיק נתונים להמלצת הרכב.")
 
     # מעקב דיוק הניחושים שלך מול המודל (אם יש משחקים שהוכרעו)
     try:

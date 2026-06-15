@@ -329,22 +329,27 @@ def fetch_fantasy_player_pool(gemini: GeminiClient, limit: int = 120) -> list[di
     return pool
 
 
-def fetch_differentials(gemini: GeminiClient, per_pos: int = 5) -> dict:
+def fetch_differentials(gemini: GeminiClient, counts: dict | None = None) -> dict:
     """מאתר את שחקני ה-DIFFERENTIAL הטובים ביותר לכל עמדה — בעלות נמוכה (<5%)
-    אך ערך גבוה — מתוך כל מאגר ה-FIFA Fantasy (48 נבחרות, מעל 1000 שחקנים).
+    ומקום מובטח בהרכב — מתוך כל מאגר ה-FIFA Fantasy (48 נבחרות, 1000+ שחקנים).
     מחזיר {GK:[...], DEF:[...], MID:[...], FWD:[...]}. best-effort."""
     if not getattr(gemini, "enabled", False):
         return {}
+    counts = counts or getattr(config, "DIFFERENTIAL_COUNTS",
+                               {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3})
     sources = ", ".join(config.FANTASY_SOURCES)
     thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
     prompt = (
         f"סרוק את כל מאגר השחקנים של {config.COMPETITION} Fantasy — 48 נבחרות, "
-        f"מעל 1000 שחקנים — בהתבסס על המקורות: {sources}. "
-        f"מצא את שחקני ה-DIFFERENTIAL הטובים ביותר לכל עמדה: שחקנים שבעלות "
-        f"(ownership) שלהם מתחת ל-{thr}% אך עם ערך גבוה (כושר, פיקסצ'רים קלים, "
-        f"תפקיד מובטח, בעיטות עונשין/קרן). החזר עד {per_pos} לכל עמדה. "
+        f"1000+ שחקנים — בהתבסס על המקורות: {sources}. "
+        f"מצא את שחקני ה-DIFFERENTIAL הטובים ביותר לכל עמדה: בעלות (ownership) "
+        f"מתחת ל-{thr}%, **ועם מקום מובטח בהרכב הפותח** (לא ספסלנים/סיכון רוטציה), "
+        "וערך גבוה (כושר, פיקסצ'ר קל, בעיטות עונשין/קרן). "
+        f"החזר בדיוק: {counts.get('GK',3)} שוערים, {counts.get('DEF',5)} מגנים, "
+        f"{counts.get('MID',5)} קשרים, {counts.get('FWD',3)} חלוצים. "
         "JSON בלבד: {\"GK\":[{\"name\":str,\"team\":str,\"ownership\":number,"
-        "\"price\":number,\"expected_points\":number,\"reason\":str}],"
+        "\"price\":number,\"expected_points\":number,"
+        "\"expected_start\":boolean,\"reason\":str}],"
         "\"DEF\":[...],\"MID\":[...],\"FWD\":[...]}"
     )
     raw = gemini.ask_json(prompt, default=None)
@@ -366,6 +371,7 @@ def fetch_differentials(gemini: GeminiClient, per_pos: int = 5) -> dict:
                 "ownership": _num(it.get("ownership"), None),
                 "price": _num(it.get("price"), None),
                 "expected_points": _num(it.get("expected_points"), None),
+                "expected_start": it.get("expected_start"),
                 "reason": it.get("reason"),
             })
         out[pos] = rows

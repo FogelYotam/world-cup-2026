@@ -9808,5 +9808,123 @@
       "xa": 0.0
     }
   ],
-  "results": []
+  "results": [],
+  "differentials": {
+    "GK": [
+      {
+        "player_name": "Gunn",
+        "team": "Scotland",
+        "position": "GK",
+        "ownership": 1.7,
+        "price": 3.6,
+        "expected_points": null,
+        "reason": "מול האיטי — שער יבש סביר"
+      },
+      {
+        "player_name": "Nyland",
+        "team": "Norway",
+        "position": "GK",
+        "ownership": 2.5,
+        "price": 4.2,
+        "expected_points": null,
+        "reason": "מול עיראק — שליטה"
+      },
+      {
+        "player_name": "Galindez",
+        "team": "Ecuador",
+        "position": "GK",
+        "ownership": 4.0,
+        "price": 4.2,
+        "expected_points": null,
+        "reason": "הגנה יציבה"
+      }
+    ],
+    "DEF": [
+      {
+        "player_name": "Hincapié",
+        "team": "Ecuador",
+        "position": "DEF",
+        "ownership": 3.5,
+        "price": 4.7,
+        "expected_points": null,
+        "reason": "הגנה שספגה 2 בלבד במוקדמות"
+      },
+      {
+        "player_name": "De Cuyper",
+        "team": "Belgium",
+        "position": "DEF",
+        "ownership": 4.4,
+        "price": 4.7,
+        "expected_points": null,
+        "reason": "מגן שמאלי התקפי"
+      },
+      {
+        "player_name": "Schlotterbeck",
+        "team": "Germany",
+        "position": "DEF",
+        "ownership": 3.7,
+        "price": 5.3,
+        "expected_points": null,
+        "reason": "מול קוראסאו החלשה"
+      }
+    ],
+    "MID": [
+      {
+        "player_name": "Bruno Guimaraes",
+        "team": "Brazil",
+        "position": "MID",
+        "ownership": 2.0,
+        "price": 6.8,
+        "expected_points": null,
+        "reason": "נקודות הגנה + קרנות"
+      },
+      {
+        "player_name": "James Rodriguez",
+        "team": "Colombia",
+        "position": "MID",
+        "ownership": 4.4,
+        "price": 6.5,
+        "expected_points": null,
+        "reason": "מול אוזבקיסטן"
+      },
+      {
+        "player_name": "Odegaard",
+        "team": "Norway",
+        "position": "MID",
+        "ownership": 4.6,
+        "price": 7.7,
+        "expected_points": null,
+        "reason": "25 הזדמנויות במוקדמות"
+      }
+    ],
+    "FWD": [
+      {
+        "player_name": "Luis Suarez",
+        "team": "Colombia",
+        "position": "FWD",
+        "ownership": 2.6,
+        "price": 5.7,
+        "expected_points": null,
+        "reason": "כושר עולה"
+      },
+      {
+        "player_name": "Gimenez",
+        "team": "Mexico",
+        "position": "FWD",
+        "ownership": 2.8,
+        "price": 7.0,
+        "expected_points": null,
+        "reason": "מארחת — תת-מתומחר"
+      },
+      {
+        "player_name": "Embolo",
+        "team": "Switzerland",
+        "position": "FWD",
+        "ownership": 2.6,
+        "price": 7.5,
+        "expected_points": null,
+        "reason": "מלך שערי המוקדמות, מול קטאר"
+      }
+    ]
+  }
 }

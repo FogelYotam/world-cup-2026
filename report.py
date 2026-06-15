@@ -138,20 +138,25 @@ _TEMPLATE = Template(
     </table>
   </div>
   {% endif %}
-  {% set diffs = advice.differentials %}
-  {% if diffs and (diffs.GK or diffs.DEF or diffs.MID or diffs.FWD) %}
+  {% if diff_pitch.rows %}
   <div class="card">
-    <strong>🎯 דיפרנציאלים מומלצים לפי עמדה</strong>
-    <span class="muted">(בעלות &lt; {{ diff_threshold }}% · מתוך כל מאגר ה-48 נבחרות · שווה לשקול לצרף)</span>
-    <table>
-      <tr><th>עמדה</th><th>שחקן</th><th>נבחרת</th><th>בעלות</th><th>EP</th></tr>
-      {% for pos in ['GK','DEF','MID','FWD'] %}
-      {% for d in diffs[pos] %}
-      <tr><td>{{ pos }}</td><td>➕ {{ d.player_name }}</td><td>{{ d.team }}</td>
-        <td>{% if d.ownership is not none %}{{ d.ownership }}%{% else %}—{% endif %}</td><td>{{ d.expected_points }}</td></tr>
+    <strong>🎯 דיפרנציאלים מומלצים</strong>
+    <span class="muted">(בעלות &lt; {{ diff_threshold }}% · 2 לעמדה על המגרש + 1 בספסל)</span>
+    <div class="pitch">
+      {% for pos, players in diff_pitch.rows %}
+      <div class="pitch-row">
+        {% for d in players %}
+        <div class="player">
+          <div class="pname">{{ d.player_name }}</div>
+          <div class="pmeta">{{ d.team }}{% if d.ownership is not none %} · {{ d.ownership }}%{% endif %}</div>
+        </div>
+        {% endfor %}
+      </div>
       {% endfor %}
-      {% endfor %}
-    </table>
+    </div>
+    {% if diff_pitch.bench %}
+    <div class="muted" style="margin-top:8px">🪑 ספסל: {% for d in diff_pitch.bench %}{{ d.player_name }} ({{ d.position }}{% if d.ownership is not none %}, {{ d.ownership }}%{% endif %}){% if not loop.last %} · {% endif %}{% endfor %}</div>
+    {% endif %}
   </div>
   {% else %}
   <div class="card muted">🎯 דיפרנציאלים (בעלות &lt; {{ diff_threshold }}%) יופיעו כשייכנסו נתוני בעלות מהאתרים.</div>
@@ -296,6 +301,19 @@ def _pitch_rows(lineup: list[dict]) -> list[tuple]:
     return [(pos, by[pos]) for pos in _PITCH_ORDER if by[pos]]
 
 
+def _differentials_split(diffs: dict | None) -> dict:
+    """מחלק דיפרנציאלים לכל עמדה: 2 על המגרש (rows) + 1 בספסל (bench)."""
+    diffs = diffs or {}
+    rows, bench = [], []
+    for pos in _PITCH_ORDER:                 # FWD מלמעלה, GK למטה
+        items = diffs.get(pos) or []
+        if items[:2]:
+            rows.append((pos, items[:2]))
+        if len(items) >= 3:
+            bench.append(items[2])           # כולל שדה position
+    return {"rows": rows, "bench": bench}
+
+
 def render_html(predictions: list[dict], fantasy_result: dict,
                 plan: dict | None = None, advice: dict | None = None) -> str:
     """מרנדר את דוח ה-HTML ושומר אותו ל-output/. מחזיר את ה-HTML."""
@@ -313,10 +331,12 @@ def render_html(predictions: list[dict], fantasy_result: dict,
     window_days = config.REPORT_UPCOMING_DAYS
     window = _within_days(predictions, window_days, now)
 
-    # ההרכב האישי כמערך על המגרש
+    # ההרכב האישי כמערך על המגרש + דיפרנציאלים (2 מגרש + 1 ספסל לעמדה)
     advice_pitch = None
+    diff_pitch = {"rows": [], "bench": []}
     if advice and advice.get("available"):
         advice_pitch = _pitch_rows(advice.get("starting_eleven"))
+        diff_pitch = _differentials_split(advice.get("differentials"))
 
     html = _TEMPLATE.render(
         predictions=window,
@@ -324,6 +344,7 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         plan=plan or {},
         advice=advice or {},
         advice_pitch=advice_pitch,
+        diff_pitch=diff_pitch,
         diff_threshold=config.DIFFERENTIAL_MAX_OWNERSHIP,
         reveal_hours=config.ODDS_REVEAL_HOURS,
         window_days=window_days,
@@ -420,17 +441,21 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
     pos_labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
     if any(diffs.get(p) for p in ("GK", "DEF", "MID", "FWD")):
-        lines.append(f"<b>🎯 דיפרנציאלים לפי עמדה</b> (בעלות &lt; {thr}% — שווה לצרף):")
+        lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% · 2 מגרש + 1 ספסל לעמדה):")
+
+        def _diff_tag(d):
+            own = d.get("ownership")
+            suffix = f" {own}%" if own is not None else ""
+            return f"{escape(str(d['player_name']))}{suffix}"
+
         for pos in ("GK", "DEF", "MID", "FWD"):
             items = diffs.get(pos) or []
             if not items:
                 continue
-            parts = []
-            for d in items:
-                own = d.get("ownership")
-                own_tag = f" {own}%" if own is not None else ""
-                parts.append(f"{escape(str(d['player_name']))}{own_tag}")
-            lines.append(f"{pos_labels[pos]}: " + " · ".join(parts))
+            line = f"{pos_labels[pos]}: " + " · ".join(_diff_tag(d) for d in items[:2])
+            if len(items) >= 3:
+                line += f" | 🪑 {_diff_tag(items[2])}"
+            lines.append(line)
     else:
         lines.append(f"<i>🎯 דיפרנציאלים (בעלות &lt; {thr}%) יופיעו כשייכנסו נתוני בעלות מהאתרים.</i>")
     lines.append("")

@@ -299,6 +299,9 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
     max_own = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
     if isinstance(db_diffs, dict) and any(db_diffs.get(p) for p in _POSITIONS):
         squad_ident = _squad_identity(my_scored)
+        # סינון נוסף לפי שם משפחה בלבד — עמיד לנבחרת שגויה ב-my_team.json
+        squad_surnames = {_surname(p.get("player_name"))
+                          for p in my_scored if p.get("player_name")}
         out: dict[str, list] = {}
         for pos in _POSITIONS:
             rows = []
@@ -306,6 +309,8 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
                 if not isinstance(it, dict) or not it.get("player_name"):
                     continue
                 if _in_identity(it.get("player_name"), it.get("team"), squad_ident):
+                    continue
+                if _surname(it.get("player_name")) in squad_surnames:
                     continue
                 own = it.get("ownership")
                 if own is not None and own >= max_own:

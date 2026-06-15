@@ -9818,7 +9818,8 @@
         "ownership": 1.7,
         "price": 3.6,
         "expected_points": null,
-        "reason": "מול האיטי — שער יבש סביר"
+        "expected_start": true,
+        "reason": "מול האיטי"
       },
       {
         "player_name": "Nyland",
@@ -9827,7 +9828,8 @@
         "ownership": 2.5,
         "price": 4.2,
         "expected_points": null,
-        "reason": "מול עיראק — שליטה"
+        "expected_start": true,
+        "reason": "מול עיראק"
       },
       {
         "player_name": "Galindez",
@@ -9836,18 +9838,20 @@
         "ownership": 4.0,
         "price": 4.2,
         "expected_points": null,
+        "expected_start": true,
         "reason": "הגנה יציבה"
       }
     ],
     "DEF": [
       {
-        "player_name": "Hincapié",
+        "player_name": "Hincapie",
         "team": "Ecuador",
         "position": "DEF",
         "ownership": 3.5,
         "price": 4.7,
         "expected_points": null,
-        "reason": "הגנה שספגה 2 בלבד במוקדמות"
+        "expected_start": true,
+        "reason": "ספגה 2 בלבד במוקדמות"
       },
       {
         "player_name": "De Cuyper",
@@ -9856,16 +9860,38 @@
         "ownership": 4.4,
         "price": 4.7,
         "expected_points": null,
+        "expected_start": true,
         "reason": "מגן שמאלי התקפי"
       },
       {
-        "player_name": "Schlotterbeck",
-        "team": "Germany",
+        "player_name": "Elvedi",
+        "team": "Switzerland",
         "position": "DEF",
-        "ownership": 3.7,
-        "price": 5.3,
+        "ownership": 3.5,
+        "price": 4.3,
         "expected_points": null,
-        "reason": "מול קוראסאו החלשה"
+        "expected_start": true,
+        "reason": "הגנת שווייץ"
+      },
+      {
+        "player_name": "Vasquez",
+        "team": "Mexico",
+        "position": "DEF",
+        "ownership": 3.0,
+        "price": 4.9,
+        "expected_points": null,
+        "expected_start": true,
+        "reason": "מארחת, שער יבש"
+      },
+      {
+        "player_name": "Kadioglu",
+        "team": "Turkey",
+        "position": "DEF",
+        "ownership": 4.5,
+        "price": null,
+        "expected_points": null,
+        "expected_start": true,
+        "reason": "מגן התקפי לטורקיה"
       }
     ],
     "MID": [
@@ -9873,9 +9899,10 @@
         "player_name": "Bruno Guimaraes",
         "team": "Brazil",
         "position": "MID",
-        "ownership": 2.0,
+        "ownership": 1.8,
         "price": 6.8,
         "expected_points": null,
+        "expected_start": true,
         "reason": "נקודות הגנה + קרנות"
       },
       {
@@ -9885,7 +9912,8 @@
         "ownership": 4.4,
         "price": 6.5,
         "expected_points": null,
-        "reason": "מול אוזבקיסטן"
+        "expected_start": true,
+        "reason": "0.73 GI/90 במוקדמות"
       },
       {
         "player_name": "Odegaard",
@@ -9894,7 +9922,28 @@
         "ownership": 4.6,
         "price": 7.7,
         "expected_points": null,
-        "reason": "25 הזדמנויות במוקדמות"
+        "expected_start": true,
+        "reason": "25 הזדמנויות"
+      },
+      {
+        "player_name": "Morgan Rogers",
+        "team": "England",
+        "position": "MID",
+        "ownership": 4.0,
+        "price": null,
+        "expected_points": null,
+        "expected_start": true,
+        "reason": "כושר עולה"
+      },
+      {
+        "player_name": "Calhanoglu",
+        "team": "Turkey",
+        "position": "MID",
+        "ownership": 4.5,
+        "price": null,
+        "expected_points": null,
+        "expected_start": true,
+        "reason": "פנדלים + קרנות"
       }
     ],
     "FWD": [
@@ -9905,6 +9954,7 @@
         "ownership": 2.6,
         "price": 5.7,
         "expected_points": null,
+        "expected_start": true,
         "reason": "כושר עולה"
       },
       {
@@ -9914,7 +9964,8 @@
         "ownership": 2.8,
         "price": 7.0,
         "expected_points": null,
-        "reason": "מארחת — תת-מתומחר"
+        "expected_start": true,
+        "reason": "מארחת"
       },
       {
         "player_name": "Embolo",
@@ -9923,7 +9974,8 @@
         "ownership": 2.6,
         "price": 7.5,
         "expected_points": null,
-        "reason": "מלך שערי המוקדמות, מול קטאר"
+        "expected_start": true,
+        "reason": "מלך שערי המוקדמות"
       }
     ]
   }

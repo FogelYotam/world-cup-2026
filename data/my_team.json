@@ -1,65 +1,100 @@
 {
-  "note": "עודכן מצילום הרכב שנשלח לבוט (FIFA World Cup Fantasy, מחזור 1).",
+  "note": "עודכן מצילום עם מחירים (FIFA WC Fantasy).",
   "budget": 100.0,
-  "bank": 0.0,
-  "free_transfers": 0,
+  "bank": 0.7,
+  "free_transfers": 1,
   "captain": "Kimmich",
   "vice_captain": "Haaland",
   "squad": [
     {
       "player_name": "Kobel",
-      "team": "",
-      "position": "GK"
+      "team": "Switzerland",
+      "position": "GK",
+      "price": 4.7
+    },
+    {
+      "player_name": "Galindez",
+      "team": "Ecuador",
+      "position": "GK",
+      "price": 4.2
     },
     {
       "player_name": "Varela",
-      "team": "",
-      "position": "DEF"
+      "team": "Uruguay",
+      "position": "DEF",
+      "price": 4.2
     },
     {
       "player_name": "Kimmich",
-      "team": "",
-      "position": "MID"
+      "team": "Germany",
+      "position": "DEF",
+      "price": 5.5
     },
     {
       "player_name": "Cucurella",
-      "team": "",
-      "position": "DEF"
+      "team": "Spain",
+      "position": "DEF",
+      "price": 5.1
+    },
+    {
+      "player_name": "Munoz",
+      "team": "Colombia",
+      "position": "DEF",
+      "price": 4.6
+    },
+    {
+      "player_name": "Nuno Mendes",
+      "team": "Portugal",
+      "position": "DEF",
+      "price": 5.8
     },
     {
       "player_name": "McTominay",
-      "team": "",
-      "position": "MID"
+      "team": "Scotland",
+      "position": "MID",
+      "price": 6.5
     },
     {
       "player_name": "Wirtz",
-      "team": "",
-      "position": "MID"
+      "team": "Germany",
+      "position": "MID",
+      "price": 7.5
     },
     {
       "player_name": "Olise",
-      "team": "",
-      "position": "MID"
+      "team": "France",
+      "position": "MID",
+      "price": 9.5
     },
     {
       "player_name": "Bruno Fernandes",
-      "team": "",
-      "position": "MID"
+      "team": "Portugal",
+      "position": "MID",
+      "price": 8.5
+    },
+    {
+      "player_name": "Sabitzer",
+      "team": "Austria",
+      "position": "MID",
+      "price": 6.8
     },
     {
       "player_name": "Haaland",
-      "team": "",
-      "position": "FWD"
+      "team": "Norway",
+      "position": "FWD",
+      "price": 10.5
     },
     {
       "player_name": "Oyarzabal",
-      "team": "",
-      "position": "FWD"
+      "team": "Spain",
+      "position": "FWD",
+      "price": 8.1
     },
     {
       "player_name": "Havertz",
-      "team": "",
-      "position": "FWD"
+      "team": "Germany",
+      "position": "FWD",
+      "price": 7.8
     }
   ]
 }

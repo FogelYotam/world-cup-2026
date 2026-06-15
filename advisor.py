@@ -318,6 +318,9 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
         # סינון נוסף לפי שם משפחה בלבד — עמיד לנבחרת שגויה ב-my_team.json
         squad_surnames = {_surname(p.get("player_name"))
                           for p in my_scored if p.get("player_name")}
+        # אל תציע שחקנים מנבחרת שכבר במכסה (3) אצל המשתמש
+        nation_counts = _nation_counts(my_scored)
+        capped = {n for n, c in nation_counts.items() if c >= fantasy.MAX_PER_NATION}
         out: dict[str, list] = {}
         for pos in _POSITIONS:
             cands = []
@@ -327,6 +330,8 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
                 if _in_identity(it.get("player_name"), it.get("team"), squad_ident):
                     continue
                 if _surname(it.get("player_name")) in squad_surnames:
+                    continue
+                if it.get("team") in capped:
                     continue
                 own = it.get("ownership")
                 if own is not None and own >= max_own:

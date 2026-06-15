@@ -72,8 +72,8 @@ _TEMPLATE = Template(
   <h1>⚽ מונדיאל 2026 — דוח יומי</h1>
   <div class="date">{{ date_str }}</div>
 
-  <h2>ניחושי משחקים — {{ match_count }} המשחקים הקרובים</h2>
-  <div class="muted" style="margin-bottom:8px">מוצגים {{ match_count }} המשחקים הקרובים. המלצת ההימור נחשפת כ-{{ reveal_hours }} שעות לפני פתיחת כל משחק.</div>
+  <h2>ניחושי משחקים — {{ window_days }} הימים הקרובים</h2>
+  <div class="muted" style="margin-bottom:8px">מוצגים כל המשחקים ב-{{ window_days }} הימים הקרובים. המלצת ההימור נחשפת כ-{{ reveal_hours }} שעות לפני פתיחת כל משחק.</div>
   {% if predictions %}
     {% for p in predictions %}
     <div class="card">
@@ -95,7 +95,7 @@ _TEMPLATE = Template(
     </div>
     {% endfor %}
   {% else %}
-    <div class="card muted">אין משחקים ביומיים הקרובים.</div>
+    <div class="card muted">אין משחקים ב-{{ window_days }} הימים הקרובים.</div>
   {% endif %}
 
   {% if advice.available %}
@@ -306,9 +306,9 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         p["is_today"] = bool(_dt and _dt.date() == today)
         p["reveal_label"] = _kickoff_label(p) or (p.get("date") or "")
 
-    # מציגים בדוח את 5 המשחקים הקרובים
-    match_count = config.REPORT_UPCOMING_COUNT
-    window = _upcoming(predictions, match_count, now)
+    # מציגים בדוח את כל המשחקים ב-N הימים הקרובים
+    window_days = config.REPORT_UPCOMING_DAYS
+    window = _within_days(predictions, window_days, now)
 
     # ההרכב האישי כמערך על המגרש
     advice_pitch = None
@@ -323,7 +323,7 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         advice_pitch=advice_pitch,
         diff_threshold=config.DIFFERENTIAL_MAX_OWNERSHIP,
         reveal_hours=config.ODDS_REVEAL_HOURS,
-        match_count=match_count,
+        window_days=window_days,
         date_str=now.strftime("%d/%m/%Y"),
         generated_at=now.strftime("%d/%m/%Y %H:%M"),
     )

@@ -46,7 +46,8 @@ DEFAULT_GOALS_AGAINST = 1.3
 MAX_GOALS_GRID = 6             # תקרת שערים בחישוב מטריצת ההסתברויות
 MIN_CONFIDENCE = 0.0           # סף אמון מינימלי להצגה (0 = הצג הכל)
 REPORT_WINDOW_DAYS = 2         # (לא בשימוש בדוח כעת — נשמר לתאימות)
-REPORT_UPCOMING_COUNT = 5      # כמה משחקים קרובים להציג בניחושים שבדוח
+REPORT_UPCOMING_COUNT = 5      # (לא בשימוש — הוחלף בחלון ימים)
+REPORT_UPCOMING_DAYS = 5       # מציגים בדוח את כל המשחקים ב-5 הימים הקרובים
 
 # --- שיטת הניקוד של קבוצת הניחושים (KICKOFF) ---
 # ההמלצה נבחרת כך שתמקסם את תוחלת הנקודות תחת השיטה הזו (לא רק הסבירה ביותר).
@@ -78,7 +79,9 @@ ODDS_REVEAL_HOURS = 2             # המלצת ההימור נחשפת רק כך
 
 # --- מקורות פנטזי מומלצים (לאיסוף טפסים/מחירים/בעלות/xG) ---
 # הרשימה שבחר המשתמש — מקורות אלה נמסרים ל-Gemini לחיפוש מעוגן.
+# האתר הרשמי (play.fifa.com/fantasy) הוא המקור לאחוזי הבעלות (ownership).
 FANTASY_SOURCES = [
+    "official FIFA World Cup Fantasy (play.fifa.com/fantasy) — ownership %",
     "Fantasy Football Scout", "WhoScored", "FBref", "Flashscore",
     "Reddit r/FantasyPL", "FotMob", "#FPL on Twitter/X",
 ]

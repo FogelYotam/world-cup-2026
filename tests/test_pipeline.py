@@ -499,6 +499,27 @@ def test_position_picks_marks_in_squad():
     assert any_in_squad
 
 
+def test_differential_picks_low_ownership_only():
+    pool = [
+        {"player_name": "Star", "team": "A", "position": "MID",
+         "expected_points": 9.0, "ownership": 40.0, "suspension_status": "available"},
+        {"player_name": "Hidden1", "team": "B", "position": "MID",
+         "expected_points": 7.0, "ownership": 3.0, "suspension_status": "available"},
+        {"player_name": "Hidden2", "team": "C", "position": "FWD",
+         "expected_points": 6.0, "ownership": 1.5, "suspension_status": "available"},
+        {"player_name": "Hidden3", "team": "D", "position": "DEF",
+         "expected_points": 5.0, "ownership": 4.9, "suspension_status": "available"},
+        {"player_name": "NoOwn", "team": "E", "position": "FWD",
+         "expected_points": 8.0, "ownership": None, "suspension_status": "available"},
+    ]
+    diffs = advisor.differential_picks([], pool, max_ownership=5.0, count=3)
+    names = [d["player_name"] for d in diffs]
+    assert "Star" not in names          # בעלות גבוהה — לא דיפרנציאל
+    assert "NoOwn" not in names          # אין נתון בעלות
+    assert names == ["Hidden1", "Hidden2", "Hidden3"]   # מדורג לפי EP
+    assert all(d["ownership"] < 5.0 for d in diffs)
+
+
 def test_report_within_days_filters_window():
     import report
     now = datetime(2026, 6, 11, 9, 0)

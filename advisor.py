@@ -250,6 +250,43 @@ def transfer_options(my_scored: list[dict], scored: list[dict],
     return options
 
 
+def differential_picks(my_scored: list[dict], scored: list[dict],
+                       max_ownership: float | None = None,
+                       count: int | None = None) -> list[dict]:
+    """שחקני דיפרנציאל — בעלות נמוכה (< הסף %) ותוחלת נקודות גבוהה, מחוץ לסגל.
+    דורש נתוני ownership; אם אין — מחזיר רשימה ריקה."""
+    max_own = (max_ownership if max_ownership is not None
+               else getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0))
+    count = count or getattr(config, "DIFFERENTIAL_COUNT", 3)
+    squad_ident = _squad_identity(my_scored)
+
+    cands = []
+    for s in scored:
+        if _in_identity(s["player_name"], s["team"], squad_ident):
+            continue
+        if s.get("suspension_status") in ("suspended", "banned"):
+            continue
+        own = s.get("ownership")
+        if own is None:
+            continue
+        try:
+            own = float(own)
+        except (TypeError, ValueError):
+            continue
+        if own >= max_own:
+            continue
+        cands.append((own, s))
+
+    cands.sort(key=lambda t: t[1].get("expected_points", 0), reverse=True)
+    return [{
+        "player_name": s["player_name"], "team": s["team"],
+        "position": s.get("position"),
+        "expected_points": round(s.get("expected_points", 0) or 0, 1),
+        "ownership": round(own, 1),
+        "price": s.get("price"),
+    } for own, s in cands[:count]]
+
+
 def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
                  matchday: int | None = None) -> dict:
     """מפיק חבילת המלצות אישית. scored = שחקנים מנוקדים למחזור הרלוונטי."""
@@ -295,6 +332,7 @@ def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
             "flags": flags,
             "position_picks": _position_picks(my_scored, scored),
             "transfer_options": transfer_options(my_scored, scored, bank),
+            "differentials": differential_picks(my_scored, scored),
         }
     except Exception as exc:  # noqa: BLE001
         log.error("יועץ הפנטזי האישי נכשל: %s", exc)

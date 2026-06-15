@@ -59,6 +59,8 @@ PREDICTION_SCORING = {
 }
 POSITION_PICKS_PER_POS = 3     # כמה שחקנים מומלצים להציג בכל עמדה
 TRANSFER_CANDIDATES_PER_POS = 2  # כמה מועמדי חילוף להציג לכל עמדה
+DIFFERENTIAL_MAX_OWNERSHIP = 5.0  # סף בעלות (%) לשחקן "דיפרנציאל"
+DIFFERENTIAL_COUNT = 3            # כמה דיפרנציאלים להציג
 
 # --- תחרות ---
 COMPETITION = "FIFA World Cup 2026"

@@ -85,6 +85,8 @@ FANTASY_SOURCES = [
     "official FIFA World Cup Fantasy (play.fifa.com/fantasy) — ownership %",
     "Fantasy Football Scout", "WhoScored", "FBref", "Flashscore",
     "Reddit r/FantasyPL", "FotMob", "#FPL on Twitter/X",
+    # אתרי ניתוח דיפרנציאלים שאומתו בשיחה
+    "allaboutfpl.com", "RotoWire", "onsidearena.com", "chaseyoursport.com",
 ]
 
 # --- מקורות נתונים ---

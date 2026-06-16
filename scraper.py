@@ -379,6 +379,32 @@ def fetch_differentials(gemini: GeminiClient, counts: dict | None = None) -> dic
     return out
 
 
+def fetch_fixture_difficulty(gemini: GeminiClient) -> dict:
+    """לכל נבחרת: יריב המשחק הקרוב + דרגת קושי (0=קל, 1=קשה) לפי חוזק היריב.
+    מחזיר {team: {opponent, difficulty}}. משמש את המלצות החילוף. best-effort."""
+    if not getattr(gemini, "enabled", False):
+        return {}
+    prompt = (
+        f"עבור המחזור הקרוב ב-{config.COMPETITION} (סבב משחקי שלב הבתים הבא), "
+        "לכל נבחרת ציין את יריב המשחק הקרוב ואת דרגת הקושי: מספר בין 0.0 (קל מאוד) "
+        "ל-1.0 (קשה מאוד), לפי חוזק היריב והסיכוי של הנבחרת לנצח. "
+        "החזר JSON: {\"fixtures\": [{\"team\": str, \"opponent\": str, "
+        "\"difficulty\": number}]} — שמות נבחרות באנגלית."
+    )
+    raw = gemini.ask_json(prompt, default=None)
+    rows = (raw or {}).get("fixtures") if isinstance(raw, dict) else None
+    if not isinstance(rows, list):
+        log.warning("קושי מחזור: לא התקבל מידע שמיש")
+        return {}
+    out = {}
+    for r in rows:
+        if isinstance(r, dict) and r.get("team"):
+            out[r["team"]] = {"opponent": r.get("opponent"),
+                              "difficulty": _num(r.get("difficulty"), None)}
+    log.info("קושי מחזור: נטענו %d נבחרות", len(out))
+    return out
+
+
 # --------------------------------------------------------------------------- #
 # ריענון פציעות לנתונים קיימים (לפני תחילת המונדיאל / כשאין משחקים חדשים)
 # --------------------------------------------------------------------------- #
@@ -578,6 +604,8 @@ def collect(days_ahead: int = 3) -> dict:
             db["players"] = _dedupe_players(list(db.get("players", [])) + pool)
         _enrich_fantasy_data(gemini, db)
         db["differentials"] = fetch_differentials(gemini) or db.get("differentials", {})
+        db["fixture_difficulty"] = (fetch_fixture_difficulty(gemini)
+                                    or db.get("fixture_difficulty", {}))
         odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
         odds_mod.attach_to_matches(existing, odds_map)
         utils.save_json(config.DB_PATH, db)
@@ -611,6 +639,9 @@ def collect(days_ahead: int = 3) -> dict:
 
     # דיפרנציאלים לכל עמדה — מתוך כל מאגר ה-1000+ שחקנים
     db["differentials"] = fetch_differentials(gemini) or db.get("differentials", {})
+    # קושי המחזור הקרוב לכל נבחרת — להמלצות חילוף
+    db["fixture_difficulty"] = (fetch_fixture_difficulty(gemini)
+                                or db.get("fixture_difficulty", {}))
 
     utils.save_json(config.DB_PATH, db)
     log.info(

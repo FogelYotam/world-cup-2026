@@ -84,7 +84,8 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
     # המלצות אישיות לפי הקבוצה האמיתית שלך (data/my_team.json) למחזור הקרוב
     try:
         scored_md1 = fantasy.score_players(db, predictions)
-        advice = advisor.build_advice(db, scored_md1, matchday=1)
+        advice = advisor.build_advice(db, scored_md1, matchday=1,
+                                      predictions=predictions)
     except Exception as exc:  # noqa: BLE001
         log.error("בניית ההמלצות האישיות נכשלה: %s", exc)
         advice = {"available": False}

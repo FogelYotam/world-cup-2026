@@ -535,6 +535,30 @@ def test_differential_picks_handles_none_expected_points():
     assert sum(len(v) for v in diffs.values()) == 2   # לא קורס; שניהם
 
 
+def test_transfer_recommendations_budget_and_easy_in():
+    my_team = {"bank": 0.5, "squad": [
+        {"player_name": "OutMid", "team": "Scotland", "position": "MID", "price": 6.5},
+        {"player_name": "OutDef", "team": "Colombia", "position": "DEF", "price": 4.6},
+    ]}
+    db = {
+        "fixture_difficulty": {
+            "Scotland": {"opponent": "Morocco", "difficulty": 0.7},
+            "Colombia": {"opponent": "DRC", "difficulty": 0.3},
+            "Brazil": {"opponent": "Haiti", "difficulty": 0.1},
+            "Ecuador": {"opponent": "Curacao", "difficulty": 0.1},
+        },
+        "differentials": {
+            "MID": [{"player_name": "InMid", "team": "Brazil", "ownership": 2.0, "price": 6.8}],
+            "DEF": [{"player_name": "InDef", "team": "Ecuador", "ownership": 3.0, "price": 4.7}],
+            "GK": [], "FWD": [],
+        },
+    }
+    recs = advisor.transfer_recommendations(my_team, db, None)
+    assert recs                                    # נוצרה לפחות אופציה אחת
+    for o in recs:                                 # כל אופציה בתוך התקציב
+        assert o["in_cost"] <= o["out_cost"] + my_team["bank"] + 1e-9
+
+
 def test_differentials_for_user_prefers_db_and_excludes_squad():
     db_diffs = {
         "MID": [{"player_name": "GemA", "team": "X", "ownership": 2.0,

@@ -350,8 +350,141 @@ def differentials_for_user(db_diffs: dict | None, my_scored: list[dict],
     return differential_picks(my_scored, scored)
 
 
+def fixture_difficulty(predictions: list[dict] | None) -> dict:
+    """לכל נבחרת: קושי המשחק הקרוב לפי הסתברות הניצחון מהמודל (0=קל, 1=קשה)."""
+    out: dict[str, dict] = {}
+    for p in predictions or []:
+        o = p.get("outcome_probabilities") or {}
+        for team, wp, opp in (
+            (p.get("home_team"), o.get("home_win", 0), p.get("away_team")),
+            (p.get("away_team"), o.get("away_win", 0), p.get("home_team")),
+        ):
+            if not team or team in out:      # שומרים את המשחק הקרוב ביותר
+                continue
+            out[team] = {"opponent": opp, "win_prob": round(wp, 3),
+                         "difficulty": round(1 - wp, 3)}
+    return out
+
+
+def _brief_player(p: dict) -> dict:
+    return {"player_name": p.get("player_name"), "team": p.get("team"),
+            "position": p.get("position"), "price": p.get("price"),
+            "ownership": p.get("ownership"), "opponent": p.get("opponent"),
+            "difficulty": p.get("difficulty")}
+
+
+def _pick_two_in(in_by_pos: dict, need: list, budget: float,
+                 nation_counts: dict) -> list | None:
+    """בוחר 2 נכנסים בעמדות הנדרשות, בתוך התקציב, עם ניצול תקציבי מקסימלי."""
+    best = None
+    for a in in_by_pos.get(need[0], []):
+        for b in in_by_pos.get(need[1], []):
+            if a["player_name"] == b["player_name"]:
+                continue
+            nc = dict(nation_counts)
+            nc[a["team"]] = nc.get(a["team"], 0) + 1
+            nc[b["team"]] = nc.get(b["team"], 0) + 1
+            if any(v > fantasy.MAX_PER_NATION for v in nc.values()):
+                continue
+            cost = (a["price"] or 0) + (b["price"] or 0)
+            if cost > budget + 1e-9:
+                continue
+            da = a["difficulty"] if a["difficulty"] is not None else 0.5
+            db_ = b["difficulty"] if b["difficulty"] is not None else 0.5
+            n_easy = (1 if da <= 0.45 else 0) + (1 if db_ <= 0.45 else 0)
+            # קודם כמה נכנסים בפיקסצ'ר קל, ואז ניצול תקציב מקסימלי
+            score = (n_easy, round(cost, 1), -(da + db_))
+            if best is None or score > best[0]:
+                best = (score, [a, b])
+    return best[1] if best else None
+
+
+def transfer_recommendations(my_team: dict | None, db: dict,
+                             predictions: list[dict] | None,
+                             forced_out: str | None = None,
+                             max_options: int = 8) -> list[dict]:
+    """המלצות חילוף 2-מול-2: קשה-מחזור יוצא, דיפרנציאל בטוח-בקל נכנס,
+    בתוך התקציב (in ≤ out + bank), עם ניצול תקציבי מקסימלי."""
+    my_team = my_team or {}
+    squad = [dict(p) for p in my_team.get("squad", []) if p.get("player_name")]
+    if not squad:
+        return []
+    # מעדיפים מפת-קושי מדויקת שנשמרה ב-DB; אחרת גוזרים מהחיזויים
+    diff = (db.get("fixture_difficulty") if isinstance(db, dict) else None) \
+        or fixture_difficulty(predictions)
+    bank = float(my_team.get("bank") or 0)
+    for p in squad:
+        d = diff.get(p.get("team")) or {}
+        p["difficulty"] = d.get("difficulty")
+        p["opponent"] = d.get("opponent")
+        p["price"] = p.get("price") or 0
+
+    squad_surnames = {_surname(p["player_name"]) for p in squad}
+    nation_counts: dict = {}
+    for p in squad:
+        nation_counts[p.get("team")] = nation_counts.get(p.get("team"), 0) + 1
+
+    in_by_pos = {"GK": [], "DEF": [], "MID": [], "FWD": []}
+    for pos, items in (db.get("differentials") or {}).items():
+        if pos not in in_by_pos:
+            continue
+        for it in (items or []):
+            if _surname(it.get("player_name")) in squad_surnames:
+                continue
+            row = dict(it)
+            d = diff.get(it.get("team")) or {}
+            row["difficulty"] = d.get("difficulty")
+            row["opponent"] = d.get("opponent")
+            row["price"] = it.get("price") or 0
+            in_by_pos[pos].append(row)
+        in_by_pos[pos].sort(key=lambda x: (
+            x["difficulty"] if x["difficulty"] is not None else 0.5,
+            x.get("ownership") if x.get("ownership") is not None else 99))
+
+    def hardness(p):
+        return p["difficulty"] if p["difficulty"] is not None else 0.0
+
+    forced = None
+    if forced_out:
+        forced = next((p for p in squad
+                       if _surname(p["player_name"]) == _surname(forced_out)), None)
+    out1_list = [forced] if forced else sorted(squad, key=hardness, reverse=True)[:3]
+
+    options, seen = [], set()
+    for out1 in out1_list:
+        if not out1:
+            continue
+        for out2 in sorted(squad, key=lambda p: (-hardness(p), p["price"])):
+            if out2["player_name"] == out1["player_name"]:
+                continue
+            need = [out1["position"], out2["position"]]
+            budget = out1["price"] + out2["price"] + bank
+            nc = dict(nation_counts)
+            nc[out1["team"]] = nc.get(out1["team"], 0) - 1
+            nc[out2["team"]] = nc.get(out2["team"], 0) - 1
+            picks = _pick_two_in(in_by_pos, need, budget, nc)
+            if not picks:
+                continue
+            key = tuple(sorted([out1["player_name"], out2["player_name"]])
+                        + sorted([c["player_name"] for c in picks]))
+            if key in seen:
+                continue
+            seen.add(key)
+            in_cost = round(sum(c["price"] for c in picks), 1)
+            options.append({
+                "out": [_brief_player(out1), _brief_player(out2)],
+                "in": [_brief_player(c) for c in picks],
+                "out_cost": round(out1["price"] + out2["price"], 1),
+                "in_cost": in_cost, "bank_after": round(budget - in_cost, 1),
+            })
+            if len(options) >= max_options:
+                return options
+    return options
+
+
 def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
-                 matchday: int | None = None) -> dict:
+                 matchday: int | None = None,
+                 predictions: list[dict] | None = None) -> dict:
     """מפיק חבילת המלצות אישית. scored = שחקנים מנוקדים למחזור הרלוונטי."""
     try:
         my_team = my_team or load_my_team()
@@ -395,6 +528,9 @@ def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
             "flags": flags,
             "position_picks": _position_picks(my_scored, scored),
             "transfer_options": transfer_options(my_scored, scored, bank),
+            "transfer_recs": transfer_recommendations(
+                my_team, db, predictions, forced_out=my_team.get("forced_out")),
+            "forced_out": my_team.get("forced_out"),
             "differentials": differentials_for_user(
                 db.get("differentials") if isinstance(db, dict) else None,
                 my_scored, scored),

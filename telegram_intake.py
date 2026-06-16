@@ -339,7 +339,8 @@ def _handle_lineup(parsed: dict) -> None:
         db = utils.load_json(config.DB_PATH, default={}) or {}
         preds = predictor.predict_all(db)
         scored = fantasy.score_players(db, preds)
-        advice = advisor.build_advice(db, scored, my_team=my_team, matchday=1)
+        advice = advisor.build_advice(db, scored, my_team=my_team, matchday=1,
+                                      predictions=preds)
         if advice.get("available"):
             lines: list[str] = []
             report._append_personal_advice(lines, advice)
@@ -475,8 +476,34 @@ def _handle_fixtures(parsed: dict) -> None:
 # --------------------------------------------------------------------------- #
 # שיח חופשי על ההרכב מול Gemini (במקום שאלות מובנות)
 # --------------------------------------------------------------------------- #
+def _handle_forced_transfer(text: str) -> bool:
+    """פקודת נעילת חילוף: 'תוציא X' / 'מכור X' / 'בטל נעילה'. True אם טופל."""
+    t = text.strip()
+    if t in ("בטל נעילה", "בטל", "נקה נעילה"):
+        mt = utils.load_json(config.MY_TEAM_PATH, default={}) or {}
+        if mt.pop("forced_out", None) is not None:
+            utils.save_json(config.MY_TEAM_PATH, mt)
+        _send_message("🔓 נעילת החילוף בוטלה. ההמלצות יחזרו לפי קושי המחזור.")
+        return True
+    for kw in ("תוציא", "מכור", "להוציא", "תמכור"):
+        if t.startswith(kw):
+            name = t[len(kw):].strip(" את:-")
+            if not name:
+                return False
+            mt = utils.load_json(config.MY_TEAM_PATH, default={}) or {}
+            mt["forced_out"] = name
+            utils.save_json(config.MY_TEAM_PATH, mt)
+            _send_message(f"🔒 ננעל: <b>{name}</b> ייצא בכל מקרה. "
+                          "ההמלצות יבנו סביבו. (לביטול: 'בטל נעילה')")
+            return True
+    return False
+
+
 def _handle_text(text: str) -> bool:
     """מנתב טקסט חופשי לשיחה עם Gemini בהקשר הקבוצה שלך. True אם טופל."""
+    # פקודת נעילת חילוף קודמת לשיח החופשי
+    if _handle_forced_transfer(text):
+        return True
     state = _load_state()
     squad = state.get("squad") or []
     if state.get("pending") != "lineup_chat" and not squad:

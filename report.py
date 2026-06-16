@@ -122,20 +122,22 @@ _TEMPLATE = Template(
     {% endif %}
     <div class="muted" style="margin-top:8px">🪑 ספסל: {% for b in advice.bench %}{{ b.position }} {{ b.player_name }}{% if not loop.last %} · {% endif %}{% endfor %}</div>
   </div>
-  {% if advice.transfer_options %}
+  {% if advice.transfer_recs %}
   <div class="card">
-    <strong>🔁 מועמדי חילוף לפי עמדה</strong>
-    <span class="muted">(לכל עמדה — החלש בסגל מול 2 המועמדים הטובים)</span>
+    <strong>🔁 המלצות חילוף לפי קושי המחזור הבא</strong>
+    <span class="muted">(קשה יוצא · דיפרנציאל בקל נכנס · בתוך התקציב{% if advice.forced_out %} · 🔒 נעול: {{ advice.forced_out }}{% endif %})</span>
     <table>
-      <tr><th>עמדה</th><th>החוצה</th><th>מועמדים להחלפה (EP · רווח)</th></tr>
-      {% for opt in advice.transfer_options %}
+      <tr><th>#</th><th>החוצה</th><th>פנימה</th><th>תקציב</th></tr>
+      {% for o in advice.transfer_recs %}
       <tr>
-        <td>{{ opt.position }}</td>
-        <td class="risk-high">{{ opt.out.player_name }} <span class="muted">({{ opt.out.expected_points }})</span></td>
-        <td>{% for c in opt.candidates %}<span class="cap">{{ c.player_name }}</span> <span class="muted">({{ c.team }}, EP {{ c.expected_points }}, +{{ c.gain }})</span>{% if not loop.last %} · {% endif %}{% endfor %}</td>
+        <td>{{ loop.index }}</td>
+        <td class="risk-high">{% for p in o.out %}{{ p.player_name }} <span class="muted">({{ p.price }}{% if p.opponent %} · v{{ p.opponent }}{% endif %})</span>{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+        <td class="cap">{% for p in o['in'] %}{{ p.player_name }} <span class="muted">({{ p.price }}{% if p.ownership is not none %} · {{ p.ownership }}%{% endif %}{% if p.opponent %} · v{{ p.opponent }}{% endif %})</span>{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+        <td class="muted">{{ o.in_cost }} ≤ {{ (o.out_cost + advice.bank)|round(1) }}</td>
       </tr>
       {% endfor %}
     </table>
+    <div class="muted" style="margin-top:6px;font-size:.85em">לנעילת חילוף: שלח בבוט "תוציא [שם]".</div>
   </div>
   {% endif %}
   {% if diff_pitch.rows %}
@@ -342,18 +344,21 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     if advice.get("bench"):
         lines.append(f"🪑 ספסל: {_group_lineup(advice['bench'])}")
 
-    options = advice.get("transfer_options") or []
-    if options:
-        lines.append("<b>🔁 מועמדי חילוף לפי עמדה</b> (החלש בסגל ← 2 מועמדים):")
-        labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
-        for opt in options:
-            outp = escape(str(opt["out"]["player_name"]))
-            cands = " · ".join(
-                f"<b>{escape(str(c['player_name']))}</b> (+{c['gain']})"
-                for c in opt["candidates"]
-            )
-            lines.append(f"{labels.get(opt['position'], opt['position'])}: "
-                         f"החוצה {outp} ← {cands}")
+    recs = advice.get("transfer_recs") or []
+    if recs:
+        hdr = "<b>🔁 חילופים לפי קושי המחזור</b> (קשה יוצא · קל נכנס):"
+        if advice.get("forced_out"):
+            hdr = hdr[:-1] + f" · 🔒 {escape(str(advice['forced_out']))}):"
+        lines.append(hdr)
+        for i, o in enumerate(recs[:4], 1):
+            outs = " + ".join(escape(str(p["player_name"])) for p in o["out"])
+            ins = " + ".join(
+                f"<b>{escape(str(p['player_name']))}</b>"
+                f"{(' v'+escape(str(p['opponent']))) if p.get('opponent') else ''}"
+                for p in o["in"])
+            lines.append(f"{i}. {outs} → {ins} <i>({o['in_cost']}≤"
+                         f"{round(o['out_cost'] + (advice.get('bank') or 0),1)})</i>")
+        lines.append("<i>לנעילת חילוף: כתוב 'תוציא [שם]'.</i>")
     flags = advice.get("flags") or []
     if flags:
         names = ", ".join(escape(str(f["player_name"])) for f in flags[:4])

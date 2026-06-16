@@ -9978,5 +9978,71 @@
         "reason": "מלך שערי המוקדמות"
       }
     ]
+  },
+  "fixture_difficulty": {
+    "Switzerland": {
+      "opponent": "Bosnia",
+      "difficulty": 0.5
+    },
+    "Germany": {
+      "opponent": "Ivory Coast",
+      "difficulty": 0.42
+    },
+    "Spain": {
+      "opponent": "Saudi Arabia",
+      "difficulty": 0.15
+    },
+    "Norway": {
+      "opponent": "Senegal",
+      "difficulty": 0.6
+    },
+    "France": {
+      "opponent": "Iraq",
+      "difficulty": 0.15
+    },
+    "Portugal": {
+      "opponent": "Uzbekistan",
+      "difficulty": 0.22
+    },
+    "Scotland": {
+      "opponent": "Morocco",
+      "difficulty": 0.68
+    },
+    "Austria": {
+      "opponent": "Jordan",
+      "difficulty": 0.28
+    },
+    "Uruguay": {
+      "opponent": "Cape Verde",
+      "difficulty": 0.2
+    },
+    "Colombia": {
+      "opponent": "DR Congo",
+      "difficulty": 0.3
+    },
+    "Ecuador": {
+      "opponent": "Curacao",
+      "difficulty": 0.1
+    },
+    "Brazil": {
+      "opponent": "Haiti",
+      "difficulty": 0.1
+    },
+    "Belgium": {
+      "opponent": "Iran",
+      "difficulty": 0.4
+    },
+    "Mexico": {
+      "opponent": "South Korea",
+      "difficulty": 0.45
+    },
+    "Turkey": {
+      "opponent": "Paraguay",
+      "difficulty": 0.4
+    },
+    "England": {
+      "opponent": "Ghana",
+      "difficulty": 0.35
+    }
   }
 }

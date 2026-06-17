@@ -241,6 +241,21 @@ def test_tune_finds_best_and_restores_config():
     assert config.HOME_ADVANTAGE == before     # tune לא משנה config
 
 
+def test_conditional_host_home_advantage():
+    assert predictor._home_advantage_for("USA") == config.HOST_HOME_ADVANTAGE
+    assert predictor._home_advantage_for("Mexico") == config.HOST_HOME_ADVANTAGE
+    assert predictor._home_advantage_for("Brazil") == config.HOME_ADVANTAGE
+    # מארחת בבית מקבלת xG ביתי גבוה יותר מאותה נבחרת במגרש ניטרלי
+    teams = {"USA": {"goals_for": 1.5, "goals_against": 1.2},
+             "Brazil": {"goals_for": 1.5, "goals_against": 1.2},
+             "Iran": {"goals_for": 1.0, "goals_against": 1.0}}
+    host_xg = predictor.predict_match(
+        {"home_team": "USA", "away_team": "Iran"}, teams)["expected_goals"]["home"]
+    neutral_xg = predictor.predict_match(
+        {"home_team": "Brazil", "away_team": "Iran"}, teams)["expected_goals"]["home"]
+    assert host_xg > neutral_xg
+
+
 def test_penalty_taker_raises_ceiling():
     p = {"position": "FWD", "team": "X", "minutes": 270, "goals": 2,
          "assists": 0, "xg": 2.0, "expected_start": True}

@@ -207,6 +207,14 @@ def _explain(home_name, away_name, home_xg, away_xg, probs,
 # --------------------------------------------------------------------------- #
 # חיזוי משחק בודד
 # --------------------------------------------------------------------------- #
+def _home_advantage_for(home_name) -> float:
+    """יתרון ביתי מותנה: גבוה למארחת שמשחקת בביתה, אחרת ניטרלי (config.HOME_ADVANTAGE)."""
+    hosts = {str(h).strip().lower() for h in getattr(config, "HOST_NATIONS", set())}
+    if str(home_name or "").strip().lower() in hosts:
+        return getattr(config, "HOST_HOME_ADVANTAGE", config.HOME_ADVANTAGE)
+    return config.HOME_ADVANTAGE
+
+
 def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
     """מחזיר חיזוי מלא למשחק אחד."""
     home_name = match.get("home_team")
@@ -215,6 +223,8 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
     away = teams_by_name.get(away_name, {})
     context = dict(match.get("context") or {})
     context.setdefault("stage", match.get("stage"))
+    # יתרון ביתי מותנה — מארחת בביתה מקבלת יתרון גבוה, אחרת ניטרלי
+    context["home_advantage"] = _home_advantage_for(home_name)
 
     home_xg, away_xg = expected_goals(home, away, context)
     matrix = score_matrix(home_xg, away_xg, config.MAX_GOALS_GRID)

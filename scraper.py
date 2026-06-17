@@ -608,6 +608,7 @@ def collect(days_ahead: int = 3) -> dict:
                                     or db.get("fixture_difficulty", {}))
         odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
         odds_mod.attach_to_matches(existing, odds_map)
+        ingest_results(gemini, db)  # למידה מתוצאות אמת — מעדכן חוזק נבחרות לניחושים הבאים
         utils.save_json(config.DB_PATH, db)
         return db
 
@@ -642,6 +643,10 @@ def collect(days_ahead: int = 3) -> dict:
     # קושי המחזור הקרוב לכל נבחרת — להמלצות חילוף
     db["fixture_difficulty"] = (fetch_fixture_difficulty(gemini)
                                 or db.get("fixture_difficulty", {}))
+
+    # למידה מתוצאות אמת אחרי הסקרייפ — כך הניחושים העתידיים נשארים ריאליסטיים
+    # (חוזק הנבחרות לא נשאר על הערכת Gemini בלבד אלא משוקלל מול מה שקרה בפועל)
+    ingest_results(gemini, db)
 
     utils.save_json(config.DB_PATH, db)
     log.info(

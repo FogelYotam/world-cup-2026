@@ -44,6 +44,8 @@ HOME_ADVANTAGE = 0.25          # תוספת לכושר התקפי ביתי (פו
 DEFAULT_GOALS_FOR = 1.3        # ערך fallback ממוצע שערים למשחק
 DEFAULT_GOALS_AGAINST = 1.3
 MAX_GOALS_GRID = 6             # תקרת שערים בחישוב מטריצת ההסתברויות
+MAX_XG = 4.5                   # תקרת צפי שערים לקבוצה (מונע over-fit לתוצאות קיצון)
+MIN_XG = 0.2                   # רצפת צפי שערים
 MIN_CONFIDENCE = 0.0           # סף אמון מינימלי להצגה (0 = הצג הכל)
 REPORT_WINDOW_DAYS = 2         # (לא בשימוש בדוח כעת — נשמר לתאימות)
 REPORT_UPCOMING_COUNT = 5      # (לא בשימוש — הוחלף בחלון ימים)

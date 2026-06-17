@@ -53,6 +53,10 @@ def expected_goals(home: dict, away: dict, context: dict | None) -> tuple[float,
         home_xg *= 0.9
         away_xg *= 0.9
 
+    # תקרה/רצפה — מונע over-fit ל-xG קיצוני מתוצאת בלאגן בודדת
+    lo, hi = getattr(config, "MIN_XG", 0.2), getattr(config, "MAX_XG", 4.5)
+    home_xg = min(max(home_xg, lo), hi)
+    away_xg = min(max(away_xg, lo), hi)
     return round(home_xg, 3), round(away_xg, 3)
 
 

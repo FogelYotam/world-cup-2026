@@ -424,28 +424,56 @@ def fetch_official_pool() -> list[dict]:
 
 
 def official_differentials(pool: list[dict], counts: dict | None = None,
-                           max_ownership: float | None = None) -> dict:
-    """גוזר דיפרנציאלים מהבריכה הרשמית: בעלות נמוכה + מקום מובטח בהרכב,
-    מדורגים לפי נקודות הפנטזי הרשמיות. מחזיר {GK:[...],DEF:[...],MID:[...],FWD:[...]}."""
+                           max_ownership: float | None = None,
+                           fixture_difficulty: dict | None = None) -> dict:
+    """גוזר דיפרנציאלים מהבריכה הרשמית: מקום מובטח בהרכב + בעלות מתחת לתקרה,
+    **מדורגים לפי הסיכוי לנקד** — תוחלת נקודות רשמית + קלות המשחק הקרוב (סיכוי
+    לנצח/לשמור רשת/להבקיע) — ובעלות נמוכה כיתרון, לא כשער יחיד.
+    מחזיר {GK:[...],DEF:[...],MID:[...],FWD:[...]}."""
     counts = counts or getattr(config, "DIFFERENTIAL_COUNTS",
                                {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3})
     thr = max_ownership if max_ownership is not None else getattr(
-        config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
+        config, "DIFFERENTIAL_MAX_OWNERSHIP", 15.0)
+    w = getattr(config, "DIFFERENTIAL_WEIGHTS",
+                {"points": 1.0, "form": 0.5, "fixture": 3.0, "ownership": 1.5})
+    fd = fixture_difficulty or {}
+
+    def _ease(team):
+        d = fd.get(team, {}).get("difficulty") if isinstance(fd.get(team), dict) else None
+        return (1.0 - d) if isinstance(d, (int, float)) else 0.5  # 1=קל מאוד
+
+    def _value(p):
+        own = _num(p.get("ownership"), 0)
+        diff_bonus = max(0.0, (thr - own)) / thr if thr else 0.0
+        return (w["points"] * _num(p.get("recent_points"), 0)
+                + w["form"] * _num(p.get("form"), 0)
+                + w["fixture"] * _ease(p.get("team"))
+                + w["ownership"] * diff_bonus)
+
     out: dict[str, list] = {}
     for pos, n in counts.items():
         cands = [p for p in pool
                  if p.get("position") == pos
                  and p.get("expected_start") is True
                  and _num(p.get("ownership"), 999) <= thr]
-        cands.sort(key=lambda p: (_num(p.get("recent_points"), 0),
-                                  _num(p.get("form"), 0)), reverse=True)
+        cands.sort(key=_value, reverse=True)
         out[pos] = [{
             "player_name": p["player_name"], "team": p["team"], "position": pos,
             "ownership": p.get("ownership"), "price": p.get("price"),
             "expected_points": p.get("recent_points"), "expected_start": True,
-            "reason": f"בעלות {p.get('ownership')}% · ממוצע רשמי {p.get('recent_points')} נק'",
+            "reason": (f"ממוצע {p.get('recent_points')} נק' · "
+                       f"{_diff_label(_ease(p.get('team')))} · בעלות {p.get('ownership')}%"),
         } for p in cands[:n]]
     return out
+
+
+def _diff_label(ease: float) -> str:
+    """תווית מילולית לקלות המשחק הקרוב."""
+    if ease >= 0.66:
+        return "משחק קל"
+    if ease >= 0.4:
+        return "משחק בינוני"
+    return "משחק קשה"
 
 
 def fetch_official_squads() -> list[dict]:
@@ -991,8 +1019,6 @@ def collect(days_ahead: int = 3) -> dict:
         elif pool:
             db["players"] = _dedupe_players(list(db.get("players", [])) + pool)
         _enrich_fantasy_data(gemini, db)
-        db["differentials"] = (official_differentials(official_pool) if official_pool
-                               else fetch_differentials(gemini)) or db.get("differentials", {})
         if rounds:
             _record_results(db, official_results(rounds))
         else:
@@ -1000,6 +1026,9 @@ def collect(days_ahead: int = 3) -> dict:
         db["fixture_difficulty"] = (
             (official_fixture_difficulty(rounds, db) if rounds else None)
             or fetch_fixture_difficulty(gemini) or db.get("fixture_difficulty", {}))
+        db["differentials"] = (
+            official_differentials(official_pool, fixture_difficulty=db["fixture_difficulty"])
+            if official_pool else fetch_differentials(gemini)) or db.get("differentials", {})
         odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
         odds_mod.attach_to_matches(existing, odds_map)
         filter_to_participants(db)
@@ -1025,11 +1054,8 @@ def collect(days_ahead: int = 3) -> dict:
     # העשרת פנטזי (xG/xA/פנדלים — משלים את הרשמי)
     _enrich_fantasy_data(gemini, db)
 
-    # דיפרנציאלים — מהבריכה הרשמית; נפילה ל-Gemini
-    db["differentials"] = (official_differentials(official_pool) if official_pool
-                           else fetch_differentials(gemini)) or db.get("differentials", {})
-
-    # תוצאות אמת: רשמי (כולל פנדלים/שלב, מיידי) → נפילה ל-Gemini
+    # תוצאות אמת: רשמי (כולל פנדלים/שלב, מיידי) → נפילה ל-Gemini.
+    # רץ לפני קושי-המשחקים כדי שחוזק היריבה יהיה מעודכן.
     if rounds:
         _record_results(db, official_results(rounds))
     else:
@@ -1042,6 +1068,11 @@ def collect(days_ahead: int = 3) -> dict:
     db["fixture_difficulty"] = (
         (official_fixture_difficulty(rounds, db) if rounds else None)
         or fetch_fixture_difficulty(gemini) or db.get("fixture_difficulty", {}))
+
+    # דיפרנציאלים — מדורגים לפי הסיכוי לנקד (תוחלת + קלות משחק), בעלות נמוכה כיתרון
+    db["differentials"] = (
+        official_differentials(official_pool, fixture_difficulty=db["fixture_difficulty"])
+        if official_pool else fetch_differentials(gemini)) or db.get("differentials", {})
 
     filter_to_participants(db)
     utils.save_json(config.DB_PATH, db)

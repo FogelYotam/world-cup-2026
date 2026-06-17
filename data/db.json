@@ -33911,16 +33911,6 @@
   "differentials": {
     "GK": [
       {
-        "player_name": "Patrick Beach",
-        "team": "Australia",
-        "position": "GK",
-        "ownership": 1.8,
-        "price": 3.5,
-        "expected_points": 11.0,
-        "expected_start": true,
-        "reason": "בעלות 1.8% · ממוצע רשמי 11.0 נק'"
-      },
-      {
         "player_name": "Vozinha",
         "team": "Cabo Verde",
         "position": "GK",
@@ -33928,17 +33918,27 @@
         "price": 3.9,
         "expected_points": 11.0,
         "expected_start": true,
-        "reason": "בעלות 0.7% · ממוצע רשמי 11.0 נק'"
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 0.7%"
       },
       {
-        "player_name": "Yahia Fofana",
-        "team": "Côte d'Ivoire",
+        "player_name": "Patrick Beach",
+        "team": "Australia",
         "position": "GK",
-        "ownership": 0.4,
-        "price": 4.2,
+        "ownership": 1.8,
+        "price": 3.5,
+        "expected_points": 11.0,
+        "expected_start": true,
+        "reason": "ממוצע 11.0 נק' · משחק קשה · בעלות 1.8%"
+      },
+      {
+        "player_name": "Angus Gunn",
+        "team": "Scotland",
+        "position": "GK",
+        "ownership": 1.9,
+        "price": 3.6,
         "expected_points": 9.0,
         "expected_start": true,
-        "reason": "בעלות 0.4% · ממוצע רשמי 9.0 נק'"
+        "reason": "ממוצע 9.0 נק' · משחק בינוני · בעלות 1.9%"
       }
     ],
     "DEF": [
@@ -33950,7 +33950,7 @@
         "price": 4.7,
         "expected_points": 14.0,
         "expected_start": true,
-        "reason": "בעלות 2.5% · ממוצע רשמי 14.0 נק'"
+        "reason": "ממוצע 14.0 נק' · משחק בינוני · בעלות 2.5%"
       },
       {
         "player_name": "Ramin Rezaeian",
@@ -33960,7 +33960,7 @@
         "price": 4.0,
         "expected_points": 13.0,
         "expected_start": true,
-        "reason": "בעלות 0.5% · ממוצע רשמי 13.0 נק'"
+        "reason": "ממוצע 13.0 נק' · משחק בינוני · בעלות 0.5%"
       },
       {
         "player_name": "Wilfried Singo",
@@ -33970,17 +33970,7 @@
         "price": 4.4,
         "expected_points": 12.0,
         "expected_start": true,
-        "reason": "בעלות 0.4% · ממוצע רשמי 12.0 נק'"
-      },
-      {
-        "player_name": "Nico Schlotterbeck",
-        "team": "Germany",
-        "position": "DEF",
-        "ownership": 5.0,
-        "price": 5.3,
-        "expected_points": 11.0,
-        "expected_start": true,
-        "reason": "בעלות 5.0% · ממוצע רשמי 11.0 נק'"
+        "reason": "ממוצע 12.0 נק' · משחק קשה · בעלות 0.4%"
       },
       {
         "player_name": "Ladislav Krejcí",
@@ -33990,7 +33980,17 @@
         "price": 4.4,
         "expected_points": 10.0,
         "expected_start": true,
-        "reason": "בעלות 1.1% · ממוצע רשמי 10.0 נק'"
+        "reason": "ממוצע 10.0 נק' · משחק קל · בעלות 1.1%"
+      },
+      {
+        "player_name": "Nico Schlotterbeck",
+        "team": "Germany",
+        "position": "DEF",
+        "ownership": 5.0,
+        "price": 5.3,
+        "expected_points": 11.0,
+        "expected_start": true,
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 5.0%"
       }
     ],
     "MID": [
@@ -34002,7 +34002,7 @@
         "price": 5.3,
         "expected_points": 17.0,
         "expected_start": true,
-        "reason": "בעלות 1.0% · ממוצע רשמי 17.0 נק'"
+        "reason": "ממוצע 17.0 נק' · משחק בינוני · בעלות 1.0%"
       },
       {
         "player_name": "Elijah Just",
@@ -34012,17 +34012,7 @@
         "price": 4.2,
         "expected_points": 16.0,
         "expected_start": true,
-        "reason": "בעלות 0.6% · ממוצע רשמי 16.0 נק'"
-      },
-      {
-        "player_name": "Hwang In-Beom",
-        "team": "Korea Republic",
-        "position": "MID",
-        "ownership": 0.6,
-        "price": 5.8,
-        "expected_points": 13.0,
-        "expected_start": true,
-        "reason": "בעלות 0.6% · ממוצע רשמי 13.0 נק'"
+        "reason": "ממוצע 16.0 נק' · משחק בינוני · בעלות 0.6%"
       },
       {
         "player_name": "Felix Nmecha",
@@ -34032,17 +34022,27 @@
         "price": 5.6,
         "expected_points": 13.0,
         "expected_start": true,
-        "reason": "בעלות 1.1% · ממוצע רשמי 13.0 נק'"
+        "reason": "ממוצע 13.0 נק' · משחק בינוני · בעלות 1.1%"
       },
       {
-        "player_name": "Connor Metcalfe",
-        "team": "Australia",
+        "player_name": "Hwang In-Beom",
+        "team": "Korea Republic",
         "position": "MID",
-        "ownership": 0.2,
-        "price": 5.3,
+        "ownership": 0.6,
+        "price": 5.8,
+        "expected_points": 13.0,
+        "expected_start": true,
+        "reason": "ממוצע 13.0 נק' · משחק קשה · בעלות 0.6%"
+      },
+      {
+        "player_name": "Daichi Kamada",
+        "team": "Japan",
+        "position": "MID",
+        "ownership": 0.8,
+        "price": 5.8,
         "expected_points": 11.0,
         "expected_start": true,
-        "reason": "בעלות 0.2% · ממוצע רשמי 11.0 נק'"
+        "reason": "ממוצע 11.0 נק' · משחק קל · בעלות 0.8%"
       }
     ],
     "FWD": [
@@ -34054,7 +34054,7 @@
         "price": 8.0,
         "expected_points": 16.0,
         "expected_start": true,
-        "reason": "בעלות 3.6% · ממוצע רשמי 16.0 נק'"
+        "reason": "ממוצע 16.0 נק' · משחק בינוני · בעלות 3.6%"
       },
       {
         "player_name": "Folarin Balogun",
@@ -34064,17 +34064,17 @@
         "price": 6.0,
         "expected_points": 15.0,
         "expected_start": true,
-        "reason": "בעלות 2.3% · ממוצע רשמי 15.0 נק'"
+        "reason": "ממוצע 15.0 נק' · משחק קשה · בעלות 2.3%"
       },
       {
-        "player_name": "Chris Wood",
-        "team": "New Zealand",
+        "player_name": "Viktor Gyökeres",
+        "team": "Sweden",
         "position": "FWD",
-        "ownership": 0.5,
-        "price": 6.5,
-        "expected_points": 11.0,
+        "ownership": 5.4,
+        "price": 7.8,
+        "expected_points": 14.0,
         "expected_start": true,
-        "reason": "בעלות 0.5% · ממוצע רשמי 11.0 נק'"
+        "reason": "ממוצע 14.0 נק' · משחק בינוני · בעלות 5.4%"
       }
     ]
   },

@@ -299,6 +299,29 @@ _FAKE_ROUNDS = [
 ]
 
 
+def test_differentials_rank_by_scoring_chance_not_obscurity():
+    pool = [
+        # בעלות נמוכה מאוד אבל תוחלת נקודות נמוכה
+        {"player_name": "Obscure", "team": "A", "position": "FWD",
+         "expected_start": True, "ownership": 0.5, "recent_points": 2, "form": 2, "price": 5},
+        # קצת יותר בעלות אבל ניקוד גבוה ומשחק קל — צריך לנצח
+        {"player_name": "Star", "team": "B", "position": "FWD",
+         "expected_start": True, "ownership": 12, "recent_points": 15, "form": 8, "price": 9},
+        # לא בהרכב → מסונן
+        {"player_name": "Bench", "team": "C", "position": "FWD",
+         "expected_start": False, "ownership": 1, "recent_points": 20, "form": 9, "price": 8},
+        # בעלות גבוהה מדי (מעל 15%) → מסונן
+        {"player_name": "Popular", "team": "D", "position": "FWD",
+         "expected_start": True, "ownership": 40, "recent_points": 18, "form": 9, "price": 10},
+    ]
+    diffs = scraper.official_differentials(
+        pool, counts={"FWD": 3}, fixture_difficulty={"B": {"difficulty": 0.1}})
+    fwds = [d["player_name"] for d in diffs["FWD"]]
+    assert fwds[0] == "Star"          # סיכוי לנקד גבר על "אף אחד לא בחר"
+    assert "Bench" not in fwds         # לא בהרכב הפותח
+    assert "Popular" not in fwds       # מעל תקרת הבעלות
+
+
 def test_official_matches_and_results():
     matches = scraper.official_matches(_FAKE_ROUNDS)
     results = scraper.official_results(_FAKE_ROUNDS)

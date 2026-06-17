@@ -134,6 +134,15 @@ def expected_points(player: dict, opponent_xg: dict, team_xg: dict | None = None
         cs_prob = clean_sheet_probability(player.get("team"), opponent_xg)
         pts += cs_prob * cs_pts * p_start
 
+    # למידה מביצועים בפועל: שילוב נקודות הפנטזי האחרונות (EWMA) של השחקן.
+    # משוקלל ב-p_start כדי שלא לתגמל שחקן שכרגע פצוע/לא בהרכב על עבר.
+    recent = player.get("recent_points")
+    if recent is not None:
+        try:
+            pts = 0.6 * pts + 0.4 * float(recent) * p_start
+        except (TypeError, ValueError):
+            pass
+
     return round(pts, 2)
 
 

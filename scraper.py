@@ -559,6 +559,99 @@ def ingest_results(gemini: GeminiClient, db: dict) -> int:
     return added
 
 
+def _fantasy_points_for(pos, goals, assists, minutes, clean_sheet) -> float:
+    """מחשב נקודות פנטזי בפועל מביצוע יחיד, באותם קבועים של מנוע הפנטזי."""
+    import fantasy
+    p = fantasy.normalize_position(pos)
+    pts = fantasy.APPEARANCE_POINTS if minutes >= 1 else 0.0
+    pts += goals * fantasy.GOAL_POINTS[p]
+    pts += assists * fantasy.ASSIST_POINTS
+    if clean_sheet and minutes >= 60:
+        pts += fantasy.CLEAN_SHEET_POINTS[p]
+    return round(pts, 2)
+
+
+def ingest_player_results(gemini: GeminiClient, db: dict) -> int:
+    """מושך ביצועי שחקנים בפועל מהמשחקים שהסתיימו ומלמד מהם את ציוני הפנטזי.
+
+    לכל שחקן מתעדכן שדה ``recent_points`` (EWMA של נקודות הפנטזי בפועל) — כך
+    ההמלצות (הרכב/קפטן/דיפרנציאלים/חילופים) זזות לכיוון מי שבאמת הופיע והבקיע,
+    בדיוק כפי ש-``ingest_results`` מעדכן את חוזק הנבחרות לניחושים.
+    שומר ב-db['player_results'] (ללא כפילויות). מחזיר כמה ביצועים חדשים נקלטו.
+    best-effort; לא זורק.
+    """
+    if not getattr(gemini, "enabled", False):
+        return 0
+    prompt = (
+        f"מהם ביצועי השחקנים הבולטים במשחקי {config.COMPETITION} שכבר הסתיימו "
+        "(עד 60 השחקנים המובילים מהמחזור האחרון, מכל הקווים — "
+        "שוערים/בלמים/קשרים/חלוצים)? כלול רק משחקים שנגמרו. "
+        "החזר JSON: {\"players\": [{\"name\": str, \"team\": str, "
+        "\"position\": \"GK\"|\"DEF\"|\"MID\"|\"FWD\", \"goals\": int, "
+        "\"assists\": int, \"minutes\": int, \"clean_sheet\": bool, "
+        "\"date\": str}]} עם שמות באנגלית."
+    )
+    raw = gemini.ask_json(prompt, default=None)
+    rows = (raw or {}).get("players") if isinstance(raw, dict) else None
+    if not isinstance(rows, list):
+        log.warning("קליטת ביצועי שחקנים: לא התקבל מידע שמיש")
+        return 0
+
+    players = db.setdefault("players", [])
+
+    def _surname(n):
+        parts = _norm(n).split()
+        return parts[-1] if parts else ""
+
+    index: dict[tuple, dict] = {}
+    for p in players:
+        nm, tm = p.get("player_name"), p.get("team")
+        index[(_norm(nm), _norm(tm))] = p
+        index.setdefault((_surname(nm), _norm(tm)), p)
+
+    db.setdefault("player_results", [])
+    seen = {
+        (_norm(r.get("name")), _norm(r.get("team")), str(r.get("date")))
+        for r in db["player_results"]
+    }
+    added = 0
+    for r in rows:
+        if not isinstance(r, dict):
+            continue
+        name, team = r.get("name"), r.get("team")
+        if not name or not team:
+            continue
+        key = (_norm(name), _norm(team), str(r.get("date")))
+        if key in seen:
+            continue
+        goals = int(_num(r.get("goals"), 0))
+        assists = int(_num(r.get("assists"), 0))
+        minutes = int(_num(r.get("minutes"), 0))
+        cs = bool(r.get("clean_sheet"))
+        pos = r.get("position")
+        actual = _fantasy_points_for(pos, goals, assists, minutes, cs)
+        db["player_results"].append({
+            "name": name, "team": team, "date": r.get("date"),
+            "goals": goals, "assists": assists, "minutes": minutes,
+            "clean_sheet": cs, "points": actual,
+        })
+        seen.add(key)
+        added += 1
+        # מאתר את השחקן בבריכה (שם מלא או שם משפחה) — או יוצר חדש אם הוא בלט אך חסר
+        p = index.get((_norm(name), _norm(team))) or index.get((_surname(name), _norm(team)))
+        if not p:
+            p = build_player({"player_name": name, "team": team, "position": pos})
+            players.append(p)
+            index[(_norm(name), _norm(team))] = p
+        old = p.get("recent_points")
+        p["recent_points"] = (round(actual, 2) if old is None
+                              else round(0.6 * _num(old, 0.0) + 0.4 * actual, 2))
+    if added:
+        db.setdefault("meta", {})["player_results_updated"] = utils.now_iso()
+    log.info("קליטת ביצועי שחקנים: %d ביצועים חדשים נלמדו", added)
+    return added
+
+
 def _classify_status(raw_status) -> str:
     s = str(raw_status or "").strip().lower()
     if any(w in s for w in _OUT_WORDS):
@@ -609,6 +702,7 @@ def collect(days_ahead: int = 3) -> dict:
         odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
         odds_mod.attach_to_matches(existing, odds_map)
         ingest_results(gemini, db)  # למידה מתוצאות אמת — מעדכן חוזק נבחרות לניחושים הבאים
+        ingest_player_results(gemini, db)  # למידה מביצועי שחקנים — מעדכן ציוני פנטזי
         utils.save_json(config.DB_PATH, db)
         return db
 
@@ -647,6 +741,8 @@ def collect(days_ahead: int = 3) -> dict:
     # למידה מתוצאות אמת אחרי הסקרייפ — כך הניחושים העתידיים נשארים ריאליסטיים
     # (חוזק הנבחרות לא נשאר על הערכת Gemini בלבד אלא משוקלל מול מה שקרה בפועל)
     ingest_results(gemini, db)
+    # למידה מביצועי שחקנים בפועל — מעדכן את ציוני הפנטזי לפי מי שהופיע/הבקיע
+    ingest_player_results(gemini, db)
 
     utils.save_json(config.DB_PATH, db)
     log.info(

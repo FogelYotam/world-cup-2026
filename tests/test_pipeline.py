@@ -121,6 +121,45 @@ def test_fantasy_output_structure(sample_db):
     assert "avoid" in fan and "transfers" in fan
 
 
+class _FakePlayerGemini:
+    """Gemini מזויף שמחזיר ביצועי שחקנים בפועל — לבדיקת למידת הפנטזי."""
+    enabled = True
+
+    def ask_json(self, prompt, default=None):
+        return {"players": [
+            {"name": "Harry Kane", "team": "England", "position": "FWD",
+             "goals": 2, "assists": 0, "minutes": 90, "clean_sheet": False,
+             "date": "6/13/2026"},
+            {"name": "New Star", "team": "Brazil", "position": "MID",
+             "goals": 1, "assists": 1, "minutes": 90, "clean_sheet": False,
+             "date": "6/13/2026"},
+        ]}
+
+
+def test_ingest_player_results_learns_and_dedupes():
+    db = {"players": [{"player_name": "Harry Kane", "team": "England",
+                       "position": "FWD", "goals": 0, "minutes": 0}]}
+    added = scraper.ingest_player_results(_FakePlayerGemini(), db)
+    assert added == 2
+    kane = next(p for p in db["players"] if p["player_name"] == "Harry Kane")
+    assert kane["recent_points"] == 10  # 2 שערים×4 + הופעה 2
+    # שחקן בולט שחסר בבריכה — נוצר אוטומטית
+    star = next(p for p in db["players"] if p["player_name"] == "New Star")
+    assert star["recent_points"] == 10  # שער×5 + בישול×3 + הופעה 2
+    # ריצה חוזרת לא סופרת שוב (dedup)
+    assert scraper.ingest_player_results(_FakePlayerGemini(), db) == 0
+
+
+def test_recent_points_boosts_expected_points():
+    base = {"position": "MID", "team": "Brazil", "minutes": 90,
+            "goals": 0, "assists": 0, "expected_start": True}
+    hot = dict(base, recent_points=12)
+    cold = dict(base, recent_points=0)
+    ep_base = fantasy.expected_points(base, {}, {})
+    assert fantasy.expected_points(hot, {}, {}) > ep_base
+    assert fantasy.expected_points(cold, {}, {}) < ep_base
+
+
 def test_injured_player_flagged_to_avoid(sample_db):
     preds = predictor.predict_all(sample_db)
     fan = fantasy.build_fantasy(sample_db, preds)

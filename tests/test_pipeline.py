@@ -241,6 +241,29 @@ def test_tune_finds_best_and_restores_config():
     assert config.HOME_ADVANTAGE == before     # tune לא משנה config
 
 
+def test_squad_repaired_to_within_budget():
+    # מאגר עם כוכבים יקרים + מספיק חלופות זולות בכל עמדה → חייב להיכנס ל-100M
+    scored = []
+    for i, pos in enumerate(["GK", "GK", "DEF", "DEF", "DEF", "DEF", "DEF",
+                             "MID", "MID", "MID", "MID", "MID", "FWD", "FWD", "FWD"]):
+        scored.append({"player_name": f"Star{i}", "team": f"N{i}", "position": pos,
+                       "price": 13.0, "expected_points": 9.0 - i * 0.1,
+                       "minutes_risk": "low", "injury_status": "fit",
+                       "suspension_status": "available"})
+    for i, pos in enumerate(["GK", "DEF", "DEF", "MID", "MID", "FWD"] * 3):
+        scored.append({"player_name": f"Cheap{i}", "team": f"C{i}", "position": pos,
+                       "price": 4.5, "expected_points": 1.0,
+                       "minutes_risk": "low", "injury_status": "fit",
+                       "suspension_status": "available"})
+    res = fantasy.pick_squad(scored)
+    assert len(res["squad"]) == fantasy.SQUAD_SIZE
+    assert res["cost"] <= fantasy.DEFAULT_BUDGET
+    # מכסת 3-לנבחרת נשמרה
+    from collections import Counter
+    nat = Counter(p["team"] for p in res["squad"])
+    assert max(nat.values()) <= fantasy.MAX_PER_NATION
+
+
 def test_conditional_host_home_advantage():
     assert predictor._home_advantage_for("USA") == config.HOST_HOME_ADVANTAGE
     assert predictor._home_advantage_for("Mexico") == config.HOST_HOME_ADVANTAGE

@@ -320,11 +320,56 @@ def pick_squad(scored: list[dict], budget: float = DEFAULT_BUDGET) -> dict:
                 continue
             if _try_add(p, enforce_budget=False):
                 chosen.add(id(p))
+    # תיקון תקציב — אם חרגנו, מחליפים שחקנים יקרים בזולים יותר באותה עמדה
+    spent = _repair_budget(squad, eligible, budget)
     if spent > budget:
         log.warning("הסגל חרג מהתקציב (%.1fM > %.1fM) — אין מספיק שחקנים זולים בנתונים",
                     spent, budget)
 
     return {"squad": squad, "cost": round(spent, 2)}
+
+
+def _repair_budget(squad: list[dict], eligible: list[dict], budget: float) -> float:
+    """אם הסגל חרג מהתקציב — מחליף שחקנים באותה עמדה לזולים יותר עד שנכנסים
+    לתקציב (אם אפשרי). בכל צעד מחליפים את ההקצאה הכי 'יקרה ביחס ל-EP' — כלומר
+    משילים קודם את הכסף שתורם הכי מעט נקודות. שומר על מכסת 3-לנבחרת. מחזיר עלות."""
+    spent = sum(p["price"] for p in squad)
+    if spent <= budget:
+        return round(spent, 2)
+
+    in_ids = {id(p) for p in squad}
+    nation_counts: dict[str, int] = {}
+    for p in squad:
+        nation_counts[p["team"]] = nation_counts.get(p["team"], 0) + 1
+
+    guard = 0
+    while spent > budget and guard < SQUAD_SIZE * 8:
+        guard += 1
+        best = None  # (efficiency, current, replacement)
+        for cur in squad:
+            for repl in eligible:
+                if id(repl) in in_ids or repl["position"] != cur["position"]:
+                    continue
+                saving = cur["price"] - repl["price"]
+                if saving <= 0:
+                    continue
+                if (repl["team"] != cur["team"]
+                        and nation_counts.get(repl["team"], 0) >= MAX_PER_NATION):
+                    continue
+                # EP שאובד לכל מיליון שנחסך — קטן יותר = החלפה משתלמת יותר
+                efficiency = (cur["expected_points"] - repl["expected_points"]) / saving
+                if best is None or efficiency < best[0]:
+                    best = (efficiency, cur, repl)
+        if best is None:
+            break  # אין חלופה זולה יותר — לא ניתן לתקן עם הנתונים הקיימים
+        _, cur, repl = best
+        idx = squad.index(cur)
+        squad[idx] = repl
+        in_ids.discard(id(cur)); in_ids.add(id(repl))
+        nation_counts[cur["team"]] -= 1
+        nation_counts[repl["team"]] = nation_counts.get(repl["team"], 0) + 1
+        spent = spent - cur["price"] + repl["price"]
+    return round(spent, 2)
 
 
 def select_starting_eleven(squad: list[dict]) -> dict:

@@ -83,6 +83,7 @@ DIFFERENTIAL_COUNTS = {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3}
 # קבצי JSON ציבוריים (ללא אימות) — הסגלים הרשמיים בלבד, עם מחיר/בעלות/כושר/נקודות.
 FIFA_FANTASY_PLAYERS_URL = "https://play.fifa.com/json/fantasy/players.json"
 FIFA_FANTASY_SQUADS_URL = "https://play.fifa.com/json/fantasy/squads.json"
+FIFA_FANTASY_ROUNDS_URL = "https://play.fifa.com/json/fantasy/rounds.json"
 
 # --- תחרות ---
 COMPETITION = "FIFA World Cup 2026"

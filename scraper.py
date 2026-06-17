@@ -448,6 +448,156 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
     return out
 
 
+def fetch_official_squads() -> list[dict]:
+    """48 הסגלים הרשמיים (id/name/group/isEliminated). best-effort; [] בכשל."""
+    try:
+        squads = _http_get_json(config.FIFA_FANTASY_SQUADS_URL)
+        return squads if isinstance(squads, list) else []
+    except Exception as exc:  # noqa: BLE001
+        log.warning("סגלים רשמיים נכשלו: %s", exc)
+        return []
+
+
+def fetch_official_rounds() -> list[dict]:
+    """לוח המשחקים/תוצאות הרשמי (rounds.json) — מחזורים עם משחקים, תוצאות,
+    פנדלים, שלב (GROUP/R32/...) ומבקיעים. best-effort; [] בכשל."""
+    try:
+        rounds = _http_get_json(config.FIFA_FANTASY_ROUNDS_URL)
+        return rounds if isinstance(rounds, list) else []
+    except Exception as exc:  # noqa: BLE001
+        log.warning("לוח רשמי מ-FIFA נכשל: %s — נופלים ל-Gemini", exc)
+        return []
+
+
+def _iso_date(s) -> str:
+    return str(s or "").split("T")[0]
+
+
+def seed_teams_from_squads(db: dict, squads: list[dict]) -> list[dict]:
+    """בונה את רשימת 48 הנבחרות מהסגלים הרשמיים, תוך שמירת חוזק שנלמד (EWMA)
+    מהריצות הקודמות (התאמה לפי שם מנורמל), וקנוניזציה לשם הרשמי."""
+    existing = {_clean_nation(t.get("team_name")): t
+                for t in db.get("teams", []) if t.get("team_name")}
+    out = []
+    for s in squads:
+        name = s.get("name")
+        if not name:
+            continue
+        prev = existing.get(_clean_nation(name))
+        if prev:
+            prev["team_name"] = name  # קנוניזציה לשם הרשמי
+            out.append(prev)
+        else:
+            out.append(build_team({"team_id": s.get("id"), "team_name": name}))
+    if out:
+        db["teams"] = out
+    return out
+
+
+def official_matches(rounds: list[dict]) -> list[dict]:
+    """משחקים שטרם הסתיימו מהלוח הרשמי → סכמת build_match, עם שלב (stage) אמיתי."""
+    out = []
+    for r in rounds or []:
+        stage = r.get("stage")
+        for m in r.get("tournaments", []) or []:
+            if not isinstance(m, dict) or m.get("status") == "complete":
+                continue
+            home, away = m.get("homeSquadName"), m.get("awaySquadName")
+            if not home or not away:
+                continue
+            out.append(build_match({
+                "match_id": m.get("id"), "date": _iso_date(m.get("date")),
+                "home_team": home, "away_team": away,
+                "venue": m.get("venueCity"), "stage": stage,
+                "status": m.get("status", "scheduled"),
+            }))
+    return out
+
+
+def official_results(rounds: list[dict]) -> list[dict]:
+    """משחקים שהסתיימו מהלוח הרשמי → שורות תוצאה (כולל פנדלים ושלב)."""
+    out = []
+    for r in rounds or []:
+        stage = r.get("stage")
+        for m in r.get("tournaments", []) or []:
+            if not isinstance(m, dict) or m.get("status") != "complete":
+                continue
+            home, away = m.get("homeSquadName"), m.get("awaySquadName")
+            hs, as_ = m.get("homeScore"), m.get("awayScore")
+            if not home or not away or hs is None or as_ is None:
+                continue
+            out.append({
+                "home": home, "away": away,
+                "home_goals": int(hs), "away_goals": int(as_),
+                "home_pen": m.get("homePenaltyScore"),
+                "away_pen": m.get("awayPenaltyScore"),
+                "date": _iso_date(m.get("date")), "stage": stage,
+            })
+    return out
+
+
+def _record_results(db: dict, rows: list[dict]) -> int:
+    """דה-דופ + EWMA לתוך חוזק הנבחרות (משותף למקור הרשמי ול-Gemini).
+    שומר תוצאות חדשות ב-db['results'] ומשקלל אותן לממוצעי השערים. מחזיר כמה נוספו."""
+    teams = {t.get("team_name"): t for t in db.get("teams", [])}
+    db.setdefault("results", [])
+    seen = {(_norm(r.get("home")), _norm(r.get("away")), str(r.get("date")))
+            for r in db["results"]}
+    added = 0
+    for r in rows:
+        home, away = r.get("home"), r.get("away")
+        hg, ag = _num(r.get("home_goals"), None), _num(r.get("away_goals"), None)
+        if not home or not away or hg is None or ag is None:
+            continue
+        key = (_norm(home), _norm(away), str(r.get("date")))
+        if key in seen:
+            continue
+        rec = {"home": home, "away": away,
+               "home_goals": int(hg), "away_goals": int(ag), "date": r.get("date")}
+        for extra in ("home_pen", "away_pen", "stage"):
+            if r.get(extra) is not None:
+                rec[extra] = r.get(extra)
+        db["results"].append(rec)
+        seen.add(key)
+        added += 1
+        for side, gf, ga in ((home, hg, ag), (away, ag, hg)):
+            t = teams.get(side)
+            if not t:
+                continue
+            t["goals_for"] = round(
+                0.7 * _num(t.get("goals_for"), config.DEFAULT_GOALS_FOR) + 0.3 * gf, 2)
+            t["goals_against"] = round(
+                0.7 * _num(t.get("goals_against"), config.DEFAULT_GOALS_AGAINST) + 0.3 * ga, 2)
+    if added:
+        db.setdefault("meta", {})["results_updated"] = utils.now_iso()
+    log.info("תוצאות נלמדו: %d חדשות", added)
+    return added
+
+
+def official_fixture_difficulty(rounds: list[dict], db: dict) -> dict:
+    """קושי המשחק הקרוב לכל נבחרת — נגזר מהמשחק הבא בלוח הרשמי וחוזק היריבה.
+    מחזיר {team: {opponent, difficulty(0..1), date}} (1 = קשה)."""
+    teams = {t.get("team_name"): t for t in db.get("teams", [])}
+    nxt: dict[str, tuple] = {}
+    for r in rounds or []:
+        for m in r.get("tournaments", []) or []:
+            if not isinstance(m, dict) or m.get("status") == "complete":
+                continue
+            home, away = m.get("homeSquadName"), m.get("awaySquadName")
+            date = _iso_date(m.get("date"))
+            for me, opp in ((home, away), (away, home)):
+                if me and opp and me not in nxt:
+                    nxt[me] = (opp, date)
+    out = {}
+    for team, (opp, date) in nxt.items():
+        o = teams.get(opp, {})
+        # חוזק יריבה: התקפה גבוהה + הגנה אטומה → קושי גבוה
+        strength = _num(o.get("goals_for"), 1.3) + (2.6 - _num(o.get("goals_against"), 1.3))
+        diff = max(0.0, min(1.0, strength / 5.2))
+        out[team] = {"opponent": opp, "difficulty": round(diff, 2), "date": date}
+    return out
+
+
 def fetch_fantasy_player_pool(gemini: GeminiClient, limit: int = 120) -> list[dict]:
     """אוסף בריכת שחקני פנטזי רחבה מהאתרים המובילים בעולם (config.FANTASY_SOURCES),
     עם מחיר/בעלות/כושר/xG — כדי שמגבלת התקציב והפיזור בין נבחרות יהיו אמיתיים.
@@ -678,44 +828,12 @@ def ingest_results(gemini: GeminiClient, db: dict) -> int:
     if not isinstance(rows, list):
         log.warning("קליטת תוצאות: לא התקבל מידע שמיש")
         return 0
-
-    teams = {t.get("team_name"): t for t in db.get("teams", [])}
-    db.setdefault("results", [])
-    seen = {
-        (_norm(r.get("home")), _norm(r.get("away")), str(r.get("date")))
-        for r in db["results"]
-    }
-    added = 0
-    for r in rows:
-        if not isinstance(r, dict):
-            continue
-        home, away = r.get("home"), r.get("away")
-        hg, ag = _num(r.get("home_goals"), None), _num(r.get("away_goals"), None)
-        if not home or not away or hg is None or ag is None:
-            continue
-        key = (_norm(home), _norm(away), str(r.get("date")))
-        if key in seen:
-            continue
-        db["results"].append({
-            "home": home, "away": away,
-            "home_goals": int(hg), "away_goals": int(ag),
-            "date": r.get("date"),
-        })
-        seen.add(key)
-        added += 1
-        # למידה: שקלול התוצאה לתוך ממוצעי השערים של הנבחרות
-        for side, gf, ga in ((home, hg, ag), (away, ag, hg)):
-            t = teams.get(side)
-            if not t:
-                continue
-            t["goals_for"] = round(
-                0.7 * _num(t.get("goals_for"), config.DEFAULT_GOALS_FOR) + 0.3 * gf, 2)
-            t["goals_against"] = round(
-                0.7 * _num(t.get("goals_against"), config.DEFAULT_GOALS_AGAINST) + 0.3 * ga, 2)
-    if added:
-        db.setdefault("meta", {})["results_updated"] = utils.now_iso()
-    log.info("קליטת תוצאות: %d תוצאות חדשות נלמדו", added)
-    return added
+    norm = [{"home": r.get("home"), "away": r.get("away"),
+             "home_goals": _num(r.get("home_goals"), None),
+             "away_goals": _num(r.get("away_goals"), None),
+             "date": r.get("date")}
+            for r in rows if isinstance(r, dict)]
+    return _record_results(db, norm)
 
 
 def _fantasy_points_for(pos, goals, assists, minutes, clean_sheet) -> float:
@@ -849,87 +967,106 @@ def collect(days_ahead: int = 3) -> dict:
         }
     )
 
-    matches = fetch_upcoming_matches(gemini, days_ahead)
-    log.info("נמצאו %d משחקים קרובים", len(matches))
+    # --- מקור אמת רשמי של FIFA: סגלים (48), לוח/תוצאות, בריכת שחקנים ---
+    squads = fetch_official_squads()
+    rounds = fetch_official_rounds()
+    official_pool = fetch_official_pool()
+    if squads:
+        seed_teams_from_squads(db, squads)     # 48 נבחרות, תוך שמירת חוזק שנלמד
+    if official_pool:
+        db["participants"] = sorted({p["team"] for p in official_pool if p.get("team")})
 
-    # הגנה: אם Gemini לא החזיר משחקים (למשל לפני תחילת המונדיאל), לא מוחקים
-    # את נתוני המחזור הקיימים — מרעננים להם אודדס ופציעות בלבד.
+    # לוח המשחקים: רשמי (כולל שלב אמיתי) → נפילה ל-Gemini
+    matches = official_matches(rounds) or fetch_upcoming_matches(gemini, days_ahead)
+    log.info("נמצאו %d משחקים", len(matches))
+
+    # הגנה: אם אין משחקים בכלל — לא מוחקים DB קיים, רק מרעננים פציעות/בריכה/תוצאות
     if not matches:
-        log.warning("לא נמצאו משחקים חדשים — משמרים DB קיים ומרעננים אודדס/פציעות")
+        log.warning("לא נמצאו משחקים — משמרים DB קיים ומרעננים פציעות/בריכה")
         existing = db.get("matches", [])
         _refresh_injuries(gemini, db)
-        # מקור אמת: הבריכה הרשמית של FIFA; נופלים ל-Gemini רק אם נכשלה
-        official = fetch_official_pool()
-        pool = official or fetch_fantasy_player_pool(gemini)
-        if official:
-            db["participants"] = sorted({p["team"] for p in official if p.get("team")})
-            db["players"] = pool                       # הרשמית מחליפה לגמרי
+        pool = official_pool or fetch_fantasy_player_pool(gemini)
+        if official_pool:
+            db["players"] = pool
         elif pool:
             db["players"] = _dedupe_players(list(db.get("players", [])) + pool)
         _enrich_fantasy_data(gemini, db)
-        db["differentials"] = (official_differentials(official) if official
+        db["differentials"] = (official_differentials(official_pool) if official_pool
                                else fetch_differentials(gemini)) or db.get("differentials", {})
-        db["fixture_difficulty"] = (fetch_fixture_difficulty(gemini)
-                                    or db.get("fixture_difficulty", {}))
+        if rounds:
+            _record_results(db, official_results(rounds))
+        else:
+            ingest_results(gemini, db)
+        db["fixture_difficulty"] = (
+            (official_fixture_difficulty(rounds, db) if rounds else None)
+            or fetch_fixture_difficulty(gemini) or db.get("fixture_difficulty", {}))
         odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
         odds_mod.attach_to_matches(existing, odds_map)
-        ingest_results(gemini, db)  # למידה מתוצאות אמת — מעדכן חוזק נבחרות לניחושים הבאים
-        ingest_player_results(gemini, db)  # למידה מביצועי שחקנים — מעדכן ציוני פנטזי
-        filter_to_participants(db)  # מסנן שחקנים מנבחרות שלא במונדיאל
+        filter_to_participants(db)
         utils.save_json(config.DB_PATH, db)
         return db
 
-    teams: dict[str, dict] = {}
+    # --- העשרת Gemini ממוקדת רק במשחקים הקרובים (חוסכת מכסה) ---
+    window = max(days_ahead, getattr(config, "REPORT_UPCOMING_DAYS", 5))
+    near = _matches_within_days(matches, window)
     players: list[dict] = []
-
-    for match in matches:
-        for side in ("home_team", "away_team"):
-            name = match.get(side)
-            if name and name not in teams:
-                teams[name] = fetch_team_stats(gemini, name)
-
-        context = fetch_match_context(gemini, match)
+    for match in near:
+        context = fetch_match_context(gemini, match)   # פציעות/הרכבים צפויים
         match["context"] = _summarize_context(context)
         players.extend(_extract_players(context, match))
+    odds_map = odds_mod.fetch_consensus_odds(gemini, near)
+    odds_mod.attach_to_matches(near, odds_map)
 
-    # אודדס קונצנזוס מ-10 מקורות נפוצים — מצורף לכל משחק
-    odds_map = odds_mod.fetch_consensus_odds(gemini, matches)
-    odds_mod.attach_to_matches(matches, odds_map)
-
-    # מקור אמת לבריכה: FIFA הרשמי (סגלים, מחיר, בעלות, נקודות); נופלים ל-Gemini
-    # רק אם נכשל. שחקני המשחקים (key players מה-context) מצורפים בכל מקרה.
-    official = fetch_official_pool()
-    pool = official or fetch_fantasy_player_pool(gemini)
-    if official:
-        db["participants"] = sorted({p["team"] for p in official if p.get("team")})
+    # בריכה: רשמית (מקור אמת) → נפילה ל-Gemini
+    pool = official_pool or fetch_fantasy_player_pool(gemini)
     db["matches"] = matches
-    db["teams"] = list(teams.values())
     db["players"] = _dedupe_players(players + pool)
 
-    # העשרה בנתוני פנטזי מהאתרים המומלצים (xG/xA/פנדלים — משלים את הרשמי)
+    # העשרת פנטזי (xG/xA/פנדלים — משלים את הרשמי)
     _enrich_fantasy_data(gemini, db)
 
-    # דיפרנציאלים — מהבריכה הרשמית (בעלות+הרכב אמיתיים); נפילה ל-Gemini
-    db["differentials"] = (official_differentials(official) if official
+    # דיפרנציאלים — מהבריכה הרשמית; נפילה ל-Gemini
+    db["differentials"] = (official_differentials(official_pool) if official_pool
                            else fetch_differentials(gemini)) or db.get("differentials", {})
-    # קושי המחזור הקרוב לכל נבחרת — להמלצות חילוף
-    db["fixture_difficulty"] = (fetch_fixture_difficulty(gemini)
-                                or db.get("fixture_difficulty", {}))
 
-    # למידה מתוצאות אמת אחרי הסקרייפ — כך הניחושים העתידיים נשארים ריאליסטיים
-    # (חוזק הנבחרות לא נשאר על הערכת Gemini בלבד אלא משוקלל מול מה שקרה בפועל)
-    ingest_results(gemini, db)
-    # למידה מביצועי שחקנים בפועל — מעדכן את ציוני הפנטזי לפי מי שהופיע/הבקיע
-    ingest_player_results(gemini, db)
-    # סינון שחקנים מנבחרות שאינן משתתפות במונדיאל (איטליה וכו') — בריכה ודיפרנציאלים
+    # תוצאות אמת: רשמי (כולל פנדלים/שלב, מיידי) → נפילה ל-Gemini
+    if rounds:
+        _record_results(db, official_results(rounds))
+    else:
+        ingest_results(gemini, db)
+    # ביצועי שחקנים: הבריכה הרשמית כבר נושאת recent_points רשמי; Gemini רק כגיבוי
+    if not official_pool:
+        ingest_player_results(gemini, db)
+
+    # קושי המחזור הקרוב — רשמי (נגזר מהלוח+חוזק היריבה) → נפילה ל-Gemini
+    db["fixture_difficulty"] = (
+        (official_fixture_difficulty(rounds, db) if rounds else None)
+        or fetch_fixture_difficulty(gemini) or db.get("fixture_difficulty", {}))
+
     filter_to_participants(db)
-
     utils.save_json(config.DB_PATH, db)
     log.info(
         "איסוף הושלם: %d משחקים, %d נבחרות, %d שחקנים",
         len(db["matches"]), len(db["teams"]), len(db["players"]),
     )
     return db
+
+
+def _matches_within_days(matches: list[dict], days: int) -> list[dict]:
+    """מסנן משחקים שמתרחשים בחלון של 'days' הימים הקרובים (להעשרה ממוקדת)."""
+    from datetime import datetime, timedelta
+    today = datetime.now().date()
+    horizon = today + timedelta(days=days)
+    out = []
+    for m in matches:
+        try:
+            md = datetime.fromisoformat(str(m.get("date"))[:10]).date()
+        except (ValueError, TypeError):
+            out.append(m)               # תאריך לא תקין — נכלל ליתר ביטחון
+            continue
+        if today <= md <= horizon:
+            out.append(m)
+    return out
 
 
 def _summarize_context(context: dict) -> dict:

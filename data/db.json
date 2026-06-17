@@ -2,378 +2,805 @@
   "meta": {
     "competition": "FIFA World Cup 2026",
     "season": "2026",
-    "last_updated": "2026-06-17T08:51:18.158160+00:00",
-    "note": "Matchday 1 — real fixtures. Injuries updated 2026-06-04 from ESPN/RotoWire: ter Stegen/Merino out, Messi/Yamal/Romero doubtful."
+    "last_updated": "2026-06-17T19:04:34.959196+00:00",
+    "note": "Matchday 1 — real fixtures. Injuries updated 2026-06-04 from ESPN/RotoWire: ter Stegen/Merino out, Messi/Yamal/Romero doubtful.",
+    "results_updated": "2026-06-17T19:04:35.641469+00:00"
   },
   "matches": [
     {
-      "match_id": "A1",
-      "home_team": "Mexico",
-      "away_team": "South Africa",
-      "date": "2026-06-11",
-      "stage": "Group A",
-      "context": {
-        "home_advantage": 0.4,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.64,
-        "draw": 0.22,
-        "away_win": 0.14,
-        "sources": 8
-      }
-    },
-    {
-      "match_id": "A2",
-      "home_team": "South Korea",
-      "away_team": "Czechia",
-      "date": "2026-06-11",
-      "stage": "Group A",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.3333,
-        "draw": 0.3333,
-        "away_win": 0.3333,
-        "sources": 1
-      }
-    },
-    {
-      "match_id": "B1",
-      "home_team": "Canada",
-      "away_team": "Bosnia and Herzegovina",
-      "date": "2026-06-12",
-      "stage": "Group B",
-      "context": {
-        "home_advantage": 0.35,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "B2",
-      "home_team": "Qatar",
-      "away_team": "Switzerland",
-      "date": "2026-06-13",
-      "stage": "Group B",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "C1",
-      "home_team": "Brazil",
-      "away_team": "Morocco",
-      "date": "2026-06-13",
-      "stage": "Group C",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.55,
-        "draw": 0.26,
-        "away_win": 0.19,
-        "sources": 8
-      }
-    },
-    {
-      "match_id": "C2",
-      "home_team": "Haiti",
-      "away_team": "Scotland",
-      "date": "2026-06-13",
-      "stage": "Group C",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "D1",
-      "home_team": "USA",
-      "away_team": "Paraguay",
-      "date": "2026-06-12",
-      "stage": "Group D",
-      "context": {
-        "home_advantage": 0.35,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "D2",
-      "home_team": "Australia",
-      "away_team": "Turkiye",
-      "date": "2026-06-13",
-      "stage": "Group D",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "E1",
-      "home_team": "Germany",
-      "away_team": "Curacao",
-      "date": "2026-06-14",
-      "stage": "Group E",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.88,
-        "draw": 0.09,
-        "away_win": 0.03,
-        "sources": 8
-      }
-    },
-    {
-      "match_id": "E2",
-      "home_team": "Cote d'Ivoire",
-      "away_team": "Ecuador",
-      "date": "2026-06-14",
-      "stage": "Group E",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "F1",
-      "home_team": "Netherlands",
-      "away_team": "Japan",
-      "date": "2026-06-14",
-      "stage": "Group F",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "F2",
-      "home_team": "Sweden",
-      "away_team": "Tunisia",
-      "date": "2026-06-14",
-      "stage": "Group F",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "G1",
-      "home_team": "Belgium",
-      "away_team": "Egypt",
-      "date": "2026-06-15",
-      "stage": "Group G",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "G2",
-      "home_team": "Iran",
-      "away_team": "New Zealand",
-      "date": "2026-06-15",
-      "stage": "Group G",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "H1",
-      "home_team": "Spain",
-      "away_team": "Cabo Verde",
-      "date": "2026-06-15",
-      "stage": "Group H",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.9,
-        "draw": 0.07,
-        "away_win": 0.03,
-        "sources": 8
-      }
-    },
-    {
-      "match_id": "H2",
-      "home_team": "Saudi Arabia",
-      "away_team": "Uruguay",
-      "date": "2026-06-15",
-      "stage": "Group H",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "I1",
-      "home_team": "France",
-      "away_team": "Senegal",
-      "date": "2026-06-16",
-      "stage": "Group I",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.65,
-        "draw": 0.21,
-        "away_win": 0.14,
-        "sources": 8
-      }
-    },
-    {
-      "match_id": "I2",
-      "home_team": "Iraq",
-      "away_team": "Norway",
-      "date": "2026-06-16",
-      "stage": "Group I",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "J1",
-      "home_team": "Argentina",
-      "away_team": "Algeria",
-      "date": "2026-06-16",
-      "stage": "Group J",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.72,
-        "draw": 0.18,
-        "away_win": 0.1,
-        "sources": 7
-      }
-    },
-    {
-      "match_id": "J2",
-      "home_team": "Austria",
-      "away_team": "Jordan",
-      "date": "2026-06-16",
-      "stage": "Group J",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "K1",
-      "home_team": "Portugal",
-      "away_team": "DR Congo",
+      "match_id": 22,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
       "date": "2026-06-17",
-      "stage": "Group K",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.7,
-        "draw": 0.2,
-        "away_win": 0.1,
-        "sources": 7
-      }
-    },
-    {
-      "match_id": "K2",
-      "home_team": "Uzbekistan",
-      "away_team": "Colombia",
-      "date": "2026-06-17",
-      "stage": "Group K",
-      "context": {
-        "home_advantage": 0.05,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": "L1",
       "home_team": "England",
       "away_team": "Croatia",
-      "date": "2026-06-17",
-      "stage": "Group L",
+      "status": "scheduled",
+      "venue": "Arlington, Texas",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
       "context": {
-        "home_advantage": 0.05,
+        "home_advantage": 0.1,
         "injury_count": 0,
-        "lineup_confidence": "high"
-      },
-      "market_probabilities": {
-        "home_win": 0.5,
-        "draw": 0.28,
-        "away_win": 0.22,
-        "sources": 7
+        "lineup_confidence": "low"
       }
     },
     {
-      "match_id": "L2",
+      "match_id": 23,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-18",
       "home_team": "Ghana",
       "away_team": "Panama",
-      "date": "2026-06-17",
-      "stage": "Group L",
+      "status": "scheduled",
+      "venue": "Toronto",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
       "context": {
-        "home_advantage": 0.05,
+        "home_advantage": 0.1,
         "injury_count": 0,
-        "lineup_confidence": "high"
+        "lineup_confidence": "low"
       }
+    },
+    {
+      "match_id": 24,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-18",
+      "home_team": "Uzbekistan",
+      "away_team": "Colombia",
+      "status": "scheduled",
+      "venue": "Mexico City",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 25,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-18",
+      "home_team": "Czechia",
+      "away_team": "South Africa",
+      "status": "scheduled",
+      "venue": "Atlanta, Georgia",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 26,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-18",
+      "home_team": "Switzerland",
+      "away_team": "Bosnia and Herzegovina",
+      "status": "scheduled",
+      "venue": "Inglewood, California",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 27,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-18",
+      "home_team": "Canada",
+      "away_team": "Qatar",
+      "status": "scheduled",
+      "venue": "Vancouver",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 28,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-19",
+      "home_team": "Mexico",
+      "away_team": "Korea Republic",
+      "status": "scheduled",
+      "venue": "Guadalajara",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 29,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-19",
+      "home_team": "USA",
+      "away_team": "Australia",
+      "status": "scheduled",
+      "venue": "Seattle, Washington",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 30,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-19",
+      "home_team": "Scotland",
+      "away_team": "Morocco",
+      "status": "scheduled",
+      "venue": "Foxborough, Massachusetts",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 31,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-20",
+      "home_team": "Brazil",
+      "away_team": "Haiti",
+      "status": "scheduled",
+      "venue": "Philadelphia, Pennsylvania",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 32,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-20",
+      "home_team": "Türkiye",
+      "away_team": "Paraguay",
+      "status": "scheduled",
+      "venue": "Santa Clara, California",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 33,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-20",
+      "home_team": "Netherlands",
+      "away_team": "Sweden",
+      "status": "scheduled",
+      "venue": "Houston, Texas",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 34,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-20",
+      "home_team": "Germany",
+      "away_team": "Côte d'Ivoire",
+      "status": "scheduled",
+      "venue": "Toronto",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 35,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-21",
+      "home_team": "Ecuador",
+      "away_team": "Curaçao",
+      "status": "scheduled",
+      "venue": "Kansas City, Missouri",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 36,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-21",
+      "home_team": "Tunisia",
+      "away_team": "Japan",
+      "status": "scheduled",
+      "venue": "Guadalupe",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 37,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-21",
+      "home_team": "Spain",
+      "away_team": "Saudi Arabia",
+      "status": "scheduled",
+      "venue": "Atlanta, Georgia",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 38,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-21",
+      "home_team": "Belgium",
+      "away_team": "IR Iran",
+      "status": "scheduled",
+      "venue": "Inglewood, California",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 39,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-21",
+      "home_team": "Uruguay",
+      "away_team": "Cabo Verde",
+      "status": "scheduled",
+      "venue": "Miami Gardens, Florida",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 40,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-22",
+      "home_team": "New Zealand",
+      "away_team": "Egypt",
+      "status": "scheduled",
+      "venue": "Vancouver",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 41,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-22",
+      "home_team": "Argentina",
+      "away_team": "Austria",
+      "status": "scheduled",
+      "venue": "Arlington, Texas",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 42,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-22",
+      "home_team": "France",
+      "away_team": "Iraq",
+      "status": "scheduled",
+      "venue": "Philadelphia, Pennsylvania",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null,
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "low"
+      }
+    },
+    {
+      "match_id": 43,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-23",
+      "home_team": "Norway",
+      "away_team": "Senegal",
+      "status": "scheduled",
+      "venue": "East Rutherford, New Jersey",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 44,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-23",
+      "home_team": "Jordan",
+      "away_team": "Algeria",
+      "status": "scheduled",
+      "venue": "Santa Clara, California",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 45,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-23",
+      "home_team": "Portugal",
+      "away_team": "Uzbekistan",
+      "status": "scheduled",
+      "venue": "Houston, Texas",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 46,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-23",
+      "home_team": "England",
+      "away_team": "Ghana",
+      "status": "scheduled",
+      "venue": "Foxborough, Massachusetts",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 47,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-24",
+      "home_team": "Panama",
+      "away_team": "Croatia",
+      "status": "scheduled",
+      "venue": "Toronto",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 48,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-24",
+      "home_team": "Colombia",
+      "away_team": "Congo DR",
+      "status": "scheduled",
+      "venue": "Guadalajara",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 49,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-24",
+      "home_team": "Switzerland",
+      "away_team": "Canada",
+      "status": "scheduled",
+      "venue": "Vancouver",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 50,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-24",
+      "home_team": "Bosnia and Herzegovina",
+      "away_team": "Qatar",
+      "status": "scheduled",
+      "venue": "Seattle, Washington",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 52,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-24",
+      "home_team": "Morocco",
+      "away_team": "Haiti",
+      "status": "scheduled",
+      "venue": "Atlanta, Georgia",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 51,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-24",
+      "home_team": "Scotland",
+      "away_team": "Brazil",
+      "status": "scheduled",
+      "venue": "Miami Gardens, Florida",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 54,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-25",
+      "home_team": "South Africa",
+      "away_team": "Korea Republic",
+      "status": "scheduled",
+      "venue": "Guadalupe",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 53,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-25",
+      "home_team": "Czechia",
+      "away_team": "Mexico",
+      "status": "scheduled",
+      "venue": "Mexico City",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 55,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-25",
+      "home_team": "Ecuador",
+      "away_team": "Germany",
+      "status": "scheduled",
+      "venue": "East Rutherford, New Jersey",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 56,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-25",
+      "home_team": "Curaçao",
+      "away_team": "Côte d'Ivoire",
+      "status": "scheduled",
+      "venue": "Philadelphia, Pennsylvania",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 57,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-26",
+      "home_team": "Tunisia",
+      "away_team": "Netherlands",
+      "status": "scheduled",
+      "venue": "Kansas City, Missouri",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 58,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-26",
+      "home_team": "Japan",
+      "away_team": "Sweden",
+      "status": "scheduled",
+      "venue": "Arlington, Texas",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 59,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-26",
+      "home_team": "Türkiye",
+      "away_team": "USA",
+      "status": "scheduled",
+      "venue": "Inglewood, California",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 60,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-26",
+      "home_team": "Paraguay",
+      "away_team": "Australia",
+      "status": "scheduled",
+      "venue": "Santa Clara, California",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 61,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-26",
+      "home_team": "Norway",
+      "away_team": "France",
+      "status": "scheduled",
+      "venue": "Foxborough, Massachusetts",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 62,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-26",
+      "home_team": "Senegal",
+      "away_team": "Iraq",
+      "status": "scheduled",
+      "venue": "Toronto",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 63,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-27",
+      "home_team": "Uruguay",
+      "away_team": "Spain",
+      "status": "scheduled",
+      "venue": "Guadalajara",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 64,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-27",
+      "home_team": "Cabo Verde",
+      "away_team": "Saudi Arabia",
+      "status": "scheduled",
+      "venue": "Houston, Texas",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 65,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-27",
+      "home_team": "New Zealand",
+      "away_team": "Belgium",
+      "status": "scheduled",
+      "venue": "Vancouver",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 66,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-27",
+      "home_team": "Egypt",
+      "away_team": "IR Iran",
+      "status": "scheduled",
+      "venue": "Seattle, Washington",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 68,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-27",
+      "home_team": "Croatia",
+      "away_team": "Ghana",
+      "status": "scheduled",
+      "venue": "Philadelphia, Pennsylvania",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 67,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-27",
+      "home_team": "Panama",
+      "away_team": "England",
+      "status": "scheduled",
+      "venue": "East Rutherford, New Jersey",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 70,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-28",
+      "home_team": "Congo DR",
+      "away_team": "Uzbekistan",
+      "status": "scheduled",
+      "venue": "Atlanta, Georgia",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 69,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-28",
+      "home_team": "Colombia",
+      "away_team": "Portugal",
+      "status": "scheduled",
+      "venue": "Miami Gardens, Florida",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 71,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-28",
+      "home_team": "Jordan",
+      "away_team": "Argentina",
+      "status": "scheduled",
+      "venue": "Arlington, Texas",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 72,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-28",
+      "home_team": "Algeria",
+      "away_team": "Austria",
+      "status": "scheduled",
+      "venue": "Kansas City, Missouri",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
     }
   ],
   "teams": [
     {
-      "team_name": "Mexico",
-      "goals_for": 1.72,
-      "goals_against": 0.7
+      "team_name": "Algeria",
+      "goals_for": 0.69,
+      "goals_against": 2.12
     },
     {
-      "team_name": "South Africa",
-      "goals_for": 0.7,
-      "goals_against": 1.65
+      "team_name": "Argentina",
+      "goals_for": 2.61,
+      "goals_against": 0.39
     },
     {
-      "team_name": "South Korea",
-      "goals_for": 1.58,
-      "goals_against": 1.14
+      "team_name": "Australia",
+      "goals_for": 1.61,
+      "goals_against": 0.64
     },
     {
-      "team_name": "Czechia",
-      "goals_for": 1.21,
-      "goals_against": 1.44
+      "team_name": "Austria",
+      "goals_for": 2.22,
+      "goals_against": 1.1
     },
     {
-      "team_name": "Canada",
-      "goals_for": 1.21,
-      "goals_against": 1.14
+      "team_name": "Belgium",
+      "goals_for": 1.39,
+      "goals_against": 1.0
     },
     {
       "team_name": "Bosnia and Herzegovina",
@@ -381,189 +808,19 @@
       "goals_against": 1.14
     },
     {
-      "team_name": "Qatar",
-      "goals_for": 1.07,
-      "goals_against": 1.28
-    },
-    {
-      "team_name": "Switzerland",
-      "goals_for": 1.35,
-      "goals_against": 1.0
-    },
-    {
       "team_name": "Brazil",
-      "goals_for": 1.77,
-      "goals_against": 0.86
-    },
-    {
-      "team_name": "Morocco",
-      "goals_for": 1.35,
-      "goals_against": 0.93
-    },
-    {
-      "team_name": "Haiti",
-      "goals_for": 0.63,
-      "goals_against": 1.49
-    },
-    {
-      "team_name": "Scotland",
-      "goals_for": 1.21,
-      "goals_against": 0.91
-    },
-    {
-      "team_name": "USA",
-      "goals_for": 1.5,
-      "goals_against": 1.1
-    },
-    {
-      "team_name": "Paraguay",
-      "goals_for": 1.07,
-      "goals_against": 2.04
-    },
-    {
-      "team_name": "Australia",
-      "goals_for": 1.44,
-      "goals_against": 0.91
-    },
-    {
-      "team_name": "Turkiye",
-      "goals_for": 1.12,
-      "goals_against": 1.37
-    },
-    {
-      "team_name": "Germany",
-      "goals_for": 3.5,
-      "goals_against": 0.93
-    },
-    {
-      "team_name": "Curacao",
-      "goals_for": 0.86,
-      "goals_against": 3.43
-    },
-    {
-      "team_name": "Cote d'Ivoire",
-      "goals_for": 1.3,
-      "goals_against": 1.2
-    },
-    {
-      "team_name": "Ecuador",
-      "goals_for": 0.91,
-      "goals_against": 1.0
-    },
-    {
-      "team_name": "Netherlands",
-      "goals_for": 1.93,
-      "goals_against": 1.23
-    },
-    {
-      "team_name": "Japan",
-      "goals_for": 1.79,
-      "goals_against": 1.3
-    },
-    {
-      "team_name": "Sweden",
-      "goals_for": 2.48,
-      "goals_against": 1.14
-    },
-    {
-      "team_name": "Tunisia",
-      "goals_for": 1.07,
-      "goals_against": 2.34
-    },
-    {
-      "team_name": "Belgium",
-      "goals_for": 1.56,
-      "goals_against": 1.0
-    },
-    {
-      "team_name": "Egypt",
-      "goals_for": 1.21,
-      "goals_against": 1.07
-    },
-    {
-      "team_name": "Iran",
-      "goals_for": 1.44,
-      "goals_against": 1.37
-    },
-    {
-      "team_name": "New Zealand",
-      "goals_for": 1.3,
-      "goals_against": 1.72
-    },
-    {
-      "team_name": "Spain",
       "goals_for": 1.54,
-      "goals_against": 0.49
-    },
-    {
-      "team_name": "Cabo Verde",
-      "goals_for": 0.9,
-      "goals_against": 1.7
-    },
-    {
-      "team_name": "Saudi Arabia",
-      "goals_for": 1.1,
-      "goals_against": 1.4
-    },
-    {
-      "team_name": "Uruguay",
-      "goals_for": 1.7,
-      "goals_against": 1.0
-    },
-    {
-      "team_name": "France",
-      "goals_for": 2.44,
-      "goals_against": 0.86
-    },
-    {
-      "team_name": "Senegal",
-      "goals_for": 1.42,
-      "goals_against": 1.6
-    },
-    {
-      "team_name": "Iraq",
-      "goals_for": 1.0,
-      "goals_against": 2.25
-    },
-    {
-      "team_name": "Norway",
-      "goals_for": 2.46,
-      "goals_against": 1.07
-    },
-    {
-      "team_name": "Argentina",
-      "goals_for": 2.44,
-      "goals_against": 0.56
-    },
-    {
-      "team_name": "Algeria",
-      "goals_for": 0.98,
-      "goals_against": 1.74
-    },
-    {
-      "team_name": "Austria",
-      "goals_for": 1.88,
-      "goals_against": 1.14
-    },
-    {
-      "team_name": "Jordan",
-      "goals_for": 1.0,
-      "goals_against": 1.95
-    },
-    {
-      "team_name": "Portugal",
-      "goals_for": 2.0,
       "goals_against": 0.9
     },
     {
-      "team_name": "DR Congo",
-      "goals_for": 1.2,
-      "goals_against": 1.3
+      "team_name": "Cabo Verde",
+      "goals_for": 0.63,
+      "goals_against": 1.19
     },
     {
-      "team_name": "Uzbekistan",
-      "goals_for": 1.1,
-      "goals_against": 1.3
+      "team_name": "Canada",
+      "goals_for": 1.21,
+      "goals_against": 1.14
     },
     {
       "team_name": "Colombia",
@@ -571,9 +828,14 @@
       "goals_against": 1.0
     },
     {
-      "team_name": "England",
-      "goals_for": 2.0,
-      "goals_against": 0.8
+      "team_name": "Congo DR",
+      "goals_for": 1.14,
+      "goals_against": 1.21
+    },
+    {
+      "team_name": "Côte d'Ivoire",
+      "goals_for": 1.21,
+      "goals_against": 0.84
     },
     {
       "team_name": "Croatia",
@@ -581,14 +843,185 @@
       "goals_against": 1.1
     },
     {
+      "team_name": "Curaçao",
+      "goals_for": 0.9,
+      "goals_against": 4.5
+    },
+    {
+      "team_name": "Czechia",
+      "goals_for": 1.15,
+      "goals_against": 1.61
+    },
+    {
+      "team_name": "Ecuador",
+      "goals_for": 0.64,
+      "goals_against": 1.0
+    },
+    {
+      "team_name": "Egypt",
+      "goals_for": 1.15,
+      "goals_against": 1.05
+    },
+    {
+      "team_name": "England",
+      "goals_for": 2.0,
+      "goals_against": 0.8
+    },
+    {
+      "team_name": "France",
+      "goals_for": 2.61,
+      "goals_against": 0.9
+    },
+    {
+      "team_name": "Germany",
+      "goals_for": 4.55,
+      "goals_against": 0.95
+    },
+    {
       "team_name": "Ghana",
       "goals_for": 1.3,
       "goals_against": 1.3
     },
     {
+      "team_name": "Haiti",
+      "goals_for": 0.44,
+      "goals_against": 1.34
+    },
+    {
+      "team_id": 23,
+      "team_name": "IR Iran",
+      "goals_for": 1.51,
+      "goals_against": 1.51,
+      "clean_sheets": 0,
+      "home_form": null,
+      "away_form": null,
+      "ranking": null,
+      "recent_matches": []
+    },
+    {
+      "team_name": "Iraq",
+      "goals_for": 1.0,
+      "goals_against": 2.77
+    },
+    {
+      "team_name": "Japan",
+      "goals_for": 1.85,
+      "goals_against": 1.51
+    },
+    {
+      "team_name": "Jordan",
+      "goals_for": 1.0,
+      "goals_against": 2.26
+    },
+    {
+      "team_name": "Korea Republic",
+      "goals_for": 1.71,
+      "goals_against": 1.1
+    },
+    {
+      "team_name": "Mexico",
+      "goals_for": 1.8,
+      "goals_against": 0.49
+    },
+    {
+      "team_name": "Morocco",
+      "goals_for": 1.24,
+      "goals_against": 0.95
+    },
+    {
+      "team_name": "Netherlands",
+      "goals_for": 1.95,
+      "goals_against": 1.46
+    },
+    {
+      "team_name": "New Zealand",
+      "goals_for": 1.51,
+      "goals_against": 1.8
+    },
+    {
+      "team_name": "Norway",
+      "goals_for": 2.92,
+      "goals_against": 1.05
+    },
+    {
       "team_name": "Panama",
       "goals_for": 1.0,
       "goals_against": 1.5
+    },
+    {
+      "team_name": "Paraguay",
+      "goals_for": 1.05,
+      "goals_against": 2.63
+    },
+    {
+      "team_name": "Portugal",
+      "goals_for": 1.7,
+      "goals_against": 0.93
+    },
+    {
+      "team_name": "Qatar",
+      "goals_for": 1.05,
+      "goals_against": 1.2
+    },
+    {
+      "team_name": "Saudi Arabia",
+      "goals_for": 1.07,
+      "goals_against": 1.28
+    },
+    {
+      "team_name": "Scotland",
+      "goals_for": 1.15,
+      "goals_against": 0.64
+    },
+    {
+      "team_name": "Senegal",
+      "goals_for": 1.29,
+      "goals_against": 2.02
+    },
+    {
+      "team_name": "South Africa",
+      "goals_for": 0.49,
+      "goals_against": 1.75
+    },
+    {
+      "team_name": "Spain",
+      "goals_for": 1.08,
+      "goals_against": 0.34
+    },
+    {
+      "team_name": "Sweden",
+      "goals_for": 3.24,
+      "goals_against": 1.1
+    },
+    {
+      "team_name": "Switzerland",
+      "goals_for": 1.24,
+      "goals_against": 1.0
+    },
+    {
+      "team_name": "Tunisia",
+      "goals_for": 1.05,
+      "goals_against": 3.14
+    },
+    {
+      "team_name": "Türkiye",
+      "goals_for": 0.78,
+      "goals_against": 1.56
+    },
+    {
+      "team_name": "Uruguay",
+      "goals_for": 1.49,
+      "goals_against": 1.0
+    },
+    {
+      "team_name": "USA",
+      "goals_for": 2.25,
+      "goals_against": 1.07
+    },
+    {
+      "team_name": "Uzbekistan",
+      "goals_for": 1.1,
+      "goals_against": 1.3
     }
   ],
   "players": [
@@ -1200,7 +1633,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 4.9,
-      "ownership": 5.4,
+      "ownership": 5.5,
       "form": 3.0,
       "xg": null,
       "xa": null,
@@ -1398,7 +1831,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 10.0,
-      "ownership": 20.0,
+      "ownership": 20.1,
       "form": 6.3,
       "xg": null,
       "xa": null,
@@ -1420,7 +1853,7 @@
       "expected_start": false,
       "expected_points": null,
       "price": 8.6,
-      "ownership": 15.1,
+      "ownership": 15.0,
       "form": 0.3,
       "xg": null,
       "xa": null,
@@ -1684,7 +2117,7 @@
       "expected_start": false,
       "expected_points": null,
       "price": 5.9,
-      "ownership": 1.4,
+      "ownership": 1.3,
       "form": 0.3,
       "xg": null,
       "xa": null,
@@ -4333,28 +4766,6 @@
       "fifa_total_points": 1.0
     },
     {
-      "player_id": 187,
-      "player_name": "Danilo",
-      "team": "Brazil",
-      "position": "MID",
-      "minutes": 0,
-      "goals": 0,
-      "assists": 0,
-      "clean_sheet_contrib": 0,
-      "injury_status": "fit",
-      "suspension_status": "available",
-      "expected_start": false,
-      "expected_points": null,
-      "price": 5.6,
-      "ownership": 0.2,
-      "form": 0.3,
-      "xg": null,
-      "xa": null,
-      "penalty_taker": false,
-      "recent_points": 1.0,
-      "fifa_total_points": 1.0
-    },
-    {
       "player_id": 188,
       "player_name": "Casemiro",
       "team": "Brazil",
@@ -6019,12 +6430,12 @@
       "expected_points": null,
       "price": 5.6,
       "ownership": 0.0,
-      "form": 0.0,
+      "form": 0.3,
       "xg": null,
       "xa": null,
       "penalty_taker": false,
-      "recent_points": 0.0,
-      "fifa_total_points": 0.0
+      "recent_points": 1.0,
+      "fifa_total_points": 1.0
     },
     {
       "player_id": 283,
@@ -6261,12 +6672,12 @@
       "expected_points": null,
       "price": 5.3,
       "ownership": 0.1,
-      "form": 0.3,
+      "form": 0.7,
       "xg": null,
       "xa": null,
       "penalty_taker": false,
-      "recent_points": 1.0,
-      "fifa_total_points": 1.0
+      "recent_points": 2.0,
+      "fifa_total_points": 2.0
     },
     {
       "player_id": 295,
@@ -6458,7 +6869,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 3.9,
-      "ownership": 1.2,
+      "ownership": 1.3,
       "form": 2.7,
       "xg": null,
       "xa": null,
@@ -6873,7 +7284,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.2,
       "ownership": 0.8,
@@ -6895,7 +7306,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.3,
       "ownership": 0.6,
@@ -6917,7 +7328,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.3,
       "ownership": 0.1,
@@ -6939,7 +7350,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.0,
       "ownership": 0.3,
@@ -6961,7 +7372,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.0,
       "ownership": 0.3,
@@ -6983,7 +7394,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 3.9,
       "ownership": 0.0,
@@ -7005,7 +7416,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 3.7,
       "ownership": 1.2,
@@ -7027,7 +7438,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 6.8,
       "ownership": 0.2,
@@ -7049,7 +7460,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 6.2,
       "ownership": 0.2,
@@ -7071,7 +7482,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 5.4,
       "ownership": 0.5,
@@ -7093,7 +7504,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 5.3,
       "ownership": 0.1,
@@ -7115,7 +7526,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 5.1,
       "ownership": 0.1,
@@ -7137,7 +7548,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.9,
       "ownership": 0.1,
@@ -7159,7 +7570,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.5,
       "ownership": 1.6,
@@ -7181,7 +7592,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 3.9,
       "ownership": 0.1,
@@ -7203,7 +7614,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.9,
       "ownership": 0.1,
@@ -7225,7 +7636,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.9,
       "ownership": 0.0,
@@ -7247,7 +7658,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 5.6,
       "ownership": 0.0,
@@ -7269,7 +7680,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 5.6,
       "ownership": 0.0,
@@ -7291,7 +7702,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 6.1,
       "ownership": 0.0,
@@ -7313,7 +7724,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 6.2,
       "ownership": 2.9,
@@ -7335,7 +7746,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 6.4,
       "ownership": 0.1,
@@ -7357,7 +7768,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 6.5,
       "ownership": 0.2,
@@ -9359,7 +9770,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.7,
       "ownership": 11.8,
@@ -9379,9 +9790,9 @@
       "goals": 0,
       "assists": 0,
       "clean_sheet_contrib": 0,
-      "injury_status": "fit",
+      "injury_status": "out",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.6,
       "ownership": 0.2,
@@ -9403,7 +9814,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 5.1,
       "ownership": 7.1,
@@ -9425,7 +9836,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.5,
       "ownership": 0.4,
@@ -9447,7 +9858,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.8,
       "ownership": 1.0,
@@ -9469,7 +9880,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.6,
       "ownership": 1.5,
@@ -9491,7 +9902,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.5,
       "ownership": 0.4,
@@ -9513,7 +9924,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 10.5,
       "ownership": 35.7,
@@ -9535,7 +9946,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 9.5,
       "ownership": 4.9,
@@ -9557,7 +9968,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 7.5,
       "ownership": 2.0,
@@ -9579,7 +9990,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 7.0,
       "ownership": 1.8,
@@ -9601,7 +10012,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 7.2,
       "ownership": 0.8,
@@ -9623,7 +10034,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 6.1,
       "ownership": 0.3,
@@ -9645,7 +10056,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 4.8,
       "ownership": 14.7,
@@ -9667,7 +10078,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.2,
       "ownership": 0.3,
@@ -9689,7 +10100,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.0,
       "ownership": 0.5,
@@ -9711,7 +10122,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 5.1,
       "ownership": 0.3,
@@ -9733,7 +10144,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 6.1,
       "ownership": 0.6,
@@ -9755,7 +10166,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 6.5,
       "ownership": 0.9,
@@ -9777,10 +10188,10 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 7.0,
-      "ownership": 7.5,
+      "ownership": 7.4,
       "form": 0.0,
       "xg": null,
       "xa": null,
@@ -9799,7 +10210,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 8.3,
       "ownership": 9.6,
@@ -10418,7 +10829,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 4.7,
-      "ownership": 2.4,
+      "ownership": 2.5,
       "form": 4.7,
       "xg": null,
       "xa": null,
@@ -10440,7 +10851,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 5.3,
-      "ownership": 4.9,
+      "ownership": 5.0,
       "form": 3.7,
       "xg": null,
       "xa": null,
@@ -10484,7 +10895,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 7.8,
-      "ownership": 15.6,
+      "ownership": 15.7,
       "form": 4.3,
       "xg": null,
       "xa": null,
@@ -10682,7 +11093,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 7.5,
-      "ownership": 22.3,
+      "ownership": 22.2,
       "form": 1.7,
       "xg": null,
       "xa": null,
@@ -15170,7 +15581,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 6.1,
-      "ownership": 1.2,
+      "ownership": 1.3,
       "form": 3.3,
       "xg": null,
       "xa": null,
@@ -15544,7 +15955,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 4.2,
-      "ownership": 0.5,
+      "ownership": 0.6,
       "form": 5.3,
       "xg": null,
       "xa": null,
@@ -17393,12 +17804,12 @@
       "expected_points": null,
       "price": 4.1,
       "ownership": 0.1,
-      "form": 0.7,
+      "form": 0.3,
       "xg": null,
       "xa": null,
       "penalty_taker": false,
-      "recent_points": 2.0,
-      "fifa_total_points": 2.0
+      "recent_points": 1.0,
+      "fifa_total_points": 1.0
     },
     {
       "player_id": 923,
@@ -17415,12 +17826,12 @@
       "expected_points": null,
       "price": 7.5,
       "ownership": 0.8,
-      "form": 0.0,
+      "form": 0.3,
       "xg": null,
       "xa": null,
       "penalty_taker": false,
-      "recent_points": 0.0,
-      "fifa_total_points": 0.0
+      "recent_points": 1.0,
+      "fifa_total_points": 1.0
     },
     {
       "player_id": 924,
@@ -17656,7 +18067,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 6.4,
-      "ownership": 11.9,
+      "ownership": 11.8,
       "form": 0.7,
       "xg": null,
       "xa": null,
@@ -17678,7 +18089,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 6.5,
-      "ownership": 4.5,
+      "ownership": 4.6,
       "form": 3.3,
       "xg": null,
       "xa": null,
@@ -17700,7 +18111,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 8.5,
-      "ownership": 49.5,
+      "ownership": 49.4,
       "form": 1.0,
       "xg": null,
       "xa": null,
@@ -20340,7 +20751,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 8.1,
-      "ownership": 19.0,
+      "ownership": 18.9,
       "form": 0.7,
       "xg": null,
       "xa": null,
@@ -20406,7 +20817,7 @@
       "expected_start": false,
       "expected_points": null,
       "price": 5.0,
-      "ownership": 12.7,
+      "ownership": 12.6,
       "form": 0.0,
       "xg": null,
       "xa": null,
@@ -22408,7 +22819,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 4.2,
-      "ownership": 1.7,
+      "ownership": 1.6,
       "form": 0.3,
       "xg": null,
       "xa": null,
@@ -23640,7 +24051,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 6.0,
-      "ownership": 2.2,
+      "ownership": 2.3,
       "form": 5.0,
       "xg": null,
       "xa": null,
@@ -24586,7 +24997,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 4.0,
-      "ownership": 0.6,
+      "ownership": 0.7,
       "form": 3.0,
       "xg": null,
       "xa": null,
@@ -26069,28 +26480,6 @@
       "fifa_total_points": 1.0
     },
     {
-      "player_id": 1475,
-      "player_name": "Jesús Angulo",
-      "team": "Mexico",
-      "position": "MID",
-      "minutes": 0,
-      "goals": 0,
-      "assists": 0,
-      "clean_sheet_contrib": 0,
-      "injury_status": "out",
-      "suspension_status": "available",
-      "expected_start": false,
-      "expected_points": null,
-      "price": 5.3,
-      "ownership": 0.0,
-      "form": 0.0,
-      "xg": null,
-      "xa": null,
-      "penalty_taker": false,
-      "recent_points": 0.0,
-      "fifa_total_points": 0.0
-    },
-    {
       "player_id": 1476,
       "player_name": "Gilberto Mora",
       "team": "Mexico",
@@ -27377,7 +27766,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.4,
       "ownership": 0.1,
@@ -27399,7 +27788,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 5.0,
       "ownership": 4.9,
@@ -27421,7 +27810,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 6.0,
       "ownership": 0.3,
@@ -27843,12 +28232,12 @@
       "expected_points": null,
       "price": 3.9,
       "ownership": 0.0,
-      "form": 0.0,
+      "form": 0.3,
       "xg": null,
       "xa": null,
       "penalty_taker": false,
-      "recent_points": 0.0,
-      "fifa_total_points": 0.0
+      "recent_points": 1.0,
+      "fifa_total_points": 1.0
     },
     {
       "player_id": 1557,
@@ -28173,12 +28562,12 @@
       "expected_points": null,
       "price": 4.3,
       "ownership": 0.2,
-      "form": 0.3,
+      "form": 0.0,
       "xg": null,
       "xa": null,
       "penalty_taker": false,
-      "recent_points": 1.0,
-      "fifa_total_points": 1.0
+      "recent_points": 0.0,
+      "fifa_total_points": 0.0
     },
     {
       "player_id": 1572,
@@ -28216,7 +28605,7 @@
       "expected_start": true,
       "expected_points": null,
       "price": 10.0,
-      "ownership": 11.2,
+      "ownership": 11.1,
       "form": 0.7,
       "xg": null,
       "xa": null,
@@ -30149,7 +30538,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.4,
       "ownership": 0.1,
@@ -30171,7 +30560,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": true,
       "expected_points": null,
       "price": 5.2,
       "ownership": 4.5,
@@ -30193,7 +30582,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 8.0,
       "ownership": 1.3,
@@ -30215,7 +30604,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 7.9,
       "ownership": 1.2,
@@ -30237,7 +30626,7 @@
       "clean_sheet_contrib": 0,
       "injury_status": "fit",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 7.5,
       "ownership": 0.2,
@@ -32418,7 +32807,7 @@
       "expected_start": false,
       "expected_points": null,
       "price": 5.2,
-      "ownership": 1.0,
+      "ownership": 0.9,
       "form": 0.0,
       "xg": null,
       "xa": null,
@@ -33219,28 +33608,6 @@
       "fifa_total_points": 0.0
     },
     {
-      "player_id": 2074,
-      "player_name": "Lutsharel Geertruida",
-      "team": "Netherlands",
-      "position": "DEF",
-      "minutes": 0,
-      "goals": 0,
-      "assists": 0,
-      "clean_sheet_contrib": 0,
-      "injury_status": "fit",
-      "suspension_status": "available",
-      "expected_start": false,
-      "expected_points": null,
-      "price": 4.3,
-      "ownership": 0.0,
-      "form": 0.0,
-      "xg": null,
-      "xa": null,
-      "penalty_taker": false,
-      "recent_points": 0.0,
-      "fifa_total_points": 0.0
-    },
-    {
       "player_id": 2075,
       "player_name": "Dejan Ljubicic",
       "team": "Austria",
@@ -33298,7 +33665,7 @@
       "expected_start": false,
       "expected_points": null,
       "price": 3.5,
-      "ownership": 0.0,
+      "ownership": 0.1,
       "form": 0.0,
       "xg": null,
       "xa": null,
@@ -33315,9 +33682,9 @@
       "goals": 0,
       "assists": 0,
       "clean_sheet_contrib": 0,
-      "injury_status": "fit",
+      "injury_status": "out",
       "suspension_status": "available",
-      "expected_start": null,
+      "expected_start": false,
       "expected_points": null,
       "price": 4.5,
       "ownership": 0.0,
@@ -33335,133 +33702,210 @@
       "away": "South Africa",
       "home_goals": 2,
       "away_goals": 0,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-11",
+      "stage": "GROUP"
     },
     {
-      "home": "South Korea",
+      "home": "Korea Republic",
       "away": "Czechia",
       "home_goals": 2,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-12",
+      "stage": "GROUP"
     },
     {
       "home": "Canada",
       "away": "Bosnia and Herzegovina",
       "home_goals": 1,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-12",
+      "stage": "GROUP"
+    },
+    {
+      "home": "USA",
+      "away": "Paraguay",
+      "home_goals": 4,
+      "away_goals": 1,
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-13",
+      "stage": "GROUP"
     },
     {
       "home": "Qatar",
       "away": "Switzerland",
       "home_goals": 1,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-13",
+      "stage": "GROUP"
     },
     {
       "home": "Brazil",
       "away": "Morocco",
       "home_goals": 1,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-13",
+      "stage": "GROUP"
     },
     {
-      "home": "Scotland",
-      "away": "Haiti",
-      "home_goals": 1,
-      "away_goals": 0,
-      "date": "2026-06-12"
+      "home": "Haiti",
+      "away": "Scotland",
+      "home_goals": 0,
+      "away_goals": 1,
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-14",
+      "stage": "GROUP"
     },
     {
       "home": "Australia",
-      "away": "Turkiye",
+      "away": "Türkiye",
       "home_goals": 2,
       "away_goals": 0,
-      "date": "2026-06-12"
-    },
-    {
-      "home": "United States",
-      "away": "Paraguay",
-      "home_goals": 4,
-      "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-14",
+      "stage": "GROUP"
     },
     {
       "home": "Germany",
-      "away": "Curacao",
+      "away": "Curaçao",
       "home_goals": 7,
       "away_goals": 1,
-      "date": "2026-06-12"
-    },
-    {
-      "home": "Ivory Coast",
-      "away": "Ecuador",
-      "home_goals": 1,
-      "away_goals": 0,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-14",
+      "stage": "GROUP"
     },
     {
       "home": "Netherlands",
       "away": "Japan",
       "home_goals": 2,
       "away_goals": 2,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-14",
+      "stage": "GROUP"
+    },
+    {
+      "home": "Côte d'Ivoire",
+      "away": "Ecuador",
+      "home_goals": 1,
+      "away_goals": 0,
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-15",
+      "stage": "GROUP"
     },
     {
       "home": "Sweden",
       "away": "Tunisia",
       "home_goals": 5,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-15",
+      "stage": "GROUP"
     },
     {
       "home": "Spain",
-      "away": "Cape Verde",
+      "away": "Cabo Verde",
       "home_goals": 0,
       "away_goals": 0,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-15",
+      "stage": "GROUP"
     },
     {
       "home": "Belgium",
       "away": "Egypt",
       "home_goals": 1,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-15",
+      "stage": "GROUP"
     },
     {
-      "home": "Iran",
+      "home": "Saudi Arabia",
+      "away": "Uruguay",
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-15",
+      "stage": "GROUP"
+    },
+    {
+      "home": "IR Iran",
       "away": "New Zealand",
       "home_goals": 2,
       "away_goals": 2,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-16",
+      "stage": "GROUP"
     },
     {
       "home": "France",
       "away": "Senegal",
       "home_goals": 3,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-16",
+      "stage": "GROUP"
     },
     {
-      "home": "Norway",
-      "away": "Iraq",
-      "home_goals": 4,
-      "away_goals": 1,
-      "date": "2026-06-12"
+      "home": "Iraq",
+      "away": "Norway",
+      "home_goals": 1,
+      "away_goals": 4,
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-16",
+      "stage": "GROUP"
     },
     {
       "home": "Argentina",
       "away": "Algeria",
       "home_goals": 3,
       "away_goals": 0,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-17",
+      "stage": "GROUP"
     },
     {
       "home": "Austria",
       "away": "Jordan",
       "home_goals": 3,
       "away_goals": 1,
-      "date": "2026-06-12"
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-17",
+      "stage": "GROUP"
+    },
+    {
+      "home": "Portugal",
+      "away": "Congo DR",
+      "home_goals": 1,
+      "away_goals": 1,
+      "home_pen": 0,
+      "away_pen": 0,
+      "date": "2026-06-17",
+      "stage": "GROUP"
     }
   ],
   "differentials": {
@@ -33502,11 +33946,11 @@
         "player_name": "Nathaniel Brown",
         "team": "Germany",
         "position": "DEF",
-        "ownership": 2.4,
+        "ownership": 2.5,
         "price": 4.7,
         "expected_points": 14.0,
         "expected_start": true,
-        "reason": "בעלות 2.4% · ממוצע רשמי 14.0 נק'"
+        "reason": "בעלות 2.5% · ממוצע רשמי 14.0 נק'"
       },
       {
         "player_name": "Ramin Rezaeian",
@@ -33532,11 +33976,11 @@
         "player_name": "Nico Schlotterbeck",
         "team": "Germany",
         "position": "DEF",
-        "ownership": 4.9,
+        "ownership": 5.0,
         "price": 5.3,
         "expected_points": 11.0,
         "expected_start": true,
-        "reason": "בעלות 4.9% · ממוצע רשמי 11.0 נק'"
+        "reason": "בעלות 5.0% · ממוצע רשמי 11.0 נק'"
       },
       {
         "player_name": "Ladislav Krejcí",
@@ -33564,11 +34008,11 @@
         "player_name": "Elijah Just",
         "team": "New Zealand",
         "position": "MID",
-        "ownership": 0.5,
+        "ownership": 0.6,
         "price": 4.2,
         "expected_points": 16.0,
         "expected_start": true,
-        "reason": "בעלות 0.5% · ממוצע רשמי 16.0 נק'"
+        "reason": "בעלות 0.6% · ממוצע רשמי 16.0 נק'"
       },
       {
         "player_name": "Hwang In-Beom",
@@ -33616,11 +34060,11 @@
         "player_name": "Folarin Balogun",
         "team": "USA",
         "position": "FWD",
-        "ownership": 2.2,
+        "ownership": 2.3,
         "price": 6.0,
         "expected_points": 15.0,
         "expected_start": true,
-        "reason": "בעלות 2.2% · ממוצע רשמי 15.0 נק'"
+        "reason": "בעלות 2.3% · ממוצע רשמי 15.0 נק'"
       },
       {
         "player_name": "Chris Wood",
@@ -33635,53 +34079,245 @@
     ]
   },
   "fixture_difficulty": {
-    "Argentina": {
-      "opponent": "USA",
-      "difficulty": 0.3
-    },
-    "USA": {
-      "opponent": "Argentina",
-      "difficulty": 0.7
-    },
-    "France": {
-      "opponent": "Uruguay",
-      "difficulty": 0.4
-    },
-    "Uruguay": {
-      "opponent": "France",
-      "difficulty": 0.6
-    },
-    "Brazil": {
-      "opponent": "Germany",
-      "difficulty": 0.5
-    },
-    "Germany": {
-      "opponent": "Brazil",
-      "difficulty": 0.5
-    },
     "England": {
-      "opponent": "Mexico",
-      "difficulty": 0.35
-    },
-    "Mexico": {
-      "opponent": "England",
-      "difficulty": 0.65
-    },
-    "Portugal": {
       "opponent": "Croatia",
-      "difficulty": 0.4
+      "difficulty": 0.58,
+      "date": "2026-06-17"
     },
     "Croatia": {
-      "opponent": "Portugal",
-      "difficulty": 0.6
+      "opponent": "England",
+      "difficulty": 0.73,
+      "date": "2026-06-17"
     },
-    "Netherlands": {
-      "opponent": "Canada",
-      "difficulty": 0.25
+    "Ghana": {
+      "opponent": "Panama",
+      "difficulty": 0.4,
+      "date": "2026-06-18"
+    },
+    "Panama": {
+      "opponent": "Ghana",
+      "difficulty": 0.5,
+      "date": "2026-06-18"
+    },
+    "Uzbekistan": {
+      "opponent": "Colombia",
+      "difficulty": 0.62,
+      "date": "2026-06-18"
+    },
+    "Colombia": {
+      "opponent": "Uzbekistan",
+      "difficulty": 0.46,
+      "date": "2026-06-18"
+    },
+    "Czechia": {
+      "opponent": "South Africa",
+      "difficulty": 0.26,
+      "date": "2026-06-18"
+    },
+    "South Africa": {
+      "opponent": "Czechia",
+      "difficulty": 0.41,
+      "date": "2026-06-18"
+    },
+    "Switzerland": {
+      "opponent": "Bosnia and Herzegovina",
+      "difficulty": 0.51,
+      "date": "2026-06-18"
+    },
+    "Bosnia and Herzegovina": {
+      "opponent": "Switzerland",
+      "difficulty": 0.55,
+      "date": "2026-06-18"
     },
     "Canada": {
+      "opponent": "Qatar",
+      "difficulty": 0.47,
+      "date": "2026-06-18"
+    },
+    "Qatar": {
+      "opponent": "Canada",
+      "difficulty": 0.51,
+      "date": "2026-06-18"
+    },
+    "Mexico": {
+      "opponent": "Korea Republic",
+      "difficulty": 0.62,
+      "date": "2026-06-19"
+    },
+    "Korea Republic": {
+      "opponent": "Mexico",
+      "difficulty": 0.75,
+      "date": "2026-06-19"
+    },
+    "USA": {
+      "opponent": "Australia",
+      "difficulty": 0.69,
+      "date": "2026-06-19"
+    },
+    "Australia": {
+      "opponent": "USA",
+      "difficulty": 0.73,
+      "date": "2026-06-19"
+    },
+    "Scotland": {
+      "opponent": "Morocco",
+      "difficulty": 0.56,
+      "date": "2026-06-19"
+    },
+    "Morocco": {
+      "opponent": "Scotland",
+      "difficulty": 0.6,
+      "date": "2026-06-19"
+    },
+    "Brazil": {
+      "opponent": "Haiti",
+      "difficulty": 0.33,
+      "date": "2026-06-20"
+    },
+    "Haiti": {
+      "opponent": "Brazil",
+      "difficulty": 0.62,
+      "date": "2026-06-20"
+    },
+    "Türkiye": {
+      "opponent": "Paraguay",
+      "difficulty": 0.2,
+      "date": "2026-06-20"
+    },
+    "Paraguay": {
+      "opponent": "Türkiye",
+      "difficulty": 0.35,
+      "date": "2026-06-20"
+    },
+    "Netherlands": {
+      "opponent": "Sweden",
+      "difficulty": 0.91,
+      "date": "2026-06-20"
+    },
+    "Sweden": {
       "opponent": "Netherlands",
-      "difficulty": 0.75
+      "difficulty": 0.59,
+      "date": "2026-06-20"
+    },
+    "Germany": {
+      "opponent": "Côte d'Ivoire",
+      "difficulty": 0.57,
+      "date": "2026-06-20"
+    },
+    "Côte d'Ivoire": {
+      "opponent": "Germany",
+      "difficulty": 1.0,
+      "date": "2026-06-20"
+    },
+    "Ecuador": {
+      "opponent": "Curaçao",
+      "difficulty": 0.0,
+      "date": "2026-06-21"
+    },
+    "Curaçao": {
+      "opponent": "Ecuador",
+      "difficulty": 0.43,
+      "date": "2026-06-21"
+    },
+    "Tunisia": {
+      "opponent": "Japan",
+      "difficulty": 0.57,
+      "date": "2026-06-21"
+    },
+    "Japan": {
+      "opponent": "Tunisia",
+      "difficulty": 0.1,
+      "date": "2026-06-21"
+    },
+    "Spain": {
+      "opponent": "Saudi Arabia",
+      "difficulty": 0.46,
+      "date": "2026-06-21"
+    },
+    "Saudi Arabia": {
+      "opponent": "Spain",
+      "difficulty": 0.64,
+      "date": "2026-06-21"
+    },
+    "Belgium": {
+      "opponent": "IR Iran",
+      "difficulty": 0.5,
+      "date": "2026-06-21"
+    },
+    "IR Iran": {
+      "opponent": "Belgium",
+      "difficulty": 0.58,
+      "date": "2026-06-21"
+    },
+    "Uruguay": {
+      "opponent": "Cabo Verde",
+      "difficulty": 0.39,
+      "date": "2026-06-21"
+    },
+    "Cabo Verde": {
+      "opponent": "Uruguay",
+      "difficulty": 0.59,
+      "date": "2026-06-21"
+    },
+    "New Zealand": {
+      "opponent": "Egypt",
+      "difficulty": 0.52,
+      "date": "2026-06-22"
+    },
+    "Egypt": {
+      "opponent": "New Zealand",
+      "difficulty": 0.44,
+      "date": "2026-06-22"
+    },
+    "Argentina": {
+      "opponent": "Austria",
+      "difficulty": 0.72,
+      "date": "2026-06-22"
+    },
+    "Austria": {
+      "opponent": "Argentina",
+      "difficulty": 0.93,
+      "date": "2026-06-22"
+    },
+    "France": {
+      "opponent": "Iraq",
+      "difficulty": 0.16,
+      "date": "2026-06-22"
+    },
+    "Iraq": {
+      "opponent": "France",
+      "difficulty": 0.83,
+      "date": "2026-06-22"
+    },
+    "Norway": {
+      "opponent": "Senegal",
+      "difficulty": 0.36,
+      "date": "2026-06-23"
+    },
+    "Senegal": {
+      "opponent": "Norway",
+      "difficulty": 0.86,
+      "date": "2026-06-23"
+    },
+    "Jordan": {
+      "opponent": "Algeria",
+      "difficulty": 0.22,
+      "date": "2026-06-23"
+    },
+    "Algeria": {
+      "opponent": "Jordan",
+      "difficulty": 0.26,
+      "date": "2026-06-23"
+    },
+    "Portugal": {
+      "opponent": "Uzbekistan",
+      "difficulty": 0.46,
+      "date": "2026-06-23"
+    },
+    "Congo DR": {
+      "opponent": "Colombia",
+      "difficulty": 0.62,
+      "date": "2026-06-24"
     }
   },
   "participants": [

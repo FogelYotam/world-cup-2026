@@ -285,6 +285,52 @@ def test_official_differentials_from_pool(monkeypatch):
     assert all(d["player_name"] != "Lionel Messi" for d in mids)
 
 
+_FAKE_ROUNDS = [
+    {"id": 1, "stage": "GROUP", "status": "playing", "tournaments": [
+        {"id": 101, "status": "complete", "homeSquadName": "Mexico",
+         "awaySquadName": "South Africa", "homeScore": 2, "awayScore": 0,
+         "homePenaltyScore": 0, "awayPenaltyScore": 0, "date": "2026-06-11T20:00:00+01:00",
+         "homeGoalScorersAssists": [], "awayGoalScorersAssists": []},
+        {"id": 102, "status": "scheduled", "homeSquadName": "Germany",
+         "awaySquadName": "Brazil", "homeScore": None, "awayScore": None,
+         "date": "2026-06-20T17:00:00+01:00", "venueCity": "Dallas"},
+    ]},
+    {"id": 5, "stage": "R16", "status": "scheduled", "tournaments": []},
+]
+
+
+def test_official_matches_and_results():
+    matches = scraper.official_matches(_FAKE_ROUNDS)
+    results = scraper.official_results(_FAKE_ROUNDS)
+    assert [m["home_team"] for m in matches] == ["Germany"]   # רק שלא הסתיים
+    assert matches[0]["stage"] == "GROUP" and matches[0]["date"] == "2026-06-20"
+    assert len(results) == 1
+    r = results[0]
+    assert (r["home"], r["home_goals"], r["away_goals"]) == ("Mexico", 2, 0)
+    assert r["stage"] == "GROUP" and r["home_pen"] == 0          # פנדלים נשמרים
+
+
+def test_record_results_dedupes_and_learns():
+    db = {"teams": [{"team_name": "Mexico", "goals_for": 1.3, "goals_against": 1.3},
+                    {"team_name": "South Africa", "goals_for": 1.3, "goals_against": 1.3}],
+          "results": []}
+    rows = scraper.official_results(_FAKE_ROUNDS)
+    assert scraper._record_results(db, rows) == 1
+    assert scraper._record_results(db, rows) == 0       # dedup בריצה חוזרת
+    mex = next(t for t in db["teams"] if t["team_name"] == "Mexico")
+    assert mex["goals_for"] > 1.3                        # למד מ-2 השערים
+
+
+def test_seed_teams_preserves_learned_strength():
+    db = {"teams": [{"team_name": "Czech Republic", "goals_for": 2.7,
+                     "goals_against": 0.6}]}
+    squads = [{"id": 1, "name": "Czechia"}, {"id": 2, "name": "Brazil"}]
+    teams = scraper.seed_teams_from_squads(db, squads)
+    by = {t["team_name"]: t for t in teams}
+    assert set(by) == {"Czechia", "Brazil"}             # קנוניזציה לשם הרשמי
+    assert by["Czechia"]["goals_for"] == 2.7            # חוזק שנלמד נשמר
+
+
 def test_filter_to_participants_drops_non_wc_nations():
     db = {
         "teams": [{"team_name": n} for n in (

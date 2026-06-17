@@ -109,6 +109,20 @@ def settle_with_results(results: list[dict]) -> int:
     return changed
 
 
+def _points(ph, pa, ah, aa) -> int | None:
+    """ניקוד KICKOFF: מדויק=3, כיוון נכון=1, הפוך=-1."""
+    if None in (ph, pa, ah, aa):
+        return None
+    if ph == ah and pa == aa:
+        return 3
+    dp, da = _outcome(ph, pa), _outcome(ah, aa)
+    if dp == da:
+        return 1
+    if dp != "D" and da != "D" and dp != da:
+        return -1
+    return 0
+
+
 def summary() -> dict:
     d = _load()
     settled = [p for p in d["predictions"] if p.get("settled")]
@@ -117,6 +131,15 @@ def summary() -> dict:
         vals = [p.get(key) for p in settled if p.get(key) is not None]
         return (sum(1 for v in vals if v), len(vals))
 
+    user_pts = model_pts = 0
+    for p in settled:
+        up = _points(p.get("user_home"), p.get("user_away"),
+                     p.get("actual_home"), p.get("actual_away"))
+        mp = _points(p.get("model_home"), p.get("model_away"),
+                     p.get("actual_home"), p.get("actual_away"))
+        user_pts += up or 0
+        model_pts += mp or 0
+
     return {
         "total": len(d["predictions"]),
         "settled": len(settled),
@@ -124,6 +147,8 @@ def summary() -> dict:
         "user_exact": rate("user_exact_ok"),
         "model_outcome": rate("model_outcome_ok"),
         "model_exact": rate("model_exact_ok"),
+        "user_points": user_pts,
+        "model_points": model_pts,
     }
 
 
@@ -136,8 +161,11 @@ def format_summary_he(s: dict | None = None) -> str:
     ue_h, ue_n = s["user_exact"]
     mo_h, mo_n = s["model_outcome"]
     me_h, me_n = s["model_exact"]
+    up, mp = s.get("user_points", 0), s.get("model_points", 0)
+    lead = "🤝 תיקו" if up == mp else ("🟢 אתה מוביל" if up > mp else "🔴 המודל מוביל")
     return (
-        f"<b>📈 דיוק הניחושים</b> ({s['settled']} משחקים שהוכרעו)\n"
-        f"אתה: מנצח {uo_h}/{uo_n} · תוצאה מדויקת {ue_h}/{ue_n}\n"
-        f"המודל: מנצח {mo_h}/{mo_n} · תוצאה מדויקת {me_h}/{me_n}"
+        f"<b>📈 ניחושים — אתה מול המערכת</b> ({s['settled']} משחקים)\n"
+        f"🏆 <b>ניקוד: אתה {up} · המערכת {mp}</b> ({lead})\n"
+        f"אתה: מנצח {uo_h}/{uo_n} · מדויק {ue_h}/{ue_n}\n"
+        f"המערכת: מנצח {mo_h}/{mo_n} · מדויק {me_h}/{me_n}"
     )

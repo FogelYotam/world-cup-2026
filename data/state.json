@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17T08:56:03.022928+00:00",
+  "generated_at": "2026-06-17T12:43:57.576936+00:00",
   "fixtures": [
     "A1",
     "A2",
@@ -44,63 +44,63 @@
   "odds": {
     "A1": {
       "favorite": "home_win",
-      "prob": 0.696
+      "prob": 0.762
     },
     "A2": {
       "favorite": "home_win",
-      "prob": 0.367
+      "prob": 0.441
     },
     "B1": {
       "favorite": "home_win",
-      "prob": 0.466
+      "prob": 0.45
     },
     "B2": {
       "favorite": "away_win",
-      "prob": 0.538
+      "prob": 0.469
     },
     "C1": {
       "favorite": "home_win",
-      "prob": 0.528
+      "prob": 0.506
     },
     "C2": {
       "favorite": "away_win",
-      "prob": 0.544
+      "prob": 0.592
     },
     "D1": {
       "favorite": "home_win",
-      "prob": 0.586
+      "prob": 0.799
     },
     "D2": {
-      "favorite": "away_win",
-      "prob": 0.491
+      "favorite": "home_win",
+      "prob": 0.558
     },
     "E1": {
       "favorite": "home_win",
-      "prob": 0.866
+      "prob": 0.909
     },
     "E2": {
-      "favorite": "away_win",
-      "prob": 0.39
+      "favorite": "home_win",
+      "prob": 0.393
     },
     "F1": {
       "favorite": "home_win",
-      "prob": 0.451
+      "prob": 0.455
     },
     "F2": {
       "favorite": "home_win",
-      "prob": 0.441
+      "prob": 0.903
     },
     "G1": {
       "favorite": "home_win",
-      "prob": 0.507
+      "prob": 0.458
     },
     "G2": {
       "favorite": "home_win",
-      "prob": 0.532
+      "prob": 0.515
     },
     "H1": {
       "favorite": "home_win",
-      "prob": 0.88
+      "prob": 0.841
     },
     "H2": {
       "favorite": "away_win",
@@ -108,19 +108,19 @@
     },
     "I1": {
       "favorite": "home_win",
-      "prob": 0.601
+      "prob": 0.72
     },
     "I2": {
       "favorite": "away_win",
-      "prob": 0.639
+      "prob": 0.891
     },
     "J1": {
       "favorite": "home_win",
-      "prob": 0.688
+      "prob": 0.811
     },
     "J2": {
       "favorite": "home_win",
-      "prob": 0.548
+      "prob": 0.78
     },
     "K1": {
       "favorite": "home_win",

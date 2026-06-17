@@ -237,6 +237,7 @@ def build_player(raw: dict) -> dict:
         "form": _num(raw.get("form"), None),
         "xg": _num(raw.get("xg"), None),
         "xa": _num(raw.get("xa"), None),
+        "penalty_taker": bool(raw.get("penalty_taker")),  # בועט פנדלים — תקרת נקודות גבוהה
     }
 
 
@@ -468,6 +469,7 @@ def _enrich_fantasy_data(gemini: GeminiClient, db: dict) -> None:
         "\"price\": number (מיליון), \"ownership\": number (אחוז), "
         "\"form\": number, \"xg\": number, \"xa\": number, "
         "\"goals\": number, \"assists\": number, \"minutes\": number, "
+        "\"penalty_taker\": boolean (האם בועט הפנדלים הראשי של הנבחרת), "
         "\"expected_points\": number}]}"
     )
     raw = gemini.ask_json(prompt, default=None)
@@ -494,6 +496,9 @@ def _enrich_fantasy_data(gemini: GeminiClient, db: dict) -> None:
             if val is not None:
                 p[f] = val
                 touched = True
+        if u.get("penalty_taker") is not None:
+            p["penalty_taker"] = bool(u.get("penalty_taker"))
+            touched = True
         changed += int(touched)
     log.info("העשרת פנטזי: עודכנו %d שחקנים ממקורות הפנטזי", changed)
 

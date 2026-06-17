@@ -227,6 +227,50 @@ def test_run_backtest_structure():
     assert "המודל" in backtest.format_report(bt)
 
 
+def test_tune_finds_best_and_restores_config():
+    import backtest
+    db = {
+        "teams": [{"team_name": "A", "goals_for": 2.5, "goals_against": 0.5},
+                  {"team_name": "B", "goals_for": 0.6, "goals_against": 2.4}],
+        "results": [{"home": "A", "away": "B", "home_goals": 3,
+                     "away_goals": 0, "date": "d1"}],
+    }
+    before = config.HOME_ADVANTAGE
+    t = backtest.tune(db, grid={"HOME_ADVANTAGE": [0.1, 0.25]})
+    assert t["best"]["ppg"] >= max(r["ppg"] for r in t["all"]) - 1e-9
+    assert config.HOME_ADVANTAGE == before     # tune לא משנה config
+
+
+def test_penalty_taker_raises_ceiling():
+    p = {"position": "FWD", "team": "X", "minutes": 270, "goals": 2,
+         "assists": 0, "xg": 2.0, "expected_start": True}
+    base = fantasy.ceiling_points(p, {}, {})
+    boosted = fantasy.ceiling_points(dict(p, penalty_taker=True), {}, {})
+    assert boosted > base
+
+
+def test_captain_chosen_by_ceiling_not_mean():
+    # MID עם EP גבוה אך תקרה נמוכה מול FWD נפיץ — הקפטן צריך להיות ה-FWD
+    squad = [
+        {"player_name": "Keeper", "team": "G", "position": "GK", "price": 5.0,
+         "expected_points": 3.0, "ceiling_points": 3.0, "minutes_risk": "low",
+         "injury_status": "fit", "suspension_status": "available"},
+        {"player_name": "SteadyMid", "team": "Y", "position": "MID", "price": 8.0,
+         "expected_points": 6.0, "ceiling_points": 6.5, "minutes_risk": "low",
+         "injury_status": "fit", "suspension_status": "available"},
+        {"player_name": "ExplosiveFwd", "team": "X", "position": "FWD", "price": 9.0,
+         "expected_points": 5.5, "ceiling_points": 9.0, "minutes_risk": "low",
+         "injury_status": "fit", "suspension_status": "available"},
+    ] + [
+        {"player_name": f"F{i}", "team": f"T{i}", "position": pos, "price": 5.0,
+         "expected_points": 2.0, "ceiling_points": 2.0, "minutes_risk": "low",
+         "injury_status": "fit", "suspension_status": "available"}
+        for i, pos in enumerate(["DEF", "DEF", "DEF", "MID", "FWD", "DEF", "MID", "FWD"])
+    ]
+    out = fantasy.select_starting_eleven(squad)
+    assert out["captain"]["player_name"] == "ExplosiveFwd"
+
+
 def test_injured_player_flagged_to_avoid(sample_db):
     preds = predictor.predict_all(sample_db)
     fan = fantasy.build_fantasy(sample_db, preds)

@@ -17,11 +17,22 @@ Backtesting harness — מודד כמה נקודות KICKOFF המודל היה �
 """
 from __future__ import annotations
 
+import argparse
+import contextlib
+import itertools
+
 import config
 import predictor
 import utils
 
 log = utils.get_logger("backtest")
+
+# גריד ברירת-מחדל ל-auto-tune. אלה הקבועים שמשפיעים ישירות על חיזוי תוצאה
+# (יתרון-שוק אינו בגריד כי לתוצאות השמורות אין אודדס מצורף — אין לו אפקט פה).
+TUNE_GRID = {
+    "MAX_XG": [3.5, 4.0, 4.5, 5.0],
+    "HOME_ADVANTAGE": [0.10, 0.20, 0.25, 0.35],
+}
 
 
 def _clean_results(db: dict) -> list[dict]:
@@ -120,5 +131,66 @@ def format_report(bt: dict) -> str:
     return "\n".join(lines)
 
 
+@contextlib.contextmanager
+def _override_config(overrides: dict):
+    """מחליף זמנית ערכי config (predictor קורא אותם בזמן ריצה) ומשחזר בסוף."""
+    old = {k: getattr(config, k, None) for k in overrides}
+    try:
+        for k, v in overrides.items():
+            setattr(config, k, v)
+        yield
+    finally:
+        for k, v in old.items():
+            setattr(config, k, v)
+
+
+def tune(db: dict | None = None, scoring: dict | None = None,
+         grid: dict | None = None) -> dict:
+    """סורק גריד קונפיגורציות, מנקד כל אחת ב-backtest, ומחזיר את הטובה ביותר.
+
+    אזהרה: in-sample על מעט תוצאות — נוטה ל-overfit. השתמש כרמז, לא כאמת מוחלטת;
+    אל תחיל ערך קיצון בלי הבנה. הפונקציה *לא* משנה את config — רק מדווחת.
+    """
+    db = db if db is not None else (utils.load_json(config.DB_PATH, default={}) or {})
+    scoring = scoring or config.PREDICTION_SCORING
+    grid = grid or TUNE_GRID
+    keys = list(grid)
+    current = {k: getattr(config, k, None) for k in keys}
+    current_ppg = run_backtest(db, scoring)["model"]["ppg"]
+
+    rows = []
+    for combo in itertools.product(*(grid[k] for k in keys)):
+        overrides = dict(zip(keys, combo))
+        with _override_config(overrides):
+            ppg = run_backtest(db, scoring)["model"]["ppg"]
+        rows.append({"config": overrides, "ppg": ppg})
+    rows.sort(key=lambda r: r["ppg"], reverse=True)
+    best = rows[0] if rows else {"config": current, "ppg": current_ppg}
+    return {"current": current, "current_ppg": current_ppg, "best": best, "all": rows}
+
+
+def format_tune_report(t: dict) -> str:
+    cur = ", ".join(f"{k}={v}" for k, v in t["current"].items())
+    best = ", ".join(f"{k}={v}" for k, v in t["best"]["config"].items())
+    delta = t["best"]["ppg"] - t["current_ppg"]
+    lines = [
+        f"Auto-tune — {len(t['all'])} קונפיגורציות (KICKOFF ppg)", "",
+        f"נוכחי:  {cur}  →  {t['current_ppg']:.3f} ppg",
+        f"הכי טוב: {best}  →  {t['best']['ppg']:.3f} ppg  ({delta:+.3f})", "",
+        "טופ 5:",
+    ]
+    for r in t["all"][:5]:
+        cfg = ", ".join(f"{k}={v}" for k, v in r["config"].items())
+        lines.append(f"  {r['ppg']:.3f}   {cfg}")
+    lines += ["",
+              "⚠ in-sample על מעט תוצאות — נוטה ל-overfit. החל רק אם השיפור עקבי",
+              "  והערך הגיוני; אמת מול הבייסליינים לפני deploy."]
+    return "\n".join(lines)
+
+
 if __name__ == "__main__":
-    print(format_report(run_backtest()))
+    ap = argparse.ArgumentParser(description="Backtest / auto-tune the predictor")
+    ap.add_argument("--tune", action="store_true",
+                    help="סרוק גריד קונפיגורציות ובחר את הטובה ביותר")
+    args = ap.parse_args()
+    print(format_tune_report(tune()) if args.tune else format_report(run_backtest()))

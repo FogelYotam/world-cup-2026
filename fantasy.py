@@ -112,6 +112,22 @@ def attack_multiplier(team_name: str, team_xg: dict | None) -> float:
     return max(0.5, min(2.0, txg / FANTASY_BASE_XG))
 
 
+def _attacking_rates(player: dict, pos: str) -> tuple[float, float]:
+    """קצב שערים/בישולים למשחק, עם שילוב xG/xA (חצי-חצי) כשהנתון קיים —
+    xG/xA הם חזאי יציב יותר מתפוקה בפועל (מנטרל מזל סיום)."""
+    goals_rate = per_match_rate(player.get("goals"), player.get("minutes"), _pos_goal_rate(pos))
+    assists_rate = per_match_rate(player.get("assists"), player.get("minutes"), 0.1)
+    xg = player.get("xg")
+    if xg is not None:
+        goals_rate = 0.5 * goals_rate + 0.5 * per_match_rate(
+            xg, player.get("minutes"), goals_rate)
+    xa = player.get("xa")
+    if xa is not None:
+        assists_rate = 0.5 * assists_rate + 0.5 * per_match_rate(
+            xa, player.get("minutes"), assists_rate)
+    return goals_rate, assists_rate
+
+
 def expected_points(player: dict, opponent_xg: dict, team_xg: dict | None = None) -> float:
     """צפי נקודות פנטזי לשחקן במחזור הנתון.
 
@@ -122,19 +138,7 @@ def expected_points(player: dict, opponent_xg: dict, team_xg: dict | None = None
     p_start = start_probability(player)
     att = attack_multiplier(player.get("team"), team_xg)
 
-    goals_rate = per_match_rate(player.get("goals"), player.get("minutes"), _pos_goal_rate(pos))
-    assists_rate = per_match_rate(player.get("assists"), player.get("minutes"), 0.1)
-
-    # xG/xA הם חזאי יציב יותר לתפוקה עתידית מאשר שערים/בישולים בפועל (מנטרל מזל
-    # סיום). משלבים אותם חצי-חצי בקצב למשחק כשהנתון קיים.
-    xg = player.get("xg")
-    if xg is not None:
-        xg_rate = per_match_rate(xg, player.get("minutes"), goals_rate)
-        goals_rate = 0.5 * goals_rate + 0.5 * xg_rate
-    xa = player.get("xa")
-    if xa is not None:
-        xa_rate = per_match_rate(xa, player.get("minutes"), assists_rate)
-        assists_rate = 0.5 * assists_rate + 0.5 * xa_rate
+    goals_rate, assists_rate = _attacking_rates(player, pos)
 
     pts = p_start * APPEARANCE_POINTS
     pts += goals_rate * GOAL_POINTS[pos] * p_start * att
@@ -155,6 +159,25 @@ def expected_points(player: dict, opponent_xg: dict, team_xg: dict | None = None
             pass
 
     return round(pts, 2)
+
+
+def ceiling_points(player: dict, opponent_xg: dict, team_xg: dict | None = None) -> float:
+    """אומדן 'תקרה' לבחירת קפטן — מדגיש פוטנציאל התקפי נפיץ (שערים), לא רק תוחלת.
+
+    קפטן מכפיל נקודות, לכן עדיף שחקן עם סיכוי גבוה ל-haul. בועט פנדלים מקבל תוספת
+    קצב-שער (תקרה גבוהה יותר). מחזיר EP + משקל·רכיב-תקרה-התקפי.
+    """
+    pos = normalize_position(player.get("position"))
+    p_start = start_probability(player)
+    att = attack_multiplier(player.get("team"), team_xg)
+    goals_rate, assists_rate = _attacking_rates(player, pos)
+    if player.get("penalty_taker"):
+        goals_rate += getattr(config, "PENALTY_TAKER_GOAL_BONUS", 0.15)
+
+    # רכיב התקפי בלבד (החלק הנפיץ/בעל-השונות-הגבוהה), עם דגש כפול על שערים
+    upside = (2.0 * goals_rate * GOAL_POINTS[pos] + assists_rate * ASSIST_POINTS) * p_start * att
+    ep = expected_points(player, opponent_xg, team_xg)
+    return round(ep + getattr(config, "CAPTAIN_CEILING_WEIGHT", 0.5) * upside, 2)
 
 
 def minutes_risk(player: dict) -> str:
@@ -218,6 +241,8 @@ def score_players(db: dict, predictions: list[dict]) -> list[dict]:
                 "position": pos,
                 "price": estimate_price(p, pos),
                 "expected_points": expected_points(p, opponent_xg, team_xg),
+                "ceiling_points": ceiling_points(p, opponent_xg, team_xg),
+                "penalty_taker": bool(p.get("penalty_taker")),
                 "minutes_risk": minutes_risk(p),
                 "injury_status": p.get("injury_status", "fit"),
                 "suspension_status": p.get("suspension_status", "available"),
@@ -342,8 +367,11 @@ def select_starting_eleven(squad: list[dict]) -> dict:
     bench = [p for p in squad if id(p) not in chosen]
     bench.sort(key=lambda x: (x["position"] != "GK", -x["expected_points"]))
 
-    captain = lineup[0] if lineup else None
-    vice = lineup[1] if len(lineup) > 1 else None
+    # קפטן/סגן לפי תקרה (ceiling) — מעדיף פוטנציאל שיא נפיץ, לא רק תוחלת גבוהה
+    by_ceiling = sorted(
+        lineup, key=lambda x: x.get("ceiling_points", x["expected_points"]), reverse=True)
+    captain = by_ceiling[0] if by_ceiling else None
+    vice = by_ceiling[1] if len(by_ceiling) > 1 else None
 
     return {
         "lineup": lineup,

@@ -40,7 +40,10 @@ MAIL_TO = os.getenv("MAIL_TO", "").strip()
 REPORT_PUBLIC_URL = os.getenv("REPORT_PUBLIC_URL", "").strip()
 
 # --- פרמטרים של המודל ---
-HOME_ADVANTAGE = 0.25          # תוספת לכושר התקפי ביתי (פואסון)
+# מונדיאל = רוב המשחקים במגרש ניטרלי, לכן יתרון ביתי נמוך (אומת ב-backtest auto-tune:
+# 0.10 נתן 1.421 ppg מול 1.316 ב-0.25, עקבי לאורך כל ערכי MAX_XG). מארחות
+# (ארה"ב/קנדה/מקסיקו) שמשחקות בביתן — שיפור עתידי אפשרי (יתרון ביתי מותנה).
+HOME_ADVANTAGE = 0.10          # תוספת לכושר התקפי ביתי (פואסון)
 DEFAULT_GOALS_FOR = 1.3        # ערך fallback ממוצע שערים למשחק
 DEFAULT_GOALS_AGAINST = 1.3
 MAX_GOALS_GRID = 6             # תקרת שערים בחישוב מטריצת ההסתברויות
@@ -62,6 +65,10 @@ PREDICTION_SCORING = {
 }
 POSITION_PICKS_PER_POS = 3     # כמה שחקנים מומלצים להציג בכל עמדה
 TRANSFER_CANDIDATES_PER_POS = 2  # כמה מועמדי חילוף להציג לכל עמדה
+# --- בחירת קפטן לפי תקרה (ceiling) ולא רק תוחלת ---
+# קפטן מכפיל נקודות, לכן עדיף שחקן עם פוטנציאל שיא (שערים) על פני יציב-ממוצע.
+CAPTAIN_CEILING_WEIGHT = 0.5     # משקל רכיב התקרה ההתקפי בבחירת הקפטן
+PENALTY_TAKER_GOAL_BONUS = 0.15  # תוספת קצב-שער לבועט פנדלים (תקרה גבוהה יותר)
 DIFFERENTIAL_MAX_OWNERSHIP = 5.0  # סף בעלות (%) לשחקן "דיפרנציאל"
 # כמה דיפרנציאלים להציג לכל עמדה — מבנה סגל מלא (מתמקדים במובטחי-דקות)
 DIFFERENTIAL_COUNTS = {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3}

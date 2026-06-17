@@ -160,6 +160,38 @@ def test_recent_points_boosts_expected_points():
     assert fantasy.expected_points(cold, {}, {}) < ep_base
 
 
+class _FakeOfficialGemini:
+    enabled = True
+
+    def ask_json(self, prompt, default=None):
+        return {"players": [
+            # ניקוד FIFA רשמי קיים — צריך לגבור על החישוב העצמאי (1*4+2=6)
+            {"name": "Star A", "team": "Spain", "position": "FWD", "goals": 1,
+             "assists": 0, "minutes": 90, "clean_sheet": False,
+             "fantasy_points": 13, "date": "d1"},
+            # אין ניקוד רשמי — נופלים לחישוב עצמאי
+            {"name": "Star B", "team": "Brazil", "position": "FWD", "goals": 1,
+             "assists": 0, "minutes": 90, "clean_sheet": False, "date": "d1"},
+        ]}
+
+
+def test_official_fifa_points_preferred_over_computed():
+    db = {"players": []}
+    scraper.ingest_player_results(_FakeOfficialGemini(), db)
+    by_name = {r["name"]: r for r in db["player_results"]}
+    assert by_name["Star A"]["official"] is True
+    assert by_name["Star A"]["points"] == 13       # רשמי, לא 6 המחושב
+    assert by_name["Star B"]["official"] is False
+    assert by_name["Star B"]["points"] == 6         # fallback מחושב
+
+
+def test_xg_boosts_expected_points():
+    base = {"position": "FWD", "team": "X", "minutes": 90, "goals": 0,
+            "assists": 0, "expected_start": True}
+    assert (fantasy.expected_points(dict(base, xg=0.8), {}, {})
+            > fantasy.expected_points(dict(base, xg=0.0), {}, {}))
+
+
 def test_injured_player_flagged_to_avoid(sample_db):
     preds = predictor.predict_all(sample_db)
     fan = fantasy.build_fantasy(sample_db, preds)

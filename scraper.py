@@ -586,10 +586,13 @@ def ingest_player_results(gemini: GeminiClient, db: dict) -> int:
         f"מהם ביצועי השחקנים הבולטים במשחקי {config.COMPETITION} שכבר הסתיימו "
         "(עד 60 השחקנים המובילים מהמחזור האחרון, מכל הקווים — "
         "שוערים/בלמים/קשרים/חלוצים)? כלול רק משחקים שנגמרו. "
+        "לכל שחקן ציין את מספר נקודות הפנטזי הרשמיות שצבר באותו מחזור במשחק "
+        "FIFA World Cup Fantasy הרשמי (play.fifa.com/fantasy) בשדה fantasy_points — "
+        "זהו הניקוד המורכב הרשמי (כולל בונוסים), עדיף על חישוב עצמאי. "
         "החזר JSON: {\"players\": [{\"name\": str, \"team\": str, "
         "\"position\": \"GK\"|\"DEF\"|\"MID\"|\"FWD\", \"goals\": int, "
         "\"assists\": int, \"minutes\": int, \"clean_sheet\": bool, "
-        "\"date\": str}]} עם שמות באנגלית."
+        "\"fantasy_points\": number, \"date\": str}]} עם שמות באנגלית."
     )
     raw = gemini.ask_json(prompt, default=None)
     rows = (raw or {}).get("players") if isinstance(raw, dict) else None
@@ -629,11 +632,15 @@ def ingest_player_results(gemini: GeminiClient, db: dict) -> int:
         minutes = int(_num(r.get("minutes"), 0))
         cs = bool(r.get("clean_sheet"))
         pos = r.get("position")
-        actual = _fantasy_points_for(pos, goals, assists, minutes, cs)
+        # מעדיפים את הניקוד הרשמי המורכב של FIFA; נופלים לחישוב עצמאי רק אם חסר
+        official = _num(r.get("fantasy_points"), None)
+        actual = round(official, 2) if official is not None \
+            else _fantasy_points_for(pos, goals, assists, minutes, cs)
         db["player_results"].append({
             "name": name, "team": team, "date": r.get("date"),
             "goals": goals, "assists": assists, "minutes": minutes,
             "clean_sheet": cs, "points": actual,
+            "official": official is not None,
         })
         seen.add(key)
         added += 1

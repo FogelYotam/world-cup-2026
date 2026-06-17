@@ -125,6 +125,17 @@ def expected_points(player: dict, opponent_xg: dict, team_xg: dict | None = None
     goals_rate = per_match_rate(player.get("goals"), player.get("minutes"), _pos_goal_rate(pos))
     assists_rate = per_match_rate(player.get("assists"), player.get("minutes"), 0.1)
 
+    # xG/xA הם חזאי יציב יותר לתפוקה עתידית מאשר שערים/בישולים בפועל (מנטרל מזל
+    # סיום). משלבים אותם חצי-חצי בקצב למשחק כשהנתון קיים.
+    xg = player.get("xg")
+    if xg is not None:
+        xg_rate = per_match_rate(xg, player.get("minutes"), goals_rate)
+        goals_rate = 0.5 * goals_rate + 0.5 * xg_rate
+    xa = player.get("xa")
+    if xa is not None:
+        xa_rate = per_match_rate(xa, player.get("minutes"), assists_rate)
+        assists_rate = 0.5 * assists_rate + 0.5 * xa_rate
+
     pts = p_start * APPEARANCE_POINTS
     pts += goals_rate * GOAL_POINTS[pos] * p_start * att
     pts += assists_rate * ASSIST_POINTS * p_start * att

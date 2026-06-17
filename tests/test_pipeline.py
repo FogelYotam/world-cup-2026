@@ -241,6 +241,34 @@ def test_tune_finds_best_and_restores_config():
     assert config.HOME_ADVANTAGE == before     # tune לא משנה config
 
 
+def test_filter_to_participants_drops_non_wc_nations():
+    db = {
+        "teams": [{"team_name": n} for n in (
+            ["Czechia", "Netherlands", "Brazil", "USA"]
+            + [f"Nat{i}" for i in range(40)])],  # >=24 כדי לעבור את רשת הביטחון
+        "players": [
+            {"player_name": "Di Lorenzo", "team": "Italy"},        # לא העפילה
+            {"player_name": "Lunin", "team": "Ukraine"},           # לא העפילה
+            {"player_name": "Soucek", "team": "Czech Republic"},   # וריאנט של Czechia — נשאר
+            {"player_name": "Gakpo", "team": "Netherlands"},       # משתתפת — נשאר
+        ],
+        "differentials": {"GK": [{"player_name": "Lunin", "team": "Ukraine"}],
+                          "MID": [{"player_name": "Gakpo", "team": "Netherlands"}]},
+    }
+    removed = scraper.filter_to_participants(db)
+    names = {p["player_name"] for p in db["players"]}
+    assert removed == 3      # 2 מהבריכה (Italy/Ukraine) + 1 מהדיפרנציאלים (Lunin)
+    assert names == {"Soucek", "Gakpo"}          # וריאנט שם נשמר, נבחרות לא-משתתפות הוסרו
+    assert db["differentials"]["GK"] == []         # Lunin הוסר גם מהדיפרנציאלים
+    assert len(db["differentials"]["MID"]) == 1
+
+
+def test_filter_to_participants_safety_net_when_no_teams():
+    db = {"teams": [], "players": [{"player_name": "X", "team": "Italy"}]}
+    assert scraper.filter_to_participants(db) == 0      # לא מסננים בלי רשימת נבחרות
+    assert len(db["players"]) == 1
+
+
 def test_squad_repaired_to_within_budget():
     # מאגר עם כוכבים יקרים + מספיק חלופות זולות בכל עמדה → חייב להיכנס ל-100M
     scored = []

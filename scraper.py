@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 import time
+import unicodedata
 
 import config
 import odds as odds_mod
@@ -217,6 +218,66 @@ def build_team(raw: dict) -> dict:
     }
 
 
+# נרמול שמות נבחרות — מאחד וריאנטים נפוצים לצורה קנונית (ללא רווחים/סימנים)
+_NATION_ALIASES = {
+    "czechrepublic": "czechia",
+    "capeverde": "caboverde",
+    "ivorycoast": "cotedivoire",
+    "turkey": "turkiye",
+    "unitedstates": "usa", "unitedstatesofamerica": "usa", "us": "usa",
+    "korearepublic": "southkorea", "republicofkorea": "southkorea",
+    "southkorearepublic": "southkorea",
+    "democraticrepublicofcongo": "drcongo", "congodr": "drcongo",
+}
+
+
+def _clean_nation(name) -> str:
+    """מנרמל שם נבחרת: ללא ניקוד/רישיות/סימנים, עם מיפוי וריאנטים נפוצים."""
+    s = unicodedata.normalize("NFKD", str(name or "")).encode("ascii", "ignore").decode()
+    s = re.sub(r"[^a-z0-9]", "", s.lower())
+    return _NATION_ALIASES.get(s, s)
+
+
+def participating_nations(db: dict) -> set[str]:
+    """קבוצת הנבחרות המשתתפות בפועל (מנורמלת) — מתוך db['teams'] (מקור האמת,
+    48 נבחרות) ובגיבוי שמות מהמשחקים/תוצאות (נבחרות אמיתיות בלבד)."""
+    nats = {_clean_nation(t.get("team_name"))
+            for t in db.get("teams", []) if t.get("team_name")}
+    for key, fields in (("matches", ("home_team", "away_team")),
+                        ("results", ("home", "away"))):
+        for r in db.get(key, []) or []:
+            for f in fields:
+                if r.get(f):
+                    nats.add(_clean_nation(r.get(f)))
+    nats.discard("")
+    return nats
+
+
+def filter_to_participants(db: dict) -> int:
+    """מסיר מהבריכה ומהדיפרנציאלים שחקנים מנבחרות שאינן משתתפות במונדיאל
+    (למשל איטליה — לא העפילה). מחזיר כמה שחקנים הוסרו. best-effort; לא זורק."""
+    nats = participating_nations(db)
+    if len(nats) < 24:  # רשת ביטחון: אם אין רשימת נבחרות שמישה — לא מסננים בכלל
+        log.warning("סינון נבחרות דולג — רשימת נבחרות חסרה (%d)", len(nats))
+        return 0
+    removed = 0
+    players = db.get("players")
+    if isinstance(players, list):
+        kept = [p for p in players if _clean_nation(p.get("team")) in nats]
+        removed += len(players) - len(kept)
+        db["players"] = kept
+    diffs = db.get("differentials")
+    if isinstance(diffs, dict):
+        for pos, lst in diffs.items():
+            if isinstance(lst, list):
+                kept = [e for e in lst if _clean_nation(e.get("team")) in nats]
+                removed += len(lst) - len(kept)
+                diffs[pos] = kept
+    if removed:
+        log.info("סינון נבחרות לא-משתתפות: הוסרו %d שחקנים", removed)
+    return removed
+
+
 def build_player(raw: dict) -> dict:
     return {
         "player_id": utils.coalesce(raw.get("player_id"), raw.get("id")),
@@ -308,7 +369,9 @@ def fetch_fantasy_player_pool(gemini: GeminiClient, limit: int = 120) -> list[di
     prompt = (
         f"בהתבסס על המקורות המובילים בעולם לפנטזי כדורגל ({sources}), החזר את "
         f"{limit} השחקנים הרלוונטיים ביותר ל-FIFA Fantasy ב-{config.COMPETITION} "
-        "(מגוון נבחרות ועמדות). לכל שחקן ספק נתונים עדכניים. החזר JSON: "
+        "(מגוון נבחרות ועמדות). חובה: רק שחקנים מנבחרות שהעפילו למונדיאל 2026 "
+        "ושנמצאים בסגל ה-26 הרשמי שלהן (איטליה, למשל, לא העפילה — לא לכלול). "
+        "לכל שחקן ספק נתונים עדכניים. החזר JSON: "
         "{\"players\": [{\"name\": str, \"team\": str, "
         "\"position\": \"GK\"|\"DEF\"|\"MID\"|\"FWD\", "
         "\"price\": number (מחיר FIFA Fantasy במיליון), "
@@ -346,6 +409,8 @@ def fetch_differentials(gemini: GeminiClient, counts: dict | None = None) -> dic
         f"מצא את שחקני ה-DIFFERENTIAL הטובים ביותר לכל עמדה: בעלות (ownership) "
         f"מתחת ל-{thr}%, **ועם מקום מובטח בהרכב הפותח** (לא ספסלנים/סיכון רוטציה), "
         "וערך גבוה (כושר, פיקסצ'ר קל, בעיטות עונשין/קרן). "
+        "חובה: רק שחקנים מנבחרות שהעפילו למונדיאל 2026 ובסגל ה-26 הרשמי "
+        "(איטליה לא העפילה — לא לכלול). "
         f"החזר בדיוק: {counts.get('GK',3)} שוערים, {counts.get('DEF',5)} מגנים, "
         f"{counts.get('MID',5)} קשרים, {counts.get('FWD',3)} חלוצים. "
         "JSON בלבד: {\"GK\":[{\"name\":str,\"team\":str,\"ownership\":number,"
@@ -715,6 +780,7 @@ def collect(days_ahead: int = 3) -> dict:
         odds_mod.attach_to_matches(existing, odds_map)
         ingest_results(gemini, db)  # למידה מתוצאות אמת — מעדכן חוזק נבחרות לניחושים הבאים
         ingest_player_results(gemini, db)  # למידה מביצועי שחקנים — מעדכן ציוני פנטזי
+        filter_to_participants(db)  # מסנן שחקנים מנבחרות שלא במונדיאל
         utils.save_json(config.DB_PATH, db)
         return db
 
@@ -755,6 +821,8 @@ def collect(days_ahead: int = 3) -> dict:
     ingest_results(gemini, db)
     # למידה מביצועי שחקנים בפועל — מעדכן את ציוני הפנטזי לפי מי שהופיע/הבקיע
     ingest_player_results(gemini, db)
+    # סינון שחקנים מנבחרות שאינן משתתפות במונדיאל (איטליה וכו') — בריכה ודיפרנציאלים
+    filter_to_participants(db)
 
     utils.save_json(config.DB_PATH, db)
     log.info(

@@ -11,6 +11,7 @@ import json
 import re
 import time
 import unicodedata
+import urllib.request
 
 import config
 import odds as odds_mod
@@ -239,8 +240,13 @@ def _clean_nation(name) -> str:
 
 
 def participating_nations(db: dict) -> set[str]:
-    """קבוצת הנבחרות המשתתפות בפועל (מנורמלת) — מתוך db['teams'] (מקור האמת,
-    48 נבחרות) ובגיבוי שמות מהמשחקים/תוצאות (נבחרות אמיתיות בלבד)."""
+    """קבוצת הנבחרות המשתתפות בפועל (מנורמלת). מעדיפה את db['participants'] —
+    48 שמות הסגלים הרשמיים מ-FIFA (מקור אמת); אחרת נופלת ל-db['teams']+משחקים."""
+    explicit = db.get("participants")
+    if isinstance(explicit, list) and len(explicit) >= 24:
+        nats = {_clean_nation(x) for x in explicit}
+        nats.discard("")
+        return nats
     nats = {_clean_nation(t.get("team_name"))
             for t in db.get("teams", []) if t.get("team_name")}
     for key, fields in (("matches", ("home_team", "away_team")),
@@ -357,6 +363,89 @@ def fetch_match_context(gemini: GeminiClient, match: dict) -> dict:
         "(לכל שחקן: name, position, injury_status)."
     )
     return gemini.ask_json(prompt, default={"home": {}, "away": {}}) or {}
+
+
+def _http_get_json(url: str, timeout: int = 20):
+    """GET פשוט שמחזיר JSON (stdlib, ללא תלות). זורק בכשל — הקוראים עוטפים."""
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def fetch_official_pool() -> list[dict]:
+    """מושך את בריכת השחקנים הרשמית של FIFA World Cup Fantasy (players.json +
+    squads.json) — מקור האמת: רק שחקנים בסגלים הרשמיים, עם מחיר/בעלות/כושר/
+    נקודות רשמיות. מחזיר רשימת build_player (עם recent_points מהממוצע הרשמי).
+    best-effort; בכל כשל מחזיר [] כדי שניפול חזרה לבריכת Gemini."""
+    try:
+        squads = _http_get_json(config.FIFA_FANTASY_SQUADS_URL)
+        players = _http_get_json(config.FIFA_FANTASY_PLAYERS_URL)
+    except Exception as exc:  # noqa: BLE001
+        log.warning("בריכה רשמית מ-FIFA נכשלה: %s — נופלים ל-Gemini", exc)
+        return []
+    if not isinstance(players, list) or not isinstance(squads, list):
+        log.warning("בריכה רשמית מ-FIFA: מבנה לא צפוי")
+        return []
+
+    squad_name = {s.get("id"): s.get("name") for s in squads
+                  if isinstance(s, dict) and s.get("name")}
+    pool = []
+    for p in players:
+        if not isinstance(p, dict):
+            continue
+        name = p.get("knownName") or " ".join(
+            x for x in (p.get("firstName"), p.get("lastName")) if x).strip()
+        team = squad_name.get(p.get("squadId"))
+        if not name or not team:
+            continue
+        stats = p.get("stats") or {}
+        status = str(p.get("status") or "").lower()
+        mstat = str(p.get("matchStatus") or "").lower()
+        rec = build_player({
+            "player_id": p.get("id"),
+            "player_name": name,
+            "team": team,
+            "position": p.get("position"),
+            "price": p.get("price"),
+            "ownership": p.get("percentSelected"),
+            "form": stats.get("form"),
+            "expected_start": True if mstat == "start"
+            else (False if mstat in ("sub", "not_in_squad") else None),
+            # לא בסגל המחזור → לא זמין לבחירה; מורחק → suspended
+            "injury_status": "out" if mstat == "not_in_squad" else "fit",
+            "suspension_status": "suspended" if status == "suspended" else "available",
+        })
+        # נקודות פנטזי רשמיות (ממוצע למחזור) — אות 'recent_points' שמנוע הפנטזי משלב
+        rec["recent_points"] = _num(stats.get("avgPoints"), None)
+        rec["fifa_total_points"] = _num(stats.get("totalPoints"), None)
+        pool.append(rec)
+    log.info("בריכה רשמית מ-FIFA: %d שחקנים (%d נבחרות)", len(pool), len(squad_name))
+    return pool
+
+
+def official_differentials(pool: list[dict], counts: dict | None = None,
+                           max_ownership: float | None = None) -> dict:
+    """גוזר דיפרנציאלים מהבריכה הרשמית: בעלות נמוכה + מקום מובטח בהרכב,
+    מדורגים לפי נקודות הפנטזי הרשמיות. מחזיר {GK:[...],DEF:[...],MID:[...],FWD:[...]}."""
+    counts = counts or getattr(config, "DIFFERENTIAL_COUNTS",
+                               {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3})
+    thr = max_ownership if max_ownership is not None else getattr(
+        config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
+    out: dict[str, list] = {}
+    for pos, n in counts.items():
+        cands = [p for p in pool
+                 if p.get("position") == pos
+                 and p.get("expected_start") is True
+                 and _num(p.get("ownership"), 999) <= thr]
+        cands.sort(key=lambda p: (_num(p.get("recent_points"), 0),
+                                  _num(p.get("form"), 0)), reverse=True)
+        out[pos] = [{
+            "player_name": p["player_name"], "team": p["team"], "position": pos,
+            "ownership": p.get("ownership"), "price": p.get("price"),
+            "expected_points": p.get("recent_points"), "expected_start": True,
+            "reason": f"בעלות {p.get('ownership')}% · ממוצע רשמי {p.get('recent_points')} נק'",
+        } for p in cands[:n]]
+    return out
 
 
 def fetch_fantasy_player_pool(gemini: GeminiClient, limit: int = 120) -> list[dict]:
@@ -769,11 +858,17 @@ def collect(days_ahead: int = 3) -> dict:
         log.warning("לא נמצאו משחקים חדשים — משמרים DB קיים ומרעננים אודדס/פציעות")
         existing = db.get("matches", [])
         _refresh_injuries(gemini, db)
-        pool = fetch_fantasy_player_pool(gemini)
-        if pool:
+        # מקור אמת: הבריכה הרשמית של FIFA; נופלים ל-Gemini רק אם נכשלה
+        official = fetch_official_pool()
+        pool = official or fetch_fantasy_player_pool(gemini)
+        if official:
+            db["participants"] = sorted({p["team"] for p in official if p.get("team")})
+            db["players"] = pool                       # הרשמית מחליפה לגמרי
+        elif pool:
             db["players"] = _dedupe_players(list(db.get("players", [])) + pool)
         _enrich_fantasy_data(gemini, db)
-        db["differentials"] = fetch_differentials(gemini) or db.get("differentials", {})
+        db["differentials"] = (official_differentials(official) if official
+                               else fetch_differentials(gemini)) or db.get("differentials", {})
         db["fixture_difficulty"] = (fetch_fixture_difficulty(gemini)
                                     or db.get("fixture_difficulty", {}))
         odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
@@ -801,17 +896,22 @@ def collect(days_ahead: int = 3) -> dict:
     odds_map = odds_mod.fetch_consensus_odds(gemini, matches)
     odds_mod.attach_to_matches(matches, odds_map)
 
-    # בריכת פנטזי רחבה מהאתרים המובילים — מצטרפת לשחקני המשחקים
-    pool = fetch_fantasy_player_pool(gemini)
+    # מקור אמת לבריכה: FIFA הרשמי (סגלים, מחיר, בעלות, נקודות); נופלים ל-Gemini
+    # רק אם נכשל. שחקני המשחקים (key players מה-context) מצורפים בכל מקרה.
+    official = fetch_official_pool()
+    pool = official or fetch_fantasy_player_pool(gemini)
+    if official:
+        db["participants"] = sorted({p["team"] for p in official if p.get("team")})
     db["matches"] = matches
     db["teams"] = list(teams.values())
     db["players"] = _dedupe_players(players + pool)
 
-    # העשרה בנתוני פנטזי מהאתרים המומלצים (מחיר/בעלות/כושר/xG)
+    # העשרה בנתוני פנטזי מהאתרים המומלצים (xG/xA/פנדלים — משלים את הרשמי)
     _enrich_fantasy_data(gemini, db)
 
-    # דיפרנציאלים לכל עמדה — מתוך כל מאגר ה-1000+ שחקנים
-    db["differentials"] = fetch_differentials(gemini) or db.get("differentials", {})
+    # דיפרנציאלים — מהבריכה הרשמית (בעלות+הרכב אמיתיים); נפילה ל-Gemini
+    db["differentials"] = (official_differentials(official) if official
+                           else fetch_differentials(gemini)) or db.get("differentials", {})
     # קושי המחזור הקרוב לכל נבחרת — להמלצות חילוף
     db["fixture_difficulty"] = (fetch_fixture_difficulty(gemini)
                                 or db.get("fixture_difficulty", {}))

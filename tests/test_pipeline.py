@@ -241,6 +241,50 @@ def test_tune_finds_best_and_restores_config():
     assert config.HOME_ADVANTAGE == before     # tune לא משנה config
 
 
+_FAKE_SQUADS = [{"id": 1, "name": "Argentina"}, {"id": 2, "name": "Sweden"}]
+_FAKE_PLAYERS = [
+    {"id": 10, "firstName": "Lionel", "lastName": "Messi", "knownName": None,
+     "squadId": 1, "position": "FWD", "price": 10.0, "status": "playing",
+     "matchStatus": "start", "percentSelected": 20.0,
+     "stats": {"totalPoints": 30, "avgPoints": 15.0, "form": 8.0, "lastRoundPoints": 19}},
+    {"id": 11, "firstName": "Yasin", "lastName": "Ayari", "knownName": None,
+     "squadId": 2, "position": "MID", "price": 5.3, "status": "playing",
+     "matchStatus": "start", "percentSelected": 1.0,
+     "stats": {"totalPoints": 17, "avgPoints": 8.5, "form": 6.0, "lastRoundPoints": 17}},
+    {"id": 12, "firstName": "Benched", "lastName": "Guy", "knownName": None,
+     "squadId": 2, "position": "DEF", "price": 4.0, "status": "playing",
+     "matchStatus": "not_in_squad", "percentSelected": 0.5, "stats": {"avgPoints": 0}},
+]
+
+
+def test_official_pool_parses(monkeypatch):
+    def fake_get(url, timeout=20):
+        return _FAKE_SQUADS if "squads" in url else _FAKE_PLAYERS
+    monkeypatch.setattr(scraper, "_http_get_json", fake_get)
+    pool = scraper.fetch_official_pool()
+    by_name = {p["player_name"]: p for p in pool}
+    assert by_name["Lionel Messi"]["team"] == "Argentina"
+    assert by_name["Lionel Messi"]["price"] == 10.0
+    assert by_name["Lionel Messi"]["ownership"] == 20.0
+    assert by_name["Lionel Messi"]["recent_points"] == 15.0   # avgPoints הרשמי
+    assert by_name["Lionel Messi"]["expected_start"] is True
+    # not_in_squad → לא זמין לבחירה
+    assert by_name["Benched Guy"]["injury_status"] == "out"
+    assert by_name["Benched Guy"]["expected_start"] is False
+
+
+def test_official_differentials_from_pool(monkeypatch):
+    def fake_get(url, timeout=20):
+        return _FAKE_SQUADS if "squads" in url else _FAKE_PLAYERS
+    monkeypatch.setattr(scraper, "_http_get_json", fake_get)
+    pool = scraper.fetch_official_pool()
+    diffs = scraper.official_differentials(pool, counts={"MID": 3}, max_ownership=5.0)
+    mids = diffs["MID"]
+    assert any(d["player_name"] == "Yasin Ayari" for d in mids)  # 1% owned, nailed
+    # מסי לא דיפרנציאל (20% בעלות) ולא MID
+    assert all(d["player_name"] != "Lionel Messi" for d in mids)
+
+
 def test_filter_to_participants_drops_non_wc_nations():
     db = {
         "teams": [{"team_name": n} for n in (

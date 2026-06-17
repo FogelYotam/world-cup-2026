@@ -79,6 +79,11 @@ DIFFERENTIAL_MAX_OWNERSHIP = 5.0  # סף בעלות (%) לשחקן "דיפרנצ
 # כמה דיפרנציאלים להציג לכל עמדה — מבנה סגל מלא (מתמקדים במובטחי-דקות)
 DIFFERENTIAL_COUNTS = {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3}
 
+# --- מקור רשמי של FIFA World Cup Fantasy (מקור האמת לבריכת השחקנים) ---
+# קבצי JSON ציבוריים (ללא אימות) — הסגלים הרשמיים בלבד, עם מחיר/בעלות/כושר/נקודות.
+FIFA_FANTASY_PLAYERS_URL = "https://play.fifa.com/json/fantasy/players.json"
+FIFA_FANTASY_SQUADS_URL = "https://play.fifa.com/json/fantasy/squads.json"
+
 # --- תחרות ---
 COMPETITION = "FIFA World Cup 2026"
 SEASON = "2026"

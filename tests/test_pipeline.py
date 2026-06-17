@@ -192,6 +192,41 @@ def test_xg_boosts_expected_points():
             > fantasy.expected_points(dict(base, xg=0.0), {}, {}))
 
 
+def test_backtest_scores_and_baselines():
+    import backtest
+    scoring = config.PREDICTION_SCORING
+    results = [
+        {"home": "A", "away": "B", "home_goals": 1, "away_goals": 1, "date": "d1"},
+        {"home": "C", "away": "D", "home_goals": 2, "away_goals": 0, "date": "d2"},
+        {"home": "E", "away": "F", "home_goals": 0, "away_goals": 0, "date": "d3"},
+    ]
+    # בייסליין "תמיד 1-1" — מדויק על שני התיקו, כיוון נכון על שניהם, 0 על הניצחון
+    draw = backtest.evaluate(results, lambda h, a: (1, 1), scoring)
+    assert draw["n"] == 3
+    assert draw["exact"] == 1                 # רק 1-1 מדויק (0-0 לא)
+    assert draw["direction"] == 2             # שני התיקו בכיוון נכון
+    # מנבא מושלם — כל המשחקים מדויקים
+    perfect = backtest.evaluate(
+        results, lambda h, a: {"A": (1, 1), "C": (2, 0), "E": (0, 0)}[h], scoring)
+    assert perfect["exact"] == 3
+    assert perfect["points"] == 3 * scoring["exact"]
+
+
+def test_run_backtest_structure():
+    import backtest
+    db = {
+        "teams": [{"team_name": "A", "goals_for": 2.5, "goals_against": 0.5},
+                  {"team_name": "B", "goals_for": 0.6, "goals_against": 2.4}],
+        "results": [{"home": "A", "away": "B", "home_goals": 3,
+                     "away_goals": 0, "date": "d1"}],
+    }
+    bt = backtest.run_backtest(db)
+    assert bt["n_results"] == 1
+    for key in ("model", "baseline_home_1_0", "baseline_draw_1_1"):
+        assert key in bt and bt[key]["n"] == 1
+    assert "המודל" in backtest.format_report(bt)
+
+
 def test_injured_player_flagged_to_avoid(sample_db):
     preds = predictor.predict_all(sample_db)
     fan = fantasy.build_fantasy(sample_db, preds)

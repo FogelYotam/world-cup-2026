@@ -1,3 +1,82 @@
 {
-  "last_refresh": "2026-06-18T05:02:06.900437+00:00"
+  "last_refresh": "2026-06-18T05:02:06.900437+00:00",
+  "pending": "lineup_chat",
+  "squad": [
+    {
+      "player_name": "Kobel",
+      "team": "",
+      "position": "GK"
+    },
+    {
+      "player_name": "Varela",
+      "team": "",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Kimmich",
+      "team": "",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Cucurella",
+      "team": "",
+      "position": "DEF"
+    },
+    {
+      "player_name": "McTominay",
+      "team": "",
+      "position": "MID"
+    },
+    {
+      "player_name": "Wirtz",
+      "team": "",
+      "position": "MID"
+    },
+    {
+      "player_name": "Olise",
+      "team": "",
+      "position": "MID"
+    },
+    {
+      "player_name": "Bruno Fer_",
+      "team": "",
+      "position": "MID"
+    },
+    {
+      "player_name": "Haaland",
+      "team": "",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Oyarzabal",
+      "team": "",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Havertz",
+      "team": "",
+      "position": "FWD"
+    },
+    {
+      "player_name": "Galindez",
+      "team": "",
+      "position": "GK"
+    },
+    {
+      "player_name": "Muñoz",
+      "team": "",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Nuno Men...",
+      "team": "",
+      "position": "DEF"
+    },
+    {
+      "player_name": "Sabitzer",
+      "team": "",
+      "position": "MID"
+    }
+  ],
+  "captain": "Kimmich"
 }

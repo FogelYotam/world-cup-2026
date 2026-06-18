@@ -1,142 +1,493 @@
 {
-  "generated_at": "2026-06-17T12:43:57.576936+00:00",
+  "generated_at": "2026-06-18T08:56:36.375976+00:00",
   "fixtures": [
-    "A1",
-    "A2",
-    "B1",
-    "B2",
-    "C1",
-    "C2",
-    "D1",
-    "D2",
-    "E1",
-    "E2",
-    "F1",
-    "F2",
-    "G1",
-    "G2",
-    "H1",
-    "H2",
-    "I1",
-    "I2",
-    "J1",
-    "J2",
-    "K1",
-    "K2",
-    "L1",
-    "L2"
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51",
+    "52",
+    "53",
+    "54",
+    "55",
+    "56",
+    "57",
+    "58",
+    "59",
+    "60",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "66",
+    "67",
+    "68",
+    "69",
+    "70",
+    "71",
+    "72"
   ],
   "injured": [
-    "Ansu Fati|Spain",
-    "Cristian Romero|Argentina",
-    "Ederson|Brazil",
-    "Ivan Perisic|Croatia",
-    "Jurrien Timber|Netherlands",
-    "Karim Benzema|France",
-    "Marc-Andre ter Stegen|Germany",
-    "Mason Mount|England",
-    "Mikel Merino|Spain",
-    "Neymar|Brazil",
-    "Reece James|England",
-    "Rodrigo Bentancur|Uruguay",
-    "Takehiro Tomiyasu|Japan"
+    "Abde Ezzalzouli|Morocco",
+    "Abdelatif Ramdane|Algeria",
+    "Abdelhamid Aït Boudlal|Morocco",
+    "Abdullah Al Salem|Saudi Arabia",
+    "Abdulquddus Atiah|Saudi Arabia",
+    "Abdulrahman Al Sanbi|Saudi Arabia",
+    "Achraf Hakimi|Morocco",
+    "Adam Bareiro|Paraguay",
+    "Adil Aouchiche|Algeria",
+    "Adrián Alcaraz|Paraguay",
+    "Agustín Giay|Argentina",
+    "Agustín Sández|Paraguay",
+    "Agustín Álvarez|Uruguay",
+    "Ahmad Al Juaidi|Jordan",
+    "Ahmad Assaf|Jordan",
+    "Ahmed Yahya|Iraq",
+    "Ahmetcan Kaplan|Türkiye",
+    "Aidan Morris|USA",
+    "Alan Benítez|Paraguay",
+    "Alan Núñez|Paraguay",
+    "Alan Varela|Argentina",
+    "Alcides Benítez|Paraguay",
+    "Alejandro Garnacho|Argentina",
+    "Alejandro Gómez|Mexico",
+    "Alex Robertson|Australia",
+    "Alexander Djiku|Ghana",
+    "Alexis Gutiérrez|Mexico",
+    "Alexéi Domínguez|Mexico",
+    "Amin Chiakha|Algeria",
+    "Amirhossein Mahmoudi|IR Iran",
+    "Ante Suto|Australia",
+    "Anthony Mandréa|Algeria",
+    "Antonio Rodríguez|Mexico",
+    "Aníbal Moreno|Argentina",
+    "Aqtay Abdallah|Egypt",
+    "Aral Simsir|Türkiye",
+    "Atakan Karazor|Türkiye",
+    "Bassam Al Rawi|Qatar",
+    "Benjamín García|Uruguay",
+    "Blás Riveros|Paraguay",
+    "Brandon Borrello|Australia",
+    "Brandon Petersen|South Africa",
+    "Brian Barboza|Uruguay",
+    "Brooklyn Poggenpoel|South Africa",
+    "Bruno Caicedo|Ecuador",
+    "Bryan González|Mexico",
+    "Carlos Coronel|Paraguay",
+    "Carlos González|Paraguay",
+    "Carlos Moreno|Mexico",
+    "Carlos Rodríguez|Mexico",
+    "Cho Yu-Min|Korea Republic",
+    "Christoph Baumgartner|Austria",
+    "Christophe Kabongo|Czechia",
+    "Claudio Echeverri|Argentina",
+    "Clément Akpa|Côte d'Ivoire",
+    "Cristhian Loor|Ecuador",
+    "César Montes|Mexico",
+    "Daniel Jebbison|Canada",
+    "Dario Naamo|Iraq",
+    "Darwin Guagua|Ecuador",
+    "Deinner Ordóñez|Ecuador",
+    "Demir Ege Tiknaz|Türkiye",
+    "Deni Juric|Australia",
+    "Diego González|Paraguay",
+    "Diego Lainez|Mexico",
+    "Diego León|Paraguay",
+    "Ederson Castillo|Ecuador",
+    "Efraín Álvarez|Mexico",
+    "El Mehdi Al Harrar|Morocco",
+    "Elías Montiel|Mexico",
+    "Emil Holm|Sweden",
+    "Emiliano Buendía|Argentina",
+    "Enso González|Paraguay",
+    "Equi Fernández|Argentina",
+    "Ersin Destanoglu|Türkiye",
+    "Everardo López|Mexico",
+    "Facundo Cambeses|Argentina",
+    "Facundo Martínez|Uruguay",
+    "Facundo Torres|Uruguay",
+    "Fahad Younis|Qatar",
+    "Fran Karacic|Australia",
+    "Franco Mastantuono|Argentina",
+    "Fricio Caicedo|Ecuador",
+    "Gabriel Rojas|Argentina",
+    "Germán Berterame|Mexico",
+    "Germán Pezzella|Argentina",
+    "Gianluca Prestianni|Argentina",
+    "Guido Rodríguez|Argentina",
+    "Hadi Habibinejad|IR Iran",
+    "Hasan Abdulkareem|Iraq",
+    "Hugo Cuenca|Paraguay",
+    "Ibrahim Gomis|Morocco",
+    "Ibrahim Sabra|Jordan",
+    "Ilay Camara|Senegal",
+    "Imrân Louza|Morocco",
+    "Ismaël Baouf|Morocco",
+    "Iván Anderson|Panama",
+    "JD Gunn|Panama",
+    "Jacen Russell-Rowe|Canada",
+    "Jaloliddin Masharipov|Uzbekistan",
+    "Jamie Knight-Lebel|Canada",
+    "Jasurbek Jaloliddinov|Uzbekistan",
+    "Jerdy Schouten|Netherlands",
+    "Jeremie Frimpong|Netherlands",
+    "Jeremy Márquez|Mexico",
+    "Jesús Angulo|Mexico",
+    "Joe Gauci|Australia",
+    "John McGinn|Scotland",
+    "John Mercado|Ecuador",
+    "Johnny Cardoso|USA",
+    "Jonas Urbig|Germany",
+    "Jordán Carrillo|Mexico",
+    "Jorge Ruvalcaba|Mexico",
+    "José Hurtado|Ecuador",
+    "José Murillo|Panama",
+    "José Rodríguez|Uruguay",
+    "Juan Espínola|Paraguay",
+    "Julio Enciso|Paraguay",
+    "Julián Araujo|Mexico",
+    "Jurriën Timber|Netherlands",
+    "Jussef Nasrawe|Iraq",
+    "Justin Bijlow|Netherlands",
+    "Kadir Barría|Panama",
+    "Karar Nabeel|Iraq",
+    "Kasra Taheri|IR Iran",
+    "Kees Smit|Netherlands",
+    "Kevin Castañeda|Mexico",
+    "Kevin Mac Allister|Argentina",
+    "Kieran Tierney|Scotland",
+    "Kilian Belazzoug|Algeria",
+    "Kumel Saadi|Iraq",
+    "Lautaro Di Lollo|Argentina",
+    "Lebohang Maboe|South Africa",
+    "Lennart Karl|Germany",
+    "Leonardo Balerdi|Argentina",
+    "Leverton Pierre|Haiti",
+    "Lorenzo Melgarejo|Paraguay",
+    "Lucas Martínez Quarta|Argentina",
+    "Lucas Romero|Paraguay",
+    "Luciano González|Uruguay",
+    "Luciano Valente|Netherlands",
+    "Luis Fragozo|Ecuador",
+    "Lutsharel Geertruida|Netherlands",
+    "Malcom DaCosta|Ecuador",
+    "Marcel Ruiz|Mexico",
+    "Marcelo Flores|Canada",
+    "Marcos Acuña|Argentina",
+    "Martin Boyle|Australia",
+    "Martín Krug|Panama",
+    "Mateo Gamarra|Paraguay",
+    "Mateo Pellegrino|Argentina",
+    "Mathías Villasanti|Paraguay",
+    "Matías Soulé|Argentina",
+    "Maya Yoshida|Japan",
+    "Maytham Jabbar|Iraq",
+    "Mehdi Dorval|Algeria",
+    "Miguel Almirón|Paraguay",
+    "Milton Delgado|Argentina",
+    "Mohamed Chibi|Morocco",
+    "Mohammad Khalifeh|IR Iran",
+    "Mohammed Waad|Qatar",
+    "Moustapha Mbow|Senegal",
+    "Mubarak Shanan|Qatar",
+    "Muhammed Sengezer|Türkiye",
+    "Mustafa Eskihellaç|Türkiye",
+    "Máximo Perrone|Argentina",
+    "Niall Mason|Qatar",
+    "Nicolás Capaldo|Argentina",
+    "Nicolás Domínguez|Argentina",
+    "Nicolás Fonseca|Uruguay",
+    "Omid Noorafkan|IR Iran",
+    "Osman Hadzikic|Bosnia and Herzegovina",
+    "Othmane Maamma|Morocco",
+    "Oussama Targhalline|Morocco",
+    "Pablo Alcoba|Uruguay",
+    "Pape Sy|Senegal",
+    "Patrick Agyemang|USA",
+    "Patrick Maswanganyi|South Africa",
+    "Patrick Schulte|USA",
+    "Patrick Yazbek|Australia",
+    "Paul Reverson|Ghana",
+    "Pavel Bucha|Czechia",
+    "Peter Gwargis|Iraq",
+    "Ralph Priso|Canada",
+    "Ramón Juárez|Mexico",
+    "Rayane Bounida|Morocco",
+    "Rayyan Al Ali|Qatar",
+    "Ricardo Velho|Portugal",
+    "Richard Ledezma|Mexico",
+    "Riley McGree|Australia",
+    "Robert Morales|Paraguay",
+    "Robert Piris Da Motta|Paraguay",
+    "Rodney Redes|Paraguay",
+    "Ronaldo Dejesús|Paraguay",
+    "Ronaldo Martínez|Paraguay",
+    "Rubén Lezcano|Paraguay",
+    "Saleh Abu Al Shamat|Saudi Arabia",
+    "Santiago Beltrán|Argentina",
+    "Santiago Castro|Argentina",
+    "Santiago Rojas|Paraguay",
+    "Saúl Salcedo|Paraguay",
+    "Sebastian Nanasi|Sweden",
+    "Sebastián Soria|Qatar",
+    "Shehab Ellethy|Qatar",
+    "Sherzod Temirov|Uzbekistan",
+    "Sofiane Boufal|Morocco",
+    "Sofyan Amrabat|Morocco",
+    "Sohaib Nair|Algeria",
+    "Solomon Agbasi|Ghana",
+    "Souffian El Karouani|Morocco",
+    "Soufiane Benjdida|Morocco",
+    "Soufiane Bouftini|Morocco",
+    "Soufiane El-Faouzi|Morocco",
+    "Stefan de Vrij|Netherlands",
+    "Tanner Tessmann|USA",
+    "Tarek Salman|Qatar",
+    "Tawfik Bentayeb|Morocco",
+    "Thabiso Monyane|South Africa",
+    "Thapelo Morena|South Africa",
+    "Themba Zwane|South Africa",
+    "Tino Livramento|England",
+    "Tomás Aranda|Argentina",
+    "Tomás Ladra|Czechia",
+    "Umarali Rakhmonaliev|Uzbekistan",
+    "Víctor Griffith|Panama",
+    "Víctor Guzmán|Mexico",
+    "Walter Benítez|Argentina",
+    "Wataru Endo|Japan",
+    "Wesley|Brazil",
+    "Yanis Begraoui|Morocco",
+    "Yanis Benchaouch|Morocco",
+    "Yassir Zabiri|Morocco",
+    "Yaya Sithole|South Africa",
+    "Yousef Qashi|Jordan",
+    "Yusuf Akçiçek|Türkiye",
+    "Yusuf Sari|Türkiye",
+    "Zaid Romero|Argentina",
+    "Zakaria Hawsawi|Saudi Arabia",
+    "Zorhan Bassong|Canada",
+    "Álex Padilla|Mexico",
+    "Álvaro Campuzano|Paraguay",
+    "Ángel Romero|Paraguay",
+    "Érick Sánchez|Mexico",
+    "Óscar Romero|Paraguay"
   ],
   "odds": {
-    "A1": {
+    "25": {
       "favorite": "home_win",
-      "prob": 0.762
+      "prob": 0.631
     },
-    "A2": {
+    "26": {
       "favorite": "home_win",
-      "prob": 0.441
+      "prob": 0.416
     },
-    "B1": {
+    "27": {
       "favorite": "home_win",
-      "prob": 0.45
+      "prob": 0.462
     },
-    "B2": {
+    "28": {
+      "favorite": "home_win",
+      "prob": 0.68
+    },
+    "29": {
+      "favorite": "home_win",
+      "prob": 0.36
+    },
+    "30": {
+      "favorite": "draw",
+      "prob": 0.453
+    },
+    "31": {
+      "favorite": "home_win",
+      "prob": 0.724
+    },
+    "32": {
+      "favorite": "home_win",
+      "prob": 0.433
+    },
+    "33": {
       "favorite": "away_win",
-      "prob": 0.469
+      "prob": 0.688
     },
-    "C1": {
+    "34": {
       "favorite": "home_win",
-      "prob": 0.506
+      "prob": 0.809
     },
-    "C2": {
+    "35": {
+      "favorite": "home_win",
+      "prob": 0.748
+    },
+    "36": {
       "favorite": "away_win",
-      "prob": 0.592
+      "prob": 0.839
     },
-    "D1": {
+    "37": {
       "favorite": "home_win",
-      "prob": 0.799
+      "prob": 0.583
     },
-    "D2": {
+    "38": {
       "favorite": "home_win",
-      "prob": 0.558
+      "prob": 0.487
     },
-    "E1": {
+    "39": {
       "favorite": "home_win",
-      "prob": 0.909
+      "prob": 0.616
     },
-    "E2": {
-      "favorite": "home_win",
-      "prob": 0.393
-    },
-    "F1": {
-      "favorite": "home_win",
-      "prob": 0.455
-    },
-    "F2": {
-      "favorite": "home_win",
-      "prob": 0.903
-    },
-    "G1": {
-      "favorite": "home_win",
-      "prob": 0.458
-    },
-    "G2": {
-      "favorite": "home_win",
-      "prob": 0.515
-    },
-    "H1": {
-      "favorite": "home_win",
-      "prob": 0.841
-    },
-    "H2": {
+    "40": {
       "favorite": "away_win",
-      "prob": 0.588
+      "prob": 0.429
     },
-    "I1": {
+    "41": {
       "favorite": "home_win",
-      "prob": 0.72
+      "prob": 0.752
     },
-    "I2": {
-      "favorite": "away_win",
+    "42": {
+      "favorite": "home_win",
+      "prob": 0.93
+    },
+    "43": {
+      "favorite": "home_win",
       "prob": 0.891
     },
-    "J1": {
+    "44": {
       "favorite": "home_win",
-      "prob": 0.811
+      "prob": 0.507
     },
-    "J2": {
+    "45": {
       "favorite": "home_win",
-      "prob": 0.78
+      "prob": 0.756
     },
-    "K1": {
+    "46": {
       "favorite": "home_win",
-      "prob": 0.679
+      "prob": 0.579
     },
-    "K2": {
+    "47": {
       "favorite": "away_win",
-      "prob": 0.534
+      "prob": 0.496
     },
-    "L1": {
+    "48": {
       "favorite": "home_win",
-      "prob": 0.534
+      "prob": 0.64
     },
-    "L2": {
+    "49": {
       "favorite": "home_win",
-      "prob": 0.501
+      "prob": 0.416
+    },
+    "50": {
+      "favorite": "home_win",
+      "prob": 0.427
+    },
+    "52": {
+      "favorite": "home_win",
+      "prob": 0.639
+    },
+    "51": {
+      "favorite": "draw",
+      "prob": 0.356
+    },
+    "54": {
+      "favorite": "away_win",
+      "prob": 0.782
+    },
+    "53": {
+      "favorite": "away_win",
+      "prob": 0.766
+    },
+    "55": {
+      "favorite": "away_win",
+      "prob": 0.894
+    },
+    "56": {
+      "favorite": "away_win",
+      "prob": 0.916
+    },
+    "57": {
+      "favorite": "away_win",
+      "prob": 0.858
+    },
+    "58": {
+      "favorite": "away_win",
+      "prob": 0.718
+    },
+    "59": {
+      "favorite": "away_win",
+      "prob": 0.782
+    },
+    "60": {
+      "favorite": "away_win",
+      "prob": 0.867
+    },
+    "61": {
+      "favorite": "home_win",
+      "prob": 0.418
+    },
+    "62": {
+      "favorite": "home_win",
+      "prob": 0.657
+    },
+    "63": {
+      "favorite": "away_win",
+      "prob": 0.419
+    },
+    "64": {
+      "favorite": "away_win",
+      "prob": 0.408
+    },
+    "65": {
+      "favorite": "away_win",
+      "prob": 0.518
+    },
+    "66": {
+      "favorite": "home_win",
+      "prob": 0.425
+    },
+    "68": {
+      "favorite": "away_win",
+      "prob": 0.5
+    },
+    "67": {
+      "favorite": "away_win",
+      "prob": 0.785
+    },
+    "70": {
+      "favorite": "home_win",
+      "prob": 0.543
+    },
+    "69": {
+      "favorite": "home_win",
+      "prob": 0.436
+    },
+    "71": {
+      "favorite": "away_win",
+      "prob": 0.961
+    },
+    "72": {
+      "favorite": "away_win",
+      "prob": 0.883
     }
   }
 }

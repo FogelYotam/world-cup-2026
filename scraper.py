@@ -411,8 +411,10 @@ def fetch_official_pool() -> list[dict]:
             "form": stats.get("form"),
             "expected_start": True if mstat == "start"
             else (False if mstat in ("sub", "not_in_squad") else None),
-            # לא בסגל המחזור → לא זמין לבחירה; מורחק → suspended
-            "injury_status": "out" if mstat == "not_in_squad" else "fit",
+            # זמינות לפי הסטטוס הרשמי: 'playing' = פעיל; 'transferred'/לא-בסגל = בחוץ.
+            # לא נשענים על matchStatus (בין מחזורים הוא ריק לכולם).
+            "injury_status": "fit" if (status == "playing" and mstat != "not_in_squad")
+            else "out",
             "suspension_status": "suspended" if status == "suspended" else "available",
         })
         # נקודות פנטזי רשמיות (ממוצע למחזור) — אות 'recent_points' שמנוע הפנטזי משלב
@@ -443,24 +445,35 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
         return (1.0 - d) if isinstance(d, (int, float)) else 0.5  # 1=קל מאוד
 
     def _value(p):
+        # קושי המשחק *מכפיל* את תוחלת הנקודות (משחק קשה מקטין סיכוי לנקד),
+        # במקום תוספת קטנה — כך שחקן מול יריבה חזקה יורד גם אם ניקודו הגולמי גבוה.
+        ease_factor = 0.6 + 0.8 * _ease(p.get("team"))   # קשה→0.6 · קל→1.4
+        eff_points = _num(p.get("recent_points"), 0) * ease_factor
         own = _num(p.get("ownership"), 0)
         diff_bonus = max(0.0, (thr - own)) / thr if thr else 0.0
-        return (w["points"] * _num(p.get("recent_points"), 0)
+        # בונוס לשחקן עם הרכב מאומת (כשהמידע קיים); בין מחזורים אין הרכב — 0
+        starter = w.get("starter", 2.0) if p.get("expected_start") is True else 0.0
+        return (w["points"] * eff_points
                 + w["form"] * _num(p.get("form"), 0)
-                + w["fixture"] * _ease(p.get("team"))
-                + w["ownership"] * diff_bonus)
+                + w["ownership"] * diff_bonus
+                + starter)
 
     out: dict[str, list] = {}
     for pos, n in counts.items():
+        # מועמד = בעמדה, זמין (לא פצוע/מורחק/הוצא מהסגל) ולא ספסלן *ידוע*,
+        # ובעלות מתחת לתקרה. בין מחזורים אין הרכב מאומת — לא מסננים על כך.
         cands = [p for p in pool
                  if p.get("position") == pos
-                 and p.get("expected_start") is True
+                 and p.get("injury_status") != "out"
+                 and p.get("suspension_status") != "suspended"
+                 and p.get("expected_start") is not False
                  and _num(p.get("ownership"), 999) <= thr]
         cands.sort(key=_value, reverse=True)
         out[pos] = [{
             "player_name": p["player_name"], "team": p["team"], "position": pos,
             "ownership": p.get("ownership"), "price": p.get("price"),
-            "expected_points": p.get("recent_points"), "expected_start": True,
+            "expected_points": p.get("recent_points"),
+            "expected_start": p.get("expected_start"),
             "reason": (f"ממוצע {p.get('recent_points')} נק' · "
                        f"{_diff_label(_ease(p.get('team')))} · בעלות {p.get('ownership')}%"),
         } for p in cands[:n]]
@@ -602,10 +615,32 @@ def _record_results(db: dict, rows: list[dict]) -> int:
     return added
 
 
-def official_fixture_difficulty(rounds: list[dict], db: dict) -> dict:
-    """קושי המשחק הקרוב לכל נבחרת — נגזר מהמשחק הבא בלוח הרשמי וחוזק היריבה.
-    מחזיר {team: {opponent, difficulty(0..1), date}} (1 = קשה)."""
+def _team_quality(pool: list[dict]) -> dict:
+    """איכות סגל לכל נבחרת = ממוצע מחיר 15 השחקנים היקרים שלה (מהבריכה הרשמית).
+    פרוקסי יציב לחוזק אמיתי — לא מושפע מרעש של משחק בודד."""
+    from collections import defaultdict
+    by: dict[str, list] = defaultdict(list)
+    for p in pool or []:
+        pr = _num(p.get("price"), None)
+        if pr is not None and p.get("team"):
+            by[p["team"]].append(pr)
+    return {t: sum(sorted(v, reverse=True)[:15]) / min(len(v), 15)
+            for t, v in by.items() if v}
+
+
+def official_fixture_difficulty(rounds: list[dict], db: dict,
+                                pool: list[dict] | None = None) -> dict:
+    """קושי המשחק הקרוב לכל נבחרת — לפי חוזק היריבה. משלב **איכות סגל** (פרוקסי
+    יציב ממחירי השחקנים, 65%) עם כושר התוצאות עד כה (35%), כך שיריבה חזקה (הולנד)
+    תזוהה כקשה גם אחרי מחזור אחד בלבד. מחזיר {team:{opponent,difficulty(0..1),date}}."""
     teams = {t.get("team_name"): t for t in db.get("teams", [])}
+    quality = _team_quality(pool or [])
+    qn = {}
+    if quality:
+        lo, hi = min(quality.values()), max(quality.values())
+        rng = (hi - lo) or 1.0
+        qn = {t: (q - lo) / rng for t, q in quality.items()}  # 0..1, 1=חזק
+
     nxt: dict[str, tuple] = {}
     for r in rounds or []:
         for m in r.get("tournaments", []) or []:
@@ -619,10 +654,12 @@ def official_fixture_difficulty(rounds: list[dict], db: dict) -> dict:
     out = {}
     for team, (opp, date) in nxt.items():
         o = teams.get(opp, {})
-        # חוזק יריבה: התקפה גבוהה + הגנה אטומה → קושי גבוה
-        strength = _num(o.get("goals_for"), 1.3) + (2.6 - _num(o.get("goals_against"), 1.3))
-        diff = max(0.0, min(1.0, strength / 5.2))
-        out[team] = {"opponent": opp, "difficulty": round(diff, 2), "date": date}
+        # כושר תוצאות: התקפה גבוהה + הגנה אטומה
+        form = _num(o.get("goals_for"), 1.3) + (2.6 - _num(o.get("goals_against"), 1.3))
+        form_n = max(0.0, min(1.0, form / 5.2))
+        diff = (0.65 * qn[opp] + 0.35 * form_n) if opp in qn else form_n
+        out[team] = {"opponent": opp, "difficulty": round(max(0.0, min(1.0, diff)), 2),
+                     "date": date}
     return out
 
 
@@ -1024,7 +1061,7 @@ def collect(days_ahead: int = 3) -> dict:
         else:
             ingest_results(gemini, db)
         db["fixture_difficulty"] = (
-            (official_fixture_difficulty(rounds, db) if rounds else None)
+            (official_fixture_difficulty(rounds, db, official_pool) if rounds else None)
             or fetch_fixture_difficulty(gemini) or db.get("fixture_difficulty", {}))
         db["differentials"] = (
             official_differentials(official_pool, fixture_difficulty=db["fixture_difficulty"])
@@ -1066,7 +1103,7 @@ def collect(days_ahead: int = 3) -> dict:
 
     # קושי המחזור הקרוב — רשמי (נגזר מהלוח+חוזק היריבה) → נפילה ל-Gemini
     db["fixture_difficulty"] = (
-        (official_fixture_difficulty(rounds, db) if rounds else None)
+        (official_fixture_difficulty(rounds, db, official_pool) if rounds else None)
         or fetch_fixture_difficulty(gemini) or db.get("fixture_difficulty", {}))
 
     # דיפרנציאלים — מדורגים לפי הסיכוי לנקד (תוחלת + קלות משחק), בעלות נמוכה כיתרון

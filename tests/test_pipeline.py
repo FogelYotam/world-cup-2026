@@ -322,6 +322,38 @@ def test_differentials_rank_by_scoring_chance_not_obscurity():
     assert "Popular" not in fwds       # מעל תקרת הבעלות
 
 
+def test_fixture_difficulty_uses_squad_quality():
+    # יריבה עם סגל יקר (חזק) צריכה לתת קושי גבוה, גם אם תוצאות עד כה צנועות
+    rounds = [{"id": 1, "stage": "GROUP", "tournaments": [
+        {"id": 1, "status": "scheduled", "homeSquadName": "Minnow",
+         "awaySquadName": "Power", "date": "2026-06-20T18:00:00+01:00"}]}]
+    db = {"teams": [{"team_name": "Power", "goals_for": 1.3, "goals_against": 1.3},
+                    {"team_name": "Minnow", "goals_for": 1.3, "goals_against": 1.3}]}
+    pool = ([{"team": "Power", "position": "MID", "price": 11.0}] * 15
+            + [{"team": "Minnow", "position": "MID", "price": 4.5}] * 15)
+    fd = scraper.official_fixture_difficulty(rounds, db, pool)
+    assert fd["Minnow"]["difficulty"] > fd["Power"]["difficulty"]   # מול חזקה = קשה יותר
+    assert fd["Minnow"]["difficulty"] >= 0.6
+
+
+def test_differentials_populate_between_rounds_and_discount_hard_fixture():
+    # מצב בין-מחזורים: אין הרכב מאומת (expected_start=None) — חייב עדיין להחזיר מועמדים,
+    # ומשחק קשה צריך להוריד שחקן-על מתחת לשחקן עם משחק קל ותוחלת דומה.
+    pool = [
+        {"player_name": "HardStar", "team": "H", "position": "FWD",
+         "expected_start": None, "injury_status": "fit", "suspension_status": "available",
+         "ownership": 3, "recent_points": 16, "form": 8, "price": 9},
+        {"player_name": "EasyGood", "team": "E", "position": "FWD",
+         "expected_start": None, "injury_status": "fit", "suspension_status": "available",
+         "ownership": 3, "recent_points": 13, "form": 7, "price": 8},
+    ]
+    fd = {"H": {"difficulty": 0.9}, "E": {"difficulty": 0.1}}   # H קשה מאוד, E קל
+    diffs = scraper.official_differentials(pool, counts={"FWD": 2}, fixture_difficulty=fd)
+    names = [d["player_name"] for d in diffs["FWD"]]
+    assert len(names) == 2                       # אוכלס למרות expected_start=None
+    assert names[0] == "EasyGood"                # משחק קל ניצח על שחקן-על במשחק קשה
+
+
 def test_official_matches_and_results():
     matches = scraper.official_matches(_FAKE_ROUNDS)
     results = scraper.official_results(_FAKE_ROUNDS)

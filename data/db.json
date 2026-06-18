@@ -33914,31 +33914,31 @@
         "player_name": "Vozinha",
         "team": "Cabo Verde",
         "position": "GK",
-        "ownership": 0.7,
+        "ownership": 0.9,
         "price": 3.9,
         "expected_points": 11.0,
-        "expected_start": true,
-        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 0.7%"
+        "expected_start": null,
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 0.9%"
       },
       {
         "player_name": "Patrick Beach",
         "team": "Australia",
         "position": "GK",
-        "ownership": 1.8,
+        "ownership": 2.1,
         "price": 3.5,
         "expected_points": 11.0,
-        "expected_start": true,
-        "reason": "ממוצע 11.0 נק' · משחק קשה · בעלות 1.8%"
+        "expected_start": null,
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 2.1%"
       },
       {
         "player_name": "Angus Gunn",
         "team": "Scotland",
         "position": "GK",
-        "ownership": 1.9,
+        "ownership": 2.0,
         "price": 3.6,
         "expected_points": 9.0,
-        "expected_start": true,
-        "reason": "ממוצע 9.0 נק' · משחק בינוני · בעלות 1.9%"
+        "expected_start": null,
+        "reason": "ממוצע 9.0 נק' · משחק בינוני · בעלות 2.0%"
       }
     ],
     "DEF": [
@@ -33946,106 +33946,126 @@
         "player_name": "Nathaniel Brown",
         "team": "Germany",
         "position": "DEF",
-        "ownership": 2.5,
+        "ownership": 3.3,
         "price": 4.7,
         "expected_points": 14.0,
-        "expected_start": true,
-        "reason": "ממוצע 14.0 נק' · משחק בינוני · בעלות 2.5%"
+        "expected_start": null,
+        "reason": "ממוצע 14.0 נק' · משחק בינוני · בעלות 3.3%"
       },
       {
         "player_name": "Ramin Rezaeian",
         "team": "IR Iran",
         "position": "DEF",
-        "ownership": 0.5,
+        "ownership": 0.6,
         "price": 4.0,
         "expected_points": 13.0,
-        "expected_start": true,
-        "reason": "ממוצע 13.0 נק' · משחק בינוני · בעלות 0.5%"
-      },
-      {
-        "player_name": "Wilfried Singo",
-        "team": "Côte d'Ivoire",
-        "position": "DEF",
-        "ownership": 0.4,
-        "price": 4.4,
-        "expected_points": 12.0,
-        "expected_start": true,
-        "reason": "ממוצע 12.0 נק' · משחק קשה · בעלות 0.4%"
+        "expected_start": null,
+        "reason": "ממוצע 13.0 נק' · משחק בינוני · בעלות 0.6%"
       },
       {
         "player_name": "Ladislav Krejcí",
         "team": "Czechia",
         "position": "DEF",
-        "ownership": 1.1,
+        "ownership": 1.3,
         "price": 4.4,
         "expected_points": 10.0,
-        "expected_start": true,
-        "reason": "ממוצע 10.0 נק' · משחק קל · בעלות 1.1%"
+        "expected_start": null,
+        "reason": "ממוצע 10.0 נק' · משחק קל · בעלות 1.3%"
       },
       {
         "player_name": "Nico Schlotterbeck",
         "team": "Germany",
         "position": "DEF",
-        "ownership": 5.0,
+        "ownership": 5.3,
         "price": 5.3,
         "expected_points": 11.0,
-        "expected_start": true,
-        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 5.0%"
+        "expected_start": null,
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 5.3%"
+      },
+      {
+        "player_name": "Leo Østigård",
+        "team": "Norway",
+        "position": "DEF",
+        "ownership": 0.5,
+        "price": 4.1,
+        "expected_points": 10.0,
+        "expected_start": null,
+        "reason": "ממוצע 10.0 נק' · משחק בינוני · בעלות 0.5%"
       }
     ],
     "MID": [
       {
-        "player_name": "Yasin Ayari",
-        "team": "Sweden",
-        "position": "MID",
-        "ownership": 1.0,
-        "price": 5.3,
-        "expected_points": 17.0,
-        "expected_start": true,
-        "reason": "ממוצע 17.0 נק' · משחק בינוני · בעלות 1.0%"
-      },
-      {
         "player_name": "Elijah Just",
         "team": "New Zealand",
         "position": "MID",
-        "ownership": 0.6,
+        "ownership": 0.9,
         "price": 4.2,
         "expected_points": 16.0,
-        "expected_start": true,
-        "reason": "ממוצע 16.0 נק' · משחק בינוני · בעלות 0.6%"
+        "expected_start": null,
+        "reason": "ממוצע 16.0 נק' · משחק בינוני · בעלות 0.9%"
       },
       {
-        "player_name": "Felix Nmecha",
-        "team": "Germany",
+        "player_name": "Yasin Ayari",
+        "team": "Sweden",
         "position": "MID",
-        "ownership": 1.1,
-        "price": 5.6,
-        "expected_points": 13.0,
-        "expected_start": true,
-        "reason": "ממוצע 13.0 נק' · משחק בינוני · בעלות 1.1%"
-      },
-      {
-        "player_name": "Hwang In-Beom",
-        "team": "Korea Republic",
-        "position": "MID",
-        "ownership": 0.6,
-        "price": 5.8,
-        "expected_points": 13.0,
-        "expected_start": true,
-        "reason": "ממוצע 13.0 נק' · משחק קשה · בעלות 0.6%"
+        "ownership": 1.4,
+        "price": 5.3,
+        "expected_points": 17.0,
+        "expected_start": null,
+        "reason": "ממוצע 17.0 נק' · משחק קשה · בעלות 1.4%"
       },
       {
         "player_name": "Daichi Kamada",
         "team": "Japan",
         "position": "MID",
-        "ownership": 0.8,
+        "ownership": 1.1,
         "price": 5.8,
         "expected_points": 11.0,
-        "expected_start": true,
-        "reason": "ממוצע 11.0 נק' · משחק קל · בעלות 0.8%"
+        "expected_start": null,
+        "reason": "ממוצע 11.0 נק' · משחק קל · בעלות 1.1%"
+      },
+      {
+        "player_name": "Felix Nmecha",
+        "team": "Germany",
+        "position": "MID",
+        "ownership": 1.5,
+        "price": 5.6,
+        "expected_points": 13.0,
+        "expected_start": null,
+        "reason": "ממוצע 13.0 נק' · משחק בינוני · בעלות 1.5%"
+      },
+      {
+        "player_name": "Keito Nakamura",
+        "team": "Japan",
+        "position": "MID",
+        "ownership": 0.9,
+        "price": 5.5,
+        "expected_points": 10.0,
+        "expected_start": null,
+        "reason": "ממוצע 10.0 נק' · משחק קל · בעלות 0.9%"
       }
     ],
     "FWD": [
+      {
+        "player_name": "Folarin Balogun",
+        "team": "USA",
+        "position": "FWD",
+        "ownership": 2.7,
+        "price": 6.0,
+        "expected_points": 15.0,
+        "expected_start": null,
+        "reason": "ממוצע 15.0 נק' · משחק בינוני · בעלות 2.7%"
+      },
+      {
+        "player_name": "Deniz Undav",
+        "team": "Germany",
+        "position": "FWD",
+        "ownership": 1.0,
+        "price": 6.6,
+        "expected_points": 14.0,
+        "expected_start": null,
+        "reason": "ממוצע 14.0 נק' · משחק בינוני · בעלות 1.0%"
+      },
       {
         "player_name": "Alexander Isak",
         "team": "Sweden",
@@ -34053,160 +34073,110 @@
         "ownership": 3.6,
         "price": 8.0,
         "expected_points": 16.0,
-        "expected_start": true,
-        "reason": "ממוצע 16.0 נק' · משחק בינוני · בעלות 3.6%"
-      },
-      {
-        "player_name": "Folarin Balogun",
-        "team": "USA",
-        "position": "FWD",
-        "ownership": 2.3,
-        "price": 6.0,
-        "expected_points": 15.0,
-        "expected_start": true,
-        "reason": "ממוצע 15.0 נק' · משחק קשה · בעלות 2.3%"
-      },
-      {
-        "player_name": "Viktor Gyökeres",
-        "team": "Sweden",
-        "position": "FWD",
-        "ownership": 5.4,
-        "price": 7.8,
-        "expected_points": 14.0,
-        "expected_start": true,
-        "reason": "ממוצע 14.0 נק' · משחק בינוני · בעלות 5.4%"
+        "expected_start": null,
+        "reason": "ממוצע 16.0 נק' · משחק קשה · בעלות 3.6%"
       }
     ]
   },
   "fixture_difficulty": {
-    "England": {
-      "opponent": "Croatia",
-      "difficulty": 0.58,
-      "date": "2026-06-17"
-    },
-    "Croatia": {
-      "opponent": "England",
-      "difficulty": 0.73,
-      "date": "2026-06-17"
-    },
-    "Ghana": {
-      "opponent": "Panama",
-      "difficulty": 0.4,
-      "date": "2026-06-18"
-    },
-    "Panama": {
-      "opponent": "Ghana",
-      "difficulty": 0.5,
-      "date": "2026-06-18"
-    },
-    "Uzbekistan": {
-      "opponent": "Colombia",
-      "difficulty": 0.62,
-      "date": "2026-06-18"
-    },
-    "Colombia": {
-      "opponent": "Uzbekistan",
-      "difficulty": 0.46,
-      "date": "2026-06-18"
-    },
     "Czechia": {
       "opponent": "South Africa",
-      "difficulty": 0.26,
+      "difficulty": 0.22,
       "date": "2026-06-18"
     },
     "South Africa": {
       "opponent": "Czechia",
-      "difficulty": 0.41,
+      "difficulty": 0.42,
       "date": "2026-06-18"
     },
     "Switzerland": {
       "opponent": "Bosnia and Herzegovina",
-      "difficulty": 0.51,
+      "difficulty": 0.36,
       "date": "2026-06-18"
     },
     "Bosnia and Herzegovina": {
       "opponent": "Switzerland",
-      "difficulty": 0.55,
+      "difficulty": 0.57,
       "date": "2026-06-18"
     },
     "Canada": {
       "opponent": "Qatar",
-      "difficulty": 0.47,
+      "difficulty": 0.33,
       "date": "2026-06-18"
     },
     "Qatar": {
       "opponent": "Canada",
-      "difficulty": 0.51,
+      "difficulty": 0.43,
       "date": "2026-06-18"
     },
     "Mexico": {
       "opponent": "Korea Republic",
-      "difficulty": 0.62,
+      "difficulty": 0.49,
       "date": "2026-06-19"
     },
     "Korea Republic": {
       "opponent": "Mexico",
-      "difficulty": 0.75,
+      "difficulty": 0.64,
       "date": "2026-06-19"
     },
     "USA": {
       "opponent": "Australia",
-      "difficulty": 0.69,
+      "difficulty": 0.45,
       "date": "2026-06-19"
     },
     "Australia": {
       "opponent": "USA",
-      "difficulty": 0.73,
+      "difficulty": 0.58,
       "date": "2026-06-19"
     },
     "Scotland": {
       "opponent": "Morocco",
-      "difficulty": 0.56,
+      "difficulty": 0.53,
       "date": "2026-06-19"
     },
     "Morocco": {
       "opponent": "Scotland",
-      "difficulty": 0.6,
+      "difficulty": 0.4,
       "date": "2026-06-19"
     },
     "Brazil": {
       "opponent": "Haiti",
-      "difficulty": 0.33,
+      "difficulty": 0.17,
       "date": "2026-06-20"
     },
     "Haiti": {
       "opponent": "Brazil",
-      "difficulty": 0.62,
+      "difficulty": 0.72,
       "date": "2026-06-20"
     },
     "Türkiye": {
       "opponent": "Paraguay",
-      "difficulty": 0.2,
+      "difficulty": 0.38,
       "date": "2026-06-20"
     },
     "Paraguay": {
       "opponent": "Türkiye",
-      "difficulty": 0.35,
+      "difficulty": 0.41,
       "date": "2026-06-20"
     },
     "Netherlands": {
       "opponent": "Sweden",
-      "difficulty": 0.91,
+      "difficulty": 0.61,
       "date": "2026-06-20"
     },
     "Sweden": {
       "opponent": "Netherlands",
-      "difficulty": 0.59,
+      "difficulty": 0.66,
       "date": "2026-06-20"
     },
     "Germany": {
       "opponent": "Côte d'Ivoire",
-      "difficulty": 0.57,
+      "difficulty": 0.47,
       "date": "2026-06-20"
     },
     "Côte d'Ivoire": {
       "opponent": "Germany",
-      "difficulty": 1.0,
+      "difficulty": 0.83,
       "date": "2026-06-20"
     },
     "Ecuador": {
@@ -34216,12 +34186,12 @@
     },
     "Curaçao": {
       "opponent": "Ecuador",
-      "difficulty": 0.43,
+      "difficulty": 0.38,
       "date": "2026-06-21"
     },
     "Tunisia": {
       "opponent": "Japan",
-      "difficulty": 0.57,
+      "difficulty": 0.43,
       "date": "2026-06-21"
     },
     "Japan": {
@@ -34231,27 +34201,27 @@
     },
     "Spain": {
       "opponent": "Saudi Arabia",
-      "difficulty": 0.46,
+      "difficulty": 0.37,
       "date": "2026-06-21"
     },
     "Saudi Arabia": {
       "opponent": "Spain",
-      "difficulty": 0.64,
+      "difficulty": 0.83,
       "date": "2026-06-21"
     },
     "Belgium": {
       "opponent": "IR Iran",
-      "difficulty": 0.5,
+      "difficulty": 0.37,
       "date": "2026-06-21"
     },
     "IR Iran": {
       "opponent": "Belgium",
-      "difficulty": 0.58,
+      "difficulty": 0.56,
       "date": "2026-06-21"
     },
     "Uruguay": {
       "opponent": "Cabo Verde",
-      "difficulty": 0.39,
+      "difficulty": 0.25,
       "date": "2026-06-21"
     },
     "Cabo Verde": {
@@ -34261,62 +34231,92 @@
     },
     "New Zealand": {
       "opponent": "Egypt",
-      "difficulty": 0.52,
+      "difficulty": 0.39,
       "date": "2026-06-22"
     },
     "Egypt": {
       "opponent": "New Zealand",
-      "difficulty": 0.44,
+      "difficulty": 0.26,
       "date": "2026-06-22"
     },
     "Argentina": {
       "opponent": "Austria",
-      "difficulty": 0.72,
+      "difficulty": 0.57,
       "date": "2026-06-22"
     },
     "Austria": {
       "opponent": "Argentina",
-      "difficulty": 0.93,
+      "difficulty": 0.87,
       "date": "2026-06-22"
     },
     "France": {
       "opponent": "Iraq",
-      "difficulty": 0.16,
+      "difficulty": 0.2,
       "date": "2026-06-22"
     },
     "Iraq": {
       "opponent": "France",
-      "difficulty": 0.83,
+      "difficulty": 0.94,
       "date": "2026-06-22"
     },
     "Norway": {
       "opponent": "Senegal",
-      "difficulty": 0.36,
+      "difficulty": 0.45,
       "date": "2026-06-23"
     },
     "Senegal": {
       "opponent": "Norway",
-      "difficulty": 0.86,
+      "difficulty": 0.7,
       "date": "2026-06-23"
     },
     "Jordan": {
       "opponent": "Algeria",
-      "difficulty": 0.22,
+      "difficulty": 0.34,
       "date": "2026-06-23"
     },
     "Algeria": {
       "opponent": "Jordan",
-      "difficulty": 0.26,
+      "difficulty": 0.11,
       "date": "2026-06-23"
     },
     "Portugal": {
       "opponent": "Uzbekistan",
-      "difficulty": 0.46,
+      "difficulty": 0.41,
       "date": "2026-06-23"
+    },
+    "Uzbekistan": {
+      "opponent": "Portugal",
+      "difficulty": 0.78,
+      "date": "2026-06-23"
+    },
+    "England": {
+      "opponent": "Ghana",
+      "difficulty": 0.38,
+      "date": "2026-06-23"
+    },
+    "Ghana": {
+      "opponent": "England",
+      "difficulty": 0.9,
+      "date": "2026-06-23"
+    },
+    "Panama": {
+      "opponent": "Croatia",
+      "difficulty": 0.51,
+      "date": "2026-06-24"
+    },
+    "Croatia": {
+      "opponent": "Panama",
+      "difficulty": 0.31,
+      "date": "2026-06-24"
+    },
+    "Colombia": {
+      "opponent": "Congo DR",
+      "difficulty": 0.38,
+      "date": "2026-06-24"
     },
     "Congo DR": {
       "opponent": "Colombia",
-      "difficulty": 0.62,
+      "difficulty": 0.52,
       "date": "2026-06-24"
     }
   },

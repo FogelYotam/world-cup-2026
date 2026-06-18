@@ -456,9 +456,11 @@ def _handle_fixtures(parsed: dict) -> None:
         lines.append("")
         lines.append("<i>המודל רץ על נתונים מתעדכנים; ככל שנכנסות תוצאות אמת — מדויק יותר.</i>")
 
-    # שמירת הניחושים שלך + הצגת אחוז הפגיעה המצטבר (אם יש משחקים שהוכרעו)
+    # שמירת הניחושים שלך + הצגת הניקוד המצטבר מול המערכת (אם יש משחקים שהוכרעו)
     try:
         predictions_log.record_predictions(entries)
+        # עדכן מול התוצאות הרשמיות העדכניות כדי שהניקוד יוצג מיד ומעודכן
+        predictions_log.settle_with_results(db.get("results", []))
         summary_txt = predictions_log.format_summary_he()
         if summary_txt:
             lines.append("")
@@ -537,24 +539,42 @@ def _handle_text(text: str) -> bool:
 # רענון מודל — כמה פעמים ביום, כולל למידה מתוצאות אמת
 # --------------------------------------------------------------------------- #
 def _maybe_refresh_model(gemini) -> None:
-    """מרענן נתונים + לומד מתוצאות אמת, לכל היותר כל _REFRESH_MIN_HOURS שעות."""
+    """מרענן נתונים + לומד מתוצאות אמת, לכל היותר כל _REFRESH_MIN_HOURS שעות.
+
+    מבוסס על ה-feed הרשמי של FIFA (תוצאות/בריכה) — **לא תלוי במכסת Gemini**, כך
+    שהתוצאות מתעדכנות לאורך כל הטורניר גם אם Gemini אזל. העשרת xG (Gemini) רצה
+    רק אם יש מכסה."""
     state = _load_state()
     last = utils._parse_dt(state.get("last_refresh"))
     if last and datetime.now() - last < timedelta(hours=_REFRESH_MIN_HOURS):
         return
-    if not getattr(gemini, "enabled", False):
-        return
     try:
         import predictions_log
         db = utils.load_json(config.DB_PATH, default={}) or {}
-        added = scraper.ingest_results(gemini, db)
-        scraper._enrich_fantasy_data(gemini, db)
+
+        # תוצאות אמת מהלוח הרשמי (מיידי, ללא Gemini)
+        rounds = scraper.fetch_official_rounds()
+        added = scraper._record_results(db, scraper.official_results(rounds)) if rounds else 0
+        # רענון הבריכה הרשמית (מחיר/בעלות/נקודות/זמינות) + דיפרנציאלים/קושי
+        pool = scraper.fetch_official_pool()
+        if pool:
+            db["participants"] = sorted({p["team"] for p in pool if p.get("team")})
+            db["players"] = pool
+            db["fixture_difficulty"] = (scraper.official_fixture_difficulty(rounds, db, pool)
+                                        or db.get("fixture_difficulty", {}))
+            db["differentials"] = (scraper.official_differentials(
+                pool, fixture_difficulty=db["fixture_difficulty"])
+                or db.get("differentials", {}))
+        # העשרת xG/xA (Gemini) — רק אם יש מכסה
+        if getattr(gemini, "enabled", False):
+            scraper._enrich_fantasy_data(gemini, db)
         utils.save_json(config.DB_PATH, db)
+
         # סידור ניחושי המשתמש מול התוצאות האמיתיות שנכנסו
         predictions_log.settle_with_results(db.get("results", []))
         state["last_refresh"] = utils.now_iso()
         _save_state(state)
-        log.info("רענון מודל בוצע (%d תוצאות חדשות)", added)
+        log.info("רענון מודל בוצע (%d תוצאות חדשות מהמקור הרשמי)", added)
     except Exception as exc:  # noqa: BLE001
         log.error("רענון המודל נכשל: %s", exc)
 

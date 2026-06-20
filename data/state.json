@@ -1,10 +1,6 @@
 {
-  "generated_at": "2026-06-19T08:56:56.798488+00:00",
+  "generated_at": "2026-06-20T08:56:03.827848+00:00",
   "fixtures": [
-    "29",
-    "30",
-    "31",
-    "32",
     "33",
     "34",
     "35",
@@ -71,7 +67,6 @@
     "Alejandro Gómez|Mexico",
     "Alex Robertson|Australia",
     "Alexander Djiku|Ghana",
-    "Alexander Isak|Sweden",
     "Alexis Gutiérrez|Mexico",
     "Alexéi Domínguez|Mexico",
     "Alfie Jones|Canada",
@@ -86,6 +81,7 @@
     "Atakan Karazor|Türkiye",
     "Bassam Al Rawi|Qatar",
     "Benjamín García|Uruguay",
+    "Billy Gilmour|Scotland",
     "Blás Riveros|Paraguay",
     "Brandon Borrello|Australia",
     "Brandon Petersen|South Africa",
@@ -98,6 +94,7 @@
     "Carlos Moreno|Mexico",
     "Carlos Rodríguez|Mexico",
     "Cho Yu-Min|Korea Republic",
+    "Christian Pulisic|USA",
     "Christophe Kabongo|Czechia",
     "Claudio Echeverri|Argentina",
     "Clément Akpa|Côte d'Ivoire",
@@ -116,7 +113,6 @@
     "Ederson Castillo|Ecuador",
     "Efraín Álvarez|Mexico",
     "El Mehdi Al Harrar|Morocco",
-    "Eldor Shomurodov|Uzbekistan",
     "Elías Montiel|Mexico",
     "Emil Holm|Sweden",
     "Emiliano Buendía|Argentina",
@@ -130,7 +126,6 @@
     "Fahad Younis|Qatar",
     "Fran Karacic|Australia",
     "Franco Mastantuono|Argentina",
-    "Frenkie de Jong|Netherlands",
     "Fricio Caicedo|Ecuador",
     "Gabriel Rojas|Argentina",
     "Germán Berterame|Mexico",
@@ -148,7 +143,6 @@
     "Iván Anderson|Panama",
     "JD Gunn|Panama",
     "Jacen Russell-Rowe|Canada",
-    "Jaloliddin Masharipov|Uzbekistan",
     "Jamie Knight-Lebel|Canada",
     "Jasurbek Jaloliddinov|Uzbekistan",
     "Jerdy Schouten|Netherlands",
@@ -158,6 +152,7 @@
     "John Mercado|Ecuador",
     "Johnny Cardoso|USA",
     "Jonas Urbig|Germany",
+    "Jonathan David|Canada",
     "Jordán Carrillo|Mexico",
     "Jorge Ruvalcaba|Mexico",
     "José Hurtado|Ecuador",
@@ -176,6 +171,7 @@
     "Kevin Mac Allister|Argentina",
     "Kilian Belazzoug|Algeria",
     "Kumel Saadi|Iraq",
+    "Kye Rowles|Australia",
     "Lautaro Di Lollo|Argentina",
     "Lebohang Maboe|South Africa",
     "Lennart Karl|Germany",
@@ -196,7 +192,7 @@
     "Martín Krug|Panama",
     "Mateo Gamarra|Paraguay",
     "Mateo Pellegrino|Argentina",
-    "Matthijs de Ligt|Netherlands",
+    "Mathías Villasanti|Paraguay",
     "Matías Soulé|Argentina",
     "Maya Yoshida|Japan",
     "Maytham Jabbar|Iraq",
@@ -211,6 +207,8 @@
     "Muhammed Sengezer|Türkiye",
     "Mustafa Eskihellaç|Türkiye",
     "Máximo Perrone|Argentina",
+    "Nayef Aguerd|Morocco",
+    "Neymar|Brazil",
     "Niall Mason|Qatar",
     "Nicolás Capaldo|Argentina",
     "Nicolás Domínguez|Argentina",
@@ -235,6 +233,7 @@
     "Rayyan Al Ali|Qatar",
     "Ricardo Velho|Portugal",
     "Richard Ledezma|Mexico",
+    "Riley McGree|Australia",
     "Robert Morales|Paraguay",
     "Robert Piris Da Motta|Paraguay",
     "Rodney Redes|Paraguay",
@@ -264,11 +263,11 @@
     "Thabiso Monyane|South Africa",
     "Thapelo Morena|South Africa",
     "Themba Zwane|South Africa",
+    "Thomas Partey|Ghana",
     "Tino Livramento|England",
     "Tomás Aranda|Argentina",
     "Tomás Ladra|Czechia",
     "Umarali Rakhmonaliev|Uzbekistan",
-    "Victor Lindelöf|Sweden",
     "Víctor Griffith|Panama",
     "Víctor Guzmán|Mexico",
     "Walter Benítez|Argentina",
@@ -290,22 +289,6 @@
     "Óscar Romero|Paraguay"
   ],
   "odds": {
-    "29": {
-      "favorite": "home_win",
-      "prob": 0.36
-    },
-    "30": {
-      "favorite": "home_win",
-      "prob": 0.407
-    },
-    "31": {
-      "favorite": "home_win",
-      "prob": 0.678
-    },
-    "32": {
-      "favorite": "home_win",
-      "prob": 0.48
-    },
     "33": {
       "favorite": "away_win",
       "prob": 0.639
@@ -320,11 +303,11 @@
     },
     "36": {
       "favorite": "away_win",
-      "prob": 0.819
+      "prob": 0.839
     },
     "37": {
       "favorite": "home_win",
-      "prob": 0.478
+      "prob": 0.537
     },
     "38": {
       "favorite": "home_win",
@@ -332,11 +315,11 @@
     },
     "39": {
       "favorite": "home_win",
-      "prob": 0.575
+      "prob": 0.616
     },
     "40": {
       "favorite": "away_win",
-      "prob": 0.412
+      "prob": 0.429
     },
     "41": {
       "favorite": "home_win",
@@ -348,7 +331,7 @@
     },
     "43": {
       "favorite": "home_win",
-      "prob": 0.86
+      "prob": 0.891
     },
     "44": {
       "favorite": "home_win",
@@ -356,11 +339,11 @@
     },
     "45": {
       "favorite": "home_win",
-      "prob": 0.676
+      "prob": 0.721
     },
     "46": {
       "favorite": "home_win",
-      "prob": 0.516
+      "prob": 0.535
     },
     "47": {
       "favorite": "away_win",
@@ -372,7 +355,7 @@
     },
     "49": {
       "favorite": "away_win",
-      "prob": 0.516
+      "prob": 0.467
     },
     "50": {
       "favorite": "home_win",
@@ -380,11 +363,11 @@
     },
     "52": {
       "favorite": "home_win",
-      "prob": 0.639
+      "prob": 0.766
     },
     "51": {
-      "favorite": "draw",
-      "prob": 0.356
+      "favorite": "away_win",
+      "prob": 0.53
     },
     "54": {
       "favorite": "away_win",
@@ -412,11 +395,11 @@
     },
     "59": {
       "favorite": "away_win",
-      "prob": 0.782
+      "prob": 0.81
     },
     "60": {
       "favorite": "away_win",
-      "prob": 0.867
+      "prob": 0.527
     },
     "61": {
       "favorite": "home_win",

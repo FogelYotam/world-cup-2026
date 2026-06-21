@@ -26,3 +26,5 @@ output/
 
 # .env דוגמאות מותר, אבל לא הסודות עצמם
 .env.local
+
+pending_images/

@@ -1046,3 +1046,34 @@ def test_predict_match_exposes_ev_fields():
     assert pred["recommended_score"]
     assert "recommended_ep" in pred
     assert "most_likely_score" in pred
+
+
+def test_pending_image_saved_and_processed(monkeypatch, tmp_path):
+    import telegram_intake as ti
+    monkeypatch.setattr(ti, "_PENDING_DIR", tmp_path / "pending")
+    ti._save_pending_image(b"fakebytes", "image/jpeg")
+    assert len(list((tmp_path / "pending").glob("*.jpg"))) == 1
+    sent = []
+    monkeypatch.setattr(ti, "_send_message", lambda m: sent.append(m))
+    monkeypatch.setattr(ti, "_handle_fixtures", lambda parsed: None)
+    monkeypatch.setattr(ti, "classify_image",
+                        lambda g, b, m: {"kind": "fixtures", "matches": []})
+
+    class _G:
+        enabled = True
+        _quota_exhausted = False
+    assert ti._process_pending_images(_G()) == 1
+    assert list((tmp_path / "pending").glob("*.jpg")) == []   # נמחק אחרי עיבוד
+
+
+def test_pending_image_kept_when_quota_still_out(monkeypatch, tmp_path):
+    import telegram_intake as ti
+    monkeypatch.setattr(ti, "_PENDING_DIR", tmp_path / "pending")
+    ti._save_pending_image(b"x", "image/jpeg")
+    monkeypatch.setattr(ti, "classify_image", lambda g, b, m: None)  # מכסה אזלה
+
+    class _G:
+        enabled = True
+        _quota_exhausted = True
+    assert ti._process_pending_images(_G()) == 0
+    assert len(list((tmp_path / "pending").glob("*.jpg"))) == 1   # נשמר לפעם הבאה

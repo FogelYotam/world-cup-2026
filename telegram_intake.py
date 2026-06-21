@@ -23,10 +23,57 @@ log = utils.get_logger("intake")
 
 _OFFSET_PATH = config.DATA_DIR / "telegram_offset.json"
 _STATE_PATH = config.DATA_DIR / "bot_state.json"
+_PENDING_DIR = config.DATA_DIR / "pending_images"   # תמונות שהמתינו (מכסה אזלה)
+_EXT_BY_MIME = {"image/jpeg": "jpg", "image/jpg": "jpg",
+                "image/png": "png", "image/webp": "webp"}
 _VALID_POS = {"GK", "DEF", "MID", "FWD"}
 _MAX_PER_NATION = 3
 _SQUAD_SIZE = 15
 _REFRESH_MIN_HOURS = 5          # רענון מודל לכל היותר כל 5 שעות (~כמה פעמים ביום)
+
+
+def _save_pending_image(img: bytes, mime: str) -> None:
+    """שומר תמונה שלא ניתן היה לקרוא כרגע (מכסת Gemini אזלה) לעיבוד מאוחר —
+    כך שניחוש/הרכב לא הולך לאיבוד, ואין צורך לשלוח שוב."""
+    try:
+        _PENDING_DIR.mkdir(parents=True, exist_ok=True)
+        ext = _EXT_BY_MIME.get((mime or "").lower(), "jpg")
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        (_PENDING_DIR / f"{ts}.{ext}").write_bytes(img)
+        log.info("תמונה נשמרה לעיבוד מאוחר (pending)")
+    except Exception as exc:  # noqa: BLE001
+        log.error("שמירת תמונה ממתינה נכשלה: %s", exc)
+
+
+def _process_pending_images(gemini) -> int:
+    """מעבד תמונות שהמתינו (נשמרו כשהמכסה אזלה), כעת כשיש מכסה. מחזיר כמה עובדו."""
+    if not getattr(gemini, "enabled", False) or not _PENDING_DIR.exists():
+        return 0
+    done = 0
+    for path in sorted(_PENDING_DIR.glob("*.*")):
+        try:
+            mime = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
+            parsed = classify_image(gemini, path.read_bytes(), mime) or {}
+            kind = parsed.get("kind")
+            if kind == "lineup":
+                _send_message("📦 מעבד צילום הרכב שהמתין (המכסה התחדשה)…")
+                _handle_lineup(parsed)
+            elif kind == "fixtures":
+                _send_message("📦 מעבד ניחושים שהמתינו (המכסה התחדשה)…")
+                _handle_fixtures(parsed)
+            else:
+                # עדיין לא ניתן לקרוא (מכסה לא חזרה) — משאירים לפעם הבאה
+                if getattr(gemini, "_quota_exhausted", False):
+                    break
+                path.unlink(missing_ok=True)   # תמונה לא קריאה באמת — מסירים
+                continue
+            path.unlink(missing_ok=True)
+            done += 1
+        except Exception as exc:  # noqa: BLE001
+            log.error("עיבוד תמונה ממתינה נכשל: %s", exc)
+    if done:
+        log.info("עובדו %d תמונות שהמתינו", done)
+    return done
 
 
 # --------------------------------------------------------------------------- #
@@ -400,6 +447,8 @@ def _handle_fixtures(parsed: dict) -> None:
 
     lines = ["<b>🎯 ניחושי המודל מול שלך</b>"]
     found = 0
+    read = 0                    # כמה ניחושים נקראו מהתמונה (לאימות מול הצילום)
+    missing: list[str] = []     # משחקים שהימרת עליהם אך אינם במערכת
     entries: list[dict] = []   # לשמירת הניחושים שלך למעקב לאורך זמן
     for m in matches:
         if not isinstance(m, dict):
@@ -407,6 +456,7 @@ def _handle_fixtures(parsed: dict) -> None:
         home, away = m.get("home"), m.get("away")
         if not home or not away:
             continue
+        read += 1
         p = _find_prediction(preds, home, away)
         lines.append("")
         lines.append(f"<b>{home} מול {away}</b>")
@@ -427,7 +477,8 @@ def _handle_fixtures(parsed: dict) -> None:
             "model_home": mh, "model_away": ma,
         })
         if not p:
-            lines.append("• אין למודל ניחוש למשחק הזה עדיין.")
+            lines.append("• ⚠️ המשחק הזה לא נמצא במערכת — לא יושווה/ייעקב.")
+            missing.append(f"{home}–{away}")
             continue
         found += 1
         o = p.get("outcome_probabilities", {})
@@ -455,6 +506,14 @@ def _handle_fixtures(parsed: dict) -> None:
     if found:
         lines.append("")
         lines.append("<i>המודל רץ על נתונים מתעדכנים; ככל שנכנסות תוצאות אמת — מדויק יותר.</i>")
+
+    # סיכום קליטה — כדי שתוכל לוודא שכל הניחושים נקלטו, ולראות אילו חסרים במערכת
+    lines.append("")
+    lines.append(f"📥 נקלטו <b>{read}</b> ניחושים מהתמונה.")
+    if missing:
+        lines.append(f"⚠️ <b>{len(missing)} משחקים שהימרת עליהם לא נמצאו במערכת</b> "
+                     f"(לא יושוו/ייעקבו): {', '.join(missing)}.")
+        lines.append("אם המספר לא תואם למה ששלחת — ייתכן שצילום לא היה חד; שלח שוב.")
 
     # שמירת הניחושים שלך + הצגת הניקוד המצטבר מול המערכת (אם יש משחקים שהוכרעו)
     try:
@@ -589,6 +648,8 @@ def run_bot_once(poll_timeout: int = 15) -> dict:
         return {"handled": 0}
 
     gemini = scraper.GeminiClient()
+    # קודם כל — לעבד תמונות שהמתינו (נשמרו כשהמכסה אזלה), כעת כשאולי יש מכסה
+    _process_pending_images(gemini)
     offset = _load_offset()
     try:
         resp = requests.get(
@@ -616,15 +677,19 @@ def run_bot_once(poll_timeout: int = 15) -> dict:
 
             file_id = _image_file_id(msg)
             if file_id:
-                if not getattr(gemini, "enabled", False):
-                    _send_message("⚠️ קריאת תמונות זמנית לא זמינה (מכסת Gemini היומית "
-                                  "אזלה). נסה שוב מאוחר יותר.")
-                    continue
                 try:
                     img, mime = _download_file(file_id)
                 except Exception as exc:  # noqa: BLE001
                     log.error("הורדת תמונה נכשלה: %s", exc)
                     _send_message("⚠️ לא הצלחתי להוריד את התמונה. נסה לשלוח שוב.")
+                    continue
+                # מכסת Gemini אזלה — שומרים את התמונה לעיבוד אוטומטי מאוחר (לא מאבדים)
+                if not getattr(gemini, "enabled", False):
+                    _save_pending_image(img, mime)
+                    _send_message("📥 קיבלתי את התמונה, אבל קריאת התמונות אזלה כרגע "
+                                  "(מכסה יומית). שמרתי אותה — אעבד אותה אוטומטית כשהמכסה "
+                                  "תתחדש, בלי צורך לשלוח שוב.")
+                    handled += 1
                     continue
                 parsed = classify_image(gemini, img, mime) or {}
                 kind = parsed.get("kind")
@@ -632,11 +697,15 @@ def run_bot_once(poll_timeout: int = 15) -> dict:
                     _handle_lineup(parsed)
                 elif kind == "fixtures":
                     _handle_fixtures(parsed)
+                elif getattr(gemini, "_quota_exhausted", False):
+                    # המכסה אזלה תוך כדי — שומרים לעיבוד מאוחר
+                    _save_pending_image(img, mime)
+                    _send_message("📥 קיבלתי את התמונה אבל המכסה אזלה כרגע — שמרתי אותה "
+                                  "ואעבד אותה אוטומטית כשהמכסה תתחדש (אין צורך לשלוח שוב).")
                 else:
                     _send_message(
-                        "🤔 לא הצלחתי לקרוא את התמונה — ייתכן שהיא לא חדה מספיק, "
-                        "או שמכסת Gemini אזלה לרגע. נסה לשלוח שוב צילום ברור של "
-                        "מסך ההרכב או לוח המשחקים."
+                        "🤔 לא הצלחתי לקרוא את התמונה — ייתכן שהיא לא חדה מספיק. "
+                        "נסה לשלוח שוב צילום ברור של מסך ההרכב או לוח המשחקים."
                     )
                 handled += 1
                 continue

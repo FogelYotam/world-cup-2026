@@ -77,7 +77,10 @@ def _resolve_team(name, teams_by_name) -> str | None:
 def process(games: list[dict], db: dict | None = None) -> str:
     """מקבל רשימת ניחושים שחולצו מצילומים, שומר, מיישב, ומחזיר טקסט סיכום.
 
-    כל game: {home, away, user_home, user_away}. החזרה: סיכום "אתה מול המערכת".
+    כל game: {home, away, user_home, user_away, [model_home, model_away], [date]}.
+    אם המשתמש מעלה את **הדוחות** שקיבל — חלץ מהם את ניחוש המודל והעבר אותו
+    כ-model_home/model_away (זו ההשוואה ההוגנת: ניחוש המודל *לפני* המשחק). בלי זה
+    המודל מחושב מחדש — וזה in-sample/מנופח לעבר. החזרה: סיכום "אתה מול המערכת".
     """
     db = db if db is not None else (utils.load_json(config.DB_PATH, default={}) or {})
     teams_by_name = {t.get("team_name"): t for t in db.get("teams", [])}
@@ -88,16 +91,17 @@ def process(games: list[dict], db: dict | None = None) -> str:
             continue
         home, away = g.get("home"), g.get("away")
         th, ta = _resolve_team(home, teams_by_name), _resolve_team(away, teams_by_name)
-        mh = ma = None
-        if th and ta:
+        mh, ma = g.get("model_home"), g.get("model_away")
+        # אם ניחוש המודל סופק מהדוח (ההוגן — לפני המשחק) — משתמשים בו כמו שהוא.
+        # אחרת מחשבים (שים לב: לעבר זה in-sample/מנופח — עדיף לספק מהדוח).
+        if (mh is None or ma is None) and th and ta:
             pred = predictor.predict_match({"home_team": th, "away_team": ta}, teams_by_name)
             try:
                 ph, pa = (int(x) for x in pred["recommended_score"].split("-"))
-                # יישור ניחוש המודל ל-orientation של המשתמש (home=th)
                 mh, ma = (ph, pa) if _norm(pred["home_team"]) == _norm(th) else (pa, ph)
             except (KeyError, ValueError, AttributeError):
                 pass
-        else:
+        if not (th and ta):
             unresolved.append(f"{home}-{away}")
         entries.append({
             "home": th or home, "away": ta or away, "date": g.get("date"),

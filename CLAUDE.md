@@ -26,6 +26,8 @@ The user plays a Hebrew football-predictions league in the **KICKOFF** app (mobi
 5. For already-played games the model is **in-sample** (it learned from those results → inflated); the fair comparison is only for predictions saved **before** kickoff. Say so.
 6. `git commit` `data/my_predictions.json` when done.
 
+**If the user also uploads the daily reports they received** (Telegram/HTML, with the model's predictions): read them too, extract the **model's predicted score per game**, and pass it as `model_home`/`model_away` in the same `process(...)` call. This is the **fair** comparison — the model's pick as it was *before* the game. Without it, `process` recomputes the model, which for already-played games is **in-sample / inflated** (the model has since learned the result), so always prefer the report's prediction when available.
+
 ## Architecture (modules)
 - `config.py` — settings; loads `.env`. Key knobs: `REPORT_UPCOMING_COUNT` (=5 matches in the report), `POSITION_PICKS_PER_POS`, `TRANSFER_CANDIDATES_PER_POS` (=2), `MARKET_BLEND_WEIGHT`, `ODDS_REVEAL_HOURS`.
   - `FANTASY_SOURCES` — site/feed names handed to Gemini as grounded-search hints for prices/form/xG (e.g. *Fantasy Football Scout, WhoScored, FBref, Flashscore, Reddit r/FantasyPL, FotMob, #FPL on Twitter/X*). Gemini does not scrape each site — it uses them to steer its Google-grounded search.

@@ -215,6 +215,30 @@ def _home_advantage_for(home_name) -> float:
     return config.HOME_ADVANTAGE
 
 
+def _round_half_up(x: float) -> int:
+    return int(x + 0.5)
+
+
+def _realistic_scoreline(home_xg: float, away_xg: float, probs: dict,
+                         cap: int = 7) -> str:
+    """ניחוש מגוון/ריאלי לדוח: ספירת השערים מעיגול ה-xG, אך הכיוון לפי 1X2
+    המשוקלל. תיקו נבחר כשההסתברות לתיקו גבוהה דיה (סף) — כי במודל הוא כמעט אף פעם
+    לא ה'הכי סביר', אך קורה ~30% מהזמן. פחות 1-0, יותר שערים, ותיקו ריאלי."""
+    probs = probs or {}
+    hw, dr, aw = (probs.get("home_win", 0.0), probs.get("draw", 0.0),
+                  probs.get("away_win", 0.0))
+    thr = getattr(config, "DRAW_PREDICT_THRESHOLD", 0.27)
+    h, a = _round_half_up(home_xg), _round_half_up(away_xg)
+    if dr >= thr or (dr >= hw and dr >= aw):           # תיקו סביר דיו
+        g = min(_round_half_up((home_xg + away_xg) / 2), cap)
+        return f"{g}-{g}"
+    if hw >= aw and h <= a:                              # פייבוריט ביתי מנצח
+        h = a + 1
+    elif aw > hw and a <= h:                             # פייבוריט חוץ מנצח
+        a = h + 1
+    return f"{min(h, cap)}-{min(a, cap)}"
+
+
 def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
     """מחזיר חיזוי מלא למשחק אחד."""
     home_name = match.get("home_team")
@@ -251,6 +275,10 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
     recommended = ev_best["score"]
     recommended_ep = round(ev_best.get("ep", 0.0) + bonus_ep, 2)
 
+    # ניחוש לדוח — מגוון וריאלי: ספירת שערים מעיגול ה-xG, אבל הכיוון (נצחון/תיקו)
+    # לפי ההסתברות 1X2 המשוקללת. כך פחות 1-0, יותר שערים, ותיקו כשהוא הסביר ביותר.
+    predicted = _realistic_scoreline(home_xg, away_xg, probs)
+
     return {
         "match_id": match.get("match_id"),
         "home_team": home_name,
@@ -259,7 +287,8 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
         "kickoff": match.get("kickoff"),
         "stage": match.get("stage"),
         "expected_goals": {"home": home_xg, "away": away_xg},
-        "recommended_score": recommended,            # ממוקסם לפי תוחלת נקודות
+        "predicted_score": predicted,                # ניחוש הדוח — מגוון/ריאלי (xG+1X2)
+        "recommended_score": recommended,            # ממוקסם לפי תוחלת נקודות (שמרני)
         "recommended_ep": recommended_ep,            # תוחלת הנקודות של ההמלצה
         "most_likely_score": best["score"],          # התוצאה הסבירה ביותר (לעיון)
         "alternatives": [s["score"] for s in ev_ranked[1:4]],

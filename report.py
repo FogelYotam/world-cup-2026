@@ -82,9 +82,8 @@ _TEMPLATE = Template(
       {% if p.odds_locked %}
       <div>🔒 <span class="muted">ההמלצה תיחשף {{ p.reveal_label }}</span></div>
       {% else %}
-      <div>המלצה לניקוד: <span class="score">{{ p.recommended_score }}</span>
-        {% if p.recommended_ep is defined %}<span class="alts">תוחלת {{ p.recommended_ep }} נק'</span>{% endif %}
-        {% if p.most_likely_score and p.most_likely_score != p.recommended_score %}<span class="muted">· הכי סביר {{ p.most_likely_score }}</span>{% endif %}
+      <div>הניחוש: <span class="score">{{ p.predicted_score if p.predicted_score is defined else p.recommended_score }}</span>
+        {% if p.recommended_score and p.recommended_score != p.predicted_score %}<span class="muted">· בטוח-לניקוד {{ p.recommended_score }}</span>{% endif %}
         <span class="conf conf-{{ p.conf_class }}">אמון {{ p.confidence }}%</span></div>
       <div class="alts">חלופות (לפי תוחלת): {{ p.alternatives | join(', ') }}</div>
       <div class="probs">סיכויים — {{ p.home_team }}: {{ (p.outcome_probabilities.home_win*100)|round|int }}%
@@ -432,11 +431,12 @@ def build_telegram_text(predictions: list[dict], fantasy_result: dict,
                 market_tag = f" <i>[{src} מקורות{flag}]</i>"
             ko = _kickoff_label(p)
             ko_tag = f" ({ko})" if ko else ""
-            ep = p.get("recommended_ep")
-            ep_tag = f" <i>(תוחלת {ep} נק')</i>" if ep is not None else ""
+            pscore = p.get("predicted_score") or p.get("recommended_score", "")
+            safe = p.get("recommended_score", "")
+            safe_tag = f" <i>(בטוח {escape(safe)})</i>" if safe and safe != pscore else ""
             lines.append(
                 f"{i}. <b>{home}</b> מול <b>{away}</b>{ko_tag} → "
-                f"<b>{escape(p.get('recommended_score',''))}</b>{ep_tag} "
+                f"<b>{escape(pscore)}</b>{safe_tag} "
                 f"({home} {round(o.get('home_win',0)*100)}% · "
                 f"ת {round(o.get('draw',0)*100)}% · "
                 f"{away} {round(o.get('away_win',0)*100)}% · אמון {p.get('confidence',0)}%)"

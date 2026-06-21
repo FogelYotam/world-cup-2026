@@ -1085,3 +1085,25 @@ def test_find_prediction_matches_either_orientation():
     assert ti._find_prediction(preds, "Egypt", "Belgium") is not None
     assert ti._find_prediction(preds, "Belgium", "Egypt") is not None   # כיוון הפוך
     assert ti._find_prediction(preds, "Brazil", "Spain") is None        # לא קיים
+
+
+def test_realistic_scoreline_varied_with_draws():
+    import predictor as pr
+    # פייבוריט ביתי ברור → מנצח, עם שערים מה-xG (לא 1-0)
+    assert pr._realistic_scoreline(2.4, 0.6, {"home_win": 0.75, "draw": 0.16, "away_win": 0.09}) == "2-1"
+    # תיקו סביר (≥ סף) → תוצאת תיקו, גם אם הבית הכי סביר
+    assert pr._realistic_scoreline(1.4, 1.2, {"home_win": 0.45, "draw": 0.30, "away_win": 0.25}) == "1-1"
+    # פייבוריט חוץ → חוץ מנצח
+    assert pr._realistic_scoreline(0.7, 2.2, {"home_win": 0.12, "draw": 0.20, "away_win": 0.68}) == "1-2"
+    # מבטיח שהפייבוריט מנצח גם כשעיגול ה-xG שווה
+    out = pr._realistic_scoreline(1.6, 1.4, {"home_win": 0.55, "draw": 0.24, "away_win": 0.21})
+    h, a = (int(x) for x in out.split("-"))
+    assert h > a
+
+
+def test_predicted_score_field_present():
+    import config, utils, predictor
+    db = utils.load_json(config.DB_PATH, default={}) or {}
+    preds = predictor.predict_all(db)
+    if preds:
+        assert all("predicted_score" in p for p in preds)

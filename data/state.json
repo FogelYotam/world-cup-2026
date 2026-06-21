@@ -1,10 +1,6 @@
 {
-  "generated_at": "2026-06-20T08:56:03.827848+00:00",
+  "generated_at": "2026-06-21T08:56:13.987791+00:00",
   "fixtures": [
-    "33",
-    "34",
-    "35",
-    "36",
     "37",
     "38",
     "39",
@@ -78,10 +74,10 @@
     "Aníbal Moreno|Argentina",
     "Aqtay Abdallah|Egypt",
     "Aral Simsir|Türkiye",
+    "Assim Madibo|Qatar",
     "Atakan Karazor|Türkiye",
     "Bassam Al Rawi|Qatar",
     "Benjamín García|Uruguay",
-    "Billy Gilmour|Scotland",
     "Blás Riveros|Paraguay",
     "Brandon Borrello|Australia",
     "Brandon Petersen|South Africa",
@@ -99,14 +95,13 @@
     "Claudio Echeverri|Argentina",
     "Clément Akpa|Côte d'Ivoire",
     "Cristhian Loor|Ecuador",
-    "César Montes|Mexico",
     "Daniel Jebbison|Canada",
     "Dario Naamo|Iraq",
     "Darwin Guagua|Ecuador",
-    "David Jurásek|Czechia",
     "Deinner Ordóñez|Ecuador",
     "Demir Ege Tiknaz|Türkiye",
     "Deni Juric|Australia",
+    "Denis Zakaria|Switzerland",
     "Diego González|Paraguay",
     "Diego Lainez|Mexico",
     "Diego León|Paraguay",
@@ -134,18 +129,22 @@
     "Guido Rodríguez|Argentina",
     "Hadi Habibinejad|IR Iran",
     "Hasan Abdulkareem|Iraq",
+    "Homam El Amin|Qatar",
     "Hugo Cuenca|Paraguay",
     "Ibrahim Gomis|Morocco",
     "Ibrahim Sabra|Jordan",
     "Ilay Camara|Senegal",
     "Imrân Louza|Morocco",
     "Ismaël Baouf|Morocco",
+    "Ismaël Koné|Canada",
     "Iván Anderson|Panama",
     "JD Gunn|Panama",
     "Jacen Russell-Rowe|Canada",
+    "Jaloliddin Masharipov|Uzbekistan",
     "Jamie Knight-Lebel|Canada",
     "Jasurbek Jaloliddinov|Uzbekistan",
     "Jerdy Schouten|Netherlands",
+    "Jeremie Frimpong|Netherlands",
     "Jeremy Márquez|Mexico",
     "Jesús Angulo|Mexico",
     "Joe Gauci|Australia",
@@ -227,6 +226,7 @@
     "Paul Reverson|Ghana",
     "Pavel Bucha|Czechia",
     "Peter Gwargis|Iraq",
+    "Quinten Timber|Netherlands",
     "Ralph Priso|Canada",
     "Ramón Juárez|Mexico",
     "Rayane Bounida|Morocco",
@@ -249,6 +249,7 @@
     "Sebastián Soria|Qatar",
     "Shehab Ellethy|Qatar",
     "Sherzod Temirov|Uzbekistan",
+    "Shuto Machino|Japan",
     "Sofiane Boufal|Morocco",
     "Sohaib Nair|Algeria",
     "Solomon Agbasi|Ghana",
@@ -257,13 +258,14 @@
     "Soufiane Bouftini|Morocco",
     "Soufiane El-Faouzi|Morocco",
     "Stefan de Vrij|Netherlands",
+    "Takefusa Kubo|Japan",
     "Tanner Tessmann|USA",
     "Tarek Salman|Qatar",
+    "Tarik Muharemovic|Bosnia and Herzegovina",
     "Tawfik Bentayeb|Morocco",
     "Thabiso Monyane|South Africa",
     "Thapelo Morena|South Africa",
     "Themba Zwane|South Africa",
-    "Thomas Partey|Ghana",
     "Tino Livramento|England",
     "Tomás Aranda|Argentina",
     "Tomás Ladra|Czechia",
@@ -271,7 +273,9 @@
     "Víctor Griffith|Panama",
     "Víctor Guzmán|Mexico",
     "Walter Benítez|Argentina",
+    "Wataru Endo|Japan",
     "Wesley|Brazil",
+    "Xavi Simons|Netherlands",
     "Yanis Begraoui|Morocco",
     "Yanis Benchaouch|Morocco",
     "Yassir Zabiri|Morocco",
@@ -289,29 +293,13 @@
     "Óscar Romero|Paraguay"
   ],
   "odds": {
-    "33": {
-      "favorite": "away_win",
-      "prob": 0.639
-    },
-    "34": {
-      "favorite": "home_win",
-      "prob": 0.809
-    },
-    "35": {
-      "favorite": "home_win",
-      "prob": 0.748
-    },
-    "36": {
-      "favorite": "away_win",
-      "prob": 0.839
-    },
     "37": {
       "favorite": "home_win",
-      "prob": 0.537
+      "prob": 0.583
     },
     "38": {
       "favorite": "home_win",
-      "prob": 0.511
+      "prob": 0.487
     },
     "39": {
       "favorite": "home_win",
@@ -339,11 +327,11 @@
     },
     "45": {
       "favorite": "home_win",
-      "prob": 0.721
+      "prob": 0.676
     },
     "46": {
       "favorite": "home_win",
-      "prob": 0.535
+      "prob": 0.579
     },
     "47": {
       "favorite": "away_win",
@@ -351,7 +339,7 @@
     },
     "48": {
       "favorite": "home_win",
-      "prob": 0.607
+      "prob": 0.64
     },
     "49": {
       "favorite": "away_win",
@@ -379,19 +367,19 @@
     },
     "55": {
       "favorite": "away_win",
-      "prob": 0.894
+      "prob": 0.762
     },
     "56": {
       "favorite": "away_win",
-      "prob": 0.916
+      "prob": 0.807
     },
     "57": {
       "favorite": "away_win",
-      "prob": 0.858
+      "prob": 0.917
     },
     "58": {
-      "favorite": "away_win",
-      "prob": 0.718
+      "favorite": "home_win",
+      "prob": 0.743
     },
     "59": {
       "favorite": "away_win",

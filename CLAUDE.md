@@ -12,6 +12,20 @@ A Hebrew (RTL) system for the 2026 FIFA World Cup that:
 
 Runs fully in the cloud (GitHub Actions) — no PC required.
 
+## Processing the user's KICKOFF prediction screenshots (READ THIS when images are attached)
+The user plays a Hebrew football-predictions league in the **KICKOFF** app (mobile-only). They upload screenshots of their predictions; you compare them to the model and track a cumulative "you vs system" score. **When the user attaches KICKOFF screenshots, do this — do NOT use Gemini, read them with your own vision** (Gemini Vision is only for the autonomous cloud bot, and it mis-reads RTL/orientation):
+1. Each settled card shows: two team flags+names, the user's prediction badge **"ניחשת X-Y"**, the actual score, and a points badge — **בול = +3 (exact)**, **כיוון = +1 (correct direction)**, **פספוס = 0 (miss)**, **קנס חמור = −1 (reversed)**. The team shown **first / on the right** (RTL) is the home/first team. **Ignore input/edit screenshots** (editable score boxes, no points badge) — only take settled cards.
+2. Extract per game: `home`, `away`, `user_home`, `user_away` (in the app's orientation). Names may be Hebrew or English — the helper maps them.
+3. Run the helper, which computes the model's pick, records to `predictions_log` (`data/my_predictions.json`), settles against `data/db.json` results, and returns the "you vs system" summary:
+   ```python
+   import kickoff_predictions as kp
+   print(kp.process([{"home": "Egypt", "away": "Belgium", "user_home": 0, "user_away": 2}, ...]))
+   ```
+   (or CLI: `python kickoff_predictions.py '<json-list>'`). Scoring is KICKOFF: exact +3, direction +1, reversed −1, miss 0 — **no independent goals bonus** (verified: a 4-goal game with wrong direction scored 0 in the app).
+4. **Cross-check** your extracted `user_home/away` against the card's points badge — if `match_points(user, actual)` ≠ the app's badge, you read the orientation backwards; flip it.
+5. For already-played games the model is **in-sample** (it learned from those results → inflated); the fair comparison is only for predictions saved **before** kickoff. Say so.
+6. `git commit` `data/my_predictions.json` when done.
+
 ## Architecture (modules)
 - `config.py` — settings; loads `.env`. Key knobs: `REPORT_UPCOMING_COUNT` (=5 matches in the report), `POSITION_PICKS_PER_POS`, `TRANSFER_CANDIDATES_PER_POS` (=2), `MARKET_BLEND_WEIGHT`, `ODDS_REVEAL_HOURS`.
   - `FANTASY_SOURCES` — site/feed names handed to Gemini as grounded-search hints for prices/form/xG (e.g. *Fantasy Football Scout, WhoScored, FBref, Flashscore, Reddit r/FantasyPL, FotMob, #FPL on Twitter/X*). Gemini does not scrape each site — it uses them to steer its Google-grounded search.

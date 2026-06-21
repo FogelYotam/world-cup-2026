@@ -1077,3 +1077,11 @@ def test_pending_image_kept_when_quota_still_out(monkeypatch, tmp_path):
         _quota_exhausted = True
     assert ti._process_pending_images(_G()) == 0
     assert len(list((tmp_path / "pending").glob("*.jpg"))) == 1   # נשמר לפעם הבאה
+
+
+def test_find_prediction_matches_either_orientation():
+    import telegram_intake as ti
+    preds = [{"home_team": "Egypt", "away_team": "Belgium", "recommended_score": "1-1"}]
+    assert ti._find_prediction(preds, "Egypt", "Belgium") is not None
+    assert ti._find_prediction(preds, "Belgium", "Egypt") is not None   # כיוון הפוך
+    assert ti._find_prediction(preds, "Brazil", "Spain") is None        # לא קיים

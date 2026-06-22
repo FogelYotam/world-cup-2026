@@ -215,22 +215,25 @@ def _home_advantage_for(home_name) -> float:
     return config.HOME_ADVANTAGE
 
 
-def _round_half_up(x: float) -> int:
-    return int(x + 0.5)
+def _round_goals(x: float) -> int:
+    """עיגול שערים שמרני (חצי-למטה): מעגל למעלה רק כשהשבר *גדול* מ-0.5.
+    כך xG=4.5 (תקרת המודל) הופך ל-4 ולא 5 — תואם את התוצאה הסבירה ביותר (מוד
+    פואסון = floor(μ)) ולא מגזים במספר השערים לקבוצה."""
+    return int(x) + (1 if (x - int(x)) > 0.5 else 0)
 
 
 def _realistic_scoreline(home_xg: float, away_xg: float, probs: dict,
-                         cap: int = 7) -> str:
-    """ניחוש מגוון/ריאלי לדוח: ספירת השערים מעיגול ה-xG, אך הכיוון לפי 1X2
-    המשוקלל. תיקו נבחר כשההסתברות לתיקו גבוהה דיה (סף) — כי במודל הוא כמעט אף פעם
-    לא ה'הכי סביר', אך קורה ~30% מהזמן. פחות 1-0, יותר שערים, ותיקו ריאלי."""
+                         cap: int = 6) -> str:
+    """ניחוש מגוון/ריאלי לדוח: ספירת השערים מעיגול (שמרני) של ה-xG, אך הכיוון לפי
+    1X2 המשוקלל. תיקו נבחר כשההסתברות לתיקו גבוהה דיה (סף) — כי במודל הוא כמעט אף
+    פעם לא ה'הכי סביר', אך קורה ~30%. פחות 1-0, יותר שערים, תיקו ריאלי, בלי הגזמה."""
     probs = probs or {}
     hw, dr, aw = (probs.get("home_win", 0.0), probs.get("draw", 0.0),
                   probs.get("away_win", 0.0))
     thr = getattr(config, "DRAW_PREDICT_THRESHOLD", 0.27)
-    h, a = _round_half_up(home_xg), _round_half_up(away_xg)
+    h, a = _round_goals(home_xg), _round_goals(away_xg)
     if dr >= thr or (dr >= hw and dr >= aw):           # תיקו סביר דיו
-        g = min(_round_half_up((home_xg + away_xg) / 2), cap)
+        g = min(_round_goals((home_xg + away_xg) / 2), cap)
         return f"{g}-{g}"
     if hw >= aw and h <= a:                              # פייבוריט ביתי מנצח
         h = a + 1

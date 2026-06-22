@@ -1,10 +1,6 @@
 {
-  "generated_at": "2026-06-21T08:56:13.987791+00:00",
+  "generated_at": "2026-06-22T08:55:46.394455+00:00",
   "fixtures": [
-    "37",
-    "38",
-    "39",
-    "40",
     "41",
     "42",
     "43",
@@ -74,7 +70,6 @@
     "Aníbal Moreno|Argentina",
     "Aqtay Abdallah|Egypt",
     "Aral Simsir|Türkiye",
-    "Assim Madibo|Qatar",
     "Atakan Karazor|Türkiye",
     "Bassam Al Rawi|Qatar",
     "Benjamín García|Uruguay",
@@ -98,6 +93,7 @@
     "Daniel Jebbison|Canada",
     "Dario Naamo|Iraq",
     "Darwin Guagua|Ecuador",
+    "David Jurásek|Czechia",
     "Deinner Ordóñez|Ecuador",
     "Demir Ege Tiknaz|Türkiye",
     "Deni Juric|Australia",
@@ -126,21 +122,22 @@
     "Germán Berterame|Mexico",
     "Germán Pezzella|Argentina",
     "Gianluca Prestianni|Argentina",
+    "Giorgian de Arrascaeta|Uruguay",
     "Guido Rodríguez|Argentina",
     "Hadi Habibinejad|IR Iran",
     "Hasan Abdulkareem|Iraq",
     "Homam El Amin|Qatar",
     "Hugo Cuenca|Paraguay",
+    "Hwang Hee-chan|Korea Republic",
+    "Hwang In-beom|Korea Republic",
     "Ibrahim Gomis|Morocco",
     "Ibrahim Sabra|Jordan",
     "Ilay Camara|Senegal",
     "Imrân Louza|Morocco",
     "Ismaël Baouf|Morocco",
-    "Ismaël Koné|Canada",
     "Iván Anderson|Panama",
     "JD Gunn|Panama",
     "Jacen Russell-Rowe|Canada",
-    "Jaloliddin Masharipov|Uzbekistan",
     "Jamie Knight-Lebel|Canada",
     "Jasurbek Jaloliddinov|Uzbekistan",
     "Jerdy Schouten|Netherlands",
@@ -151,7 +148,6 @@
     "John Mercado|Ecuador",
     "Johnny Cardoso|USA",
     "Jonas Urbig|Germany",
-    "Jonathan David|Canada",
     "Jordán Carrillo|Mexico",
     "Jorge Ruvalcaba|Mexico",
     "José Hurtado|Ecuador",
@@ -162,6 +158,7 @@
     "Jurriën Timber|Netherlands",
     "Jussef Nasrawe|Iraq",
     "Justin Bijlow|Netherlands",
+    "Jérémy Doku|Belgium",
     "Kadir Barría|Panama",
     "Karar Nabeel|Iraq",
     "Kasra Taheri|IR Iran",
@@ -184,6 +181,7 @@
     "Luis Fragozo|Ecuador",
     "Lutsharel Geertruida|Netherlands",
     "Malcom DaCosta|Ecuador",
+    "Manuel Akanji|Switzerland",
     "Marcel Ruiz|Mexico",
     "Marcelo Flores|Canada",
     "Marcos Acuña|Argentina",
@@ -192,10 +190,12 @@
     "Mateo Gamarra|Paraguay",
     "Mateo Pellegrino|Argentina",
     "Mathías Villasanti|Paraguay",
+    "Matthew Garbett|New Zealand",
     "Matías Soulé|Argentina",
     "Maya Yoshida|Japan",
     "Maytham Jabbar|Iraq",
     "Mehdi Dorval|Algeria",
+    "Miguel Almirón|Paraguay",
     "Milton Delgado|Argentina",
     "Miro Muheim|Switzerland",
     "Mohamed Chibi|Morocco",
@@ -206,7 +206,6 @@
     "Muhammed Sengezer|Türkiye",
     "Mustafa Eskihellaç|Türkiye",
     "Máximo Perrone|Argentina",
-    "Nayef Aguerd|Morocco",
     "Neymar|Brazil",
     "Niall Mason|Qatar",
     "Nicolás Capaldo|Argentina",
@@ -225,6 +224,7 @@
     "Patrick Yazbek|Australia",
     "Paul Reverson|Ghana",
     "Pavel Bucha|Czechia",
+    "Percy Tau|South Africa",
     "Peter Gwargis|Iraq",
     "Quinten Timber|Netherlands",
     "Ralph Priso|Canada",
@@ -237,6 +237,7 @@
     "Robert Morales|Paraguay",
     "Robert Piris Da Motta|Paraguay",
     "Rodney Redes|Paraguay",
+    "Ronald Araujo|Uruguay",
     "Ronaldo Dejesús|Paraguay",
     "Ronaldo Martínez|Paraguay",
     "Rubén Lezcano|Paraguay",
@@ -258,11 +259,13 @@
     "Soufiane Bouftini|Morocco",
     "Soufiane El-Faouzi|Morocco",
     "Stefan de Vrij|Netherlands",
+    "Tajon Buchanan|Canada",
     "Takefusa Kubo|Japan",
     "Tanner Tessmann|USA",
     "Tarek Salman|Qatar",
     "Tarik Muharemovic|Bosnia and Herzegovina",
     "Tawfik Bentayeb|Morocco",
+    "Teboho Mokoena|South Africa",
     "Thabiso Monyane|South Africa",
     "Thapelo Morena|South Africa",
     "Themba Zwane|South Africa",
@@ -285,6 +288,7 @@
     "Yusuf Sari|Türkiye",
     "Zaid Romero|Argentina",
     "Zakaria Hawsawi|Saudi Arabia",
+    "Zeno Debast|Belgium",
     "Zorhan Bassong|Canada",
     "Álex Padilla|Mexico",
     "Álvaro Campuzano|Paraguay",
@@ -293,22 +297,6 @@
     "Óscar Romero|Paraguay"
   ],
   "odds": {
-    "37": {
-      "favorite": "home_win",
-      "prob": 0.583
-    },
-    "38": {
-      "favorite": "home_win",
-      "prob": 0.487
-    },
-    "39": {
-      "favorite": "home_win",
-      "prob": 0.616
-    },
-    "40": {
-      "favorite": "away_win",
-      "prob": 0.429
-    },
     "41": {
       "favorite": "home_win",
       "prob": 0.752
@@ -327,11 +315,11 @@
     },
     "45": {
       "favorite": "home_win",
-      "prob": 0.676
+      "prob": 0.721
     },
     "46": {
       "favorite": "home_win",
-      "prob": 0.579
+      "prob": 0.516
     },
     "47": {
       "favorite": "away_win",
@@ -355,11 +343,11 @@
     },
     "51": {
       "favorite": "away_win",
-      "prob": 0.53
+      "prob": 0.443
     },
     "54": {
       "favorite": "away_win",
-      "prob": 0.563
+      "prob": 0.482
     },
     "53": {
       "favorite": "away_win",
@@ -399,19 +387,19 @@
     },
     "63": {
       "favorite": "away_win",
-      "prob": 0.419
+      "prob": 0.757
     },
     "64": {
-      "favorite": "away_win",
-      "prob": 0.408
+      "favorite": "home_win",
+      "prob": 0.607
     },
     "65": {
       "favorite": "away_win",
-      "prob": 0.518
+      "prob": 0.557
     },
     "66": {
       "favorite": "home_win",
-      "prob": 0.425
+      "prob": 0.527
     },
     "68": {
       "favorite": "away_win",

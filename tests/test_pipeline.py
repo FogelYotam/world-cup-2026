@@ -1131,3 +1131,16 @@ def test_config_tuning_respects_bounds(monkeypatch, tmp_path):
         assert config.HOME_ADVANTAGE == 0.2   # בתחום — הוחל
     finally:
         config.MAX_XG, config.HOME_ADVANTAGE = old_max, old_ha
+
+
+def test_core_runs_without_optional_deps():
+    """הליבה (kickoff_predictions) חייבת לייבא ולרוץ בלי python-dotenv/requests
+    — כדי שעבודה מהנייד (claude.ai/code, סביבה טרייה) תעבוד בלי pip install."""
+    import subprocess
+    code = ("import sys; sys.modules['dotenv']=None; sys.modules['requests']=None; "
+            "import kickoff_predictions as kp; "
+            "kp.process([{'home':'Norway','away':'Iraq','user_home':1,'user_away':0,"
+            "'model_home':1,'model_away':0}]); print('OK')")
+    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True,
+                       cwd=str(Path(__file__).resolve().parent.parent))
+    assert r.returncode == 0 and "OK" in r.stdout, r.stderr

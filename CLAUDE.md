@@ -75,6 +75,7 @@ The user plays a Hebrew football-predictions league in the **KICKOFF** app (mobi
 - **Python 3.11** with a virtual env: `python -m venv .venv`.
 - Activate it (`.venv\Scripts\activate` on Windows) then `pip install -r requirements.txt`.
 - Copy `.env.example` to `.env` and fill `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `GEMINI_API_KEY` (never commit `.env`).
+- **Mobile / fresh sandbox (claude.ai/code)**: the **KICKOFF comparison core runs with ZERO dependencies** — `kickoff_predictions`, `predictor`, `predictions_log`, `config`, `utils` import and run on the Python stdlib alone (`python-dotenv` and `requests` are optional/lazy). So you can read screenshots and run `kickoff_predictions.process(...)` from a fresh mobile session **without `pip install`**. Only the full pipeline (`main.py`, the bot, the report HTML) needs `pip install -r requirements.txt` (jinja2/requests/google-generativeai).
 
 ## Common operations
 - **Tests:** with the venv active, `python -m pytest -q` (47 tests). On Windows without activating: `.venv/Scripts/python.exe -m pytest -q`.

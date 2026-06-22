@@ -3,10 +3,15 @@ from pathlib import Path
 import json
 import os
 
-from dotenv import load_dotenv
-
 BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(BASE_DIR / ".env")
+# python-dotenv אופציונלי: בסביבה טרייה (claude.ai/code בנייד, ללא pip install)
+# הוא לא קיים — הליבה (kickoff_predictions/predictor) חייבת לרוץ בלעדיו. הסודות
+# נטענים אז ישירות מ-os.environ אם הוגדרו.
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / ".env")
+except ImportError:
+    pass
 
 # --- נתיבים ---
 DATA_DIR = BASE_DIR / "data"

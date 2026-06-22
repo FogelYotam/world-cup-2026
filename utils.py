@@ -7,9 +7,10 @@ import json
 import logging
 import time
 
-import requests
-
 import config
+
+# requests מיובא עצלן בתוך safe_get — כך הליבה (kickoff_predictions/predictor)
+# רצה בלי התקנת requests (סביבת נייד טרייה ב-claude.ai/code).
 
 # --------------------------------------------------------------------------- #
 # לוגים
@@ -132,6 +133,7 @@ def safe_get(
     GET עם טיפול בשגיאות רשת, rate-limit (429) ו-retry עם backoff.
     מחזיר Response במקרה הצלחה, או None אם כל הניסיונות נכשלו.
     """
+    import requests  # עצלן — נדרש רק כאן (HTTP), לא בליבת החישוב
     merged_headers = {**_DEFAULT_HEADERS, **(headers or {})}
 
     for attempt in range(1, retries + 1):

@@ -438,9 +438,11 @@ def test_squad_repaired_to_within_budget():
 
 
 def test_conditional_host_home_advantage():
-    assert predictor._home_advantage_for("USA") == config.HOST_HOME_ADVANTAGE
-    assert predictor._home_advantage_for("Mexico") == config.HOST_HOME_ADVANTAGE
+    host = config.HOME_ADVANTAGE + config.HOST_HOME_BONUS
+    assert predictor._home_advantage_for("USA") == host
+    assert predictor._home_advantage_for("Mexico") == host
     assert predictor._home_advantage_for("Brazil") == config.HOME_ADVANTAGE
+    assert host > config.HOME_ADVANTAGE          # מארחת תמיד מעל הניטרלי
     # מארחת בבית מקבלת xG ביתי גבוה יותר מאותה נבחרת במגרש ניטרלי
     teams = {"USA": {"goals_for": 1.5, "goals_against": 1.2},
              "Brazil": {"goals_for": 1.5, "goals_against": 1.2},
@@ -1107,3 +1109,25 @@ def test_predicted_score_field_present():
     preds = predictor.predict_all(db)
     if preds:
         assert all("predicted_score" in p for p in preds)
+
+
+def test_maybe_autotune_skips_with_few_results(monkeypatch, tmp_path):
+    import backtest
+    monkeypatch.setattr(config, "DATA_DIR", tmp_path)
+    db = {"teams": [], "results": [{"home": "A", "away": "B", "home_goals": 1,
+                                    "away_goals": 0, "date": "d"}]}
+    backtest.maybe_autotune(db)
+    assert not (tmp_path / "tuning.json").exists()   # <10 תוצאות → דולג
+
+
+def test_config_tuning_respects_bounds(monkeypatch, tmp_path):
+    monkeypatch.setattr(config, "DATA_DIR", tmp_path)
+    (tmp_path / "tuning.json").write_text(
+        json.dumps({"MAX_XG": 99, "HOME_ADVANTAGE": 0.2}), encoding="utf-8")
+    old_max, old_ha = config.MAX_XG, config.HOME_ADVANTAGE
+    try:
+        config._apply_saved_tuning()
+        assert config.MAX_XG == old_max       # 99 מחוץ לתחום — לא הוחל
+        assert config.HOME_ADVANTAGE == 0.2   # בתחום — הוחל
+    finally:
+        config.MAX_XG, config.HOME_ADVANTAGE = old_max, old_ha

@@ -211,7 +211,8 @@ def _home_advantage_for(home_name) -> float:
     """יתרון ביתי מותנה: גבוה למארחת שמשחקת בביתה, אחרת ניטרלי (config.HOME_ADVANTAGE)."""
     hosts = {str(h).strip().lower() for h in getattr(config, "HOST_NATIONS", set())}
     if str(home_name or "").strip().lower() in hosts:
-        return getattr(config, "HOST_HOME_ADVANTAGE", config.HOME_ADVANTAGE)
+        # יחסי: תמיד מעל הניטרלי, גם אם auto-tune שינה את HOME_ADVANTAGE
+        return config.HOME_ADVANTAGE + getattr(config, "HOST_HOME_BONUS", 0.20)
     return config.HOME_ADVANTAGE
 
 

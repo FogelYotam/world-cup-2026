@@ -28,3 +28,5 @@ output/
 .env.local
 
 pending_images/
+
+data/tuning.json

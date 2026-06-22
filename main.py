@@ -71,6 +71,13 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
         log.info("מצב --no-scrape: משתמש בנתונים הקיימים ב-db.json")
         db = utils.load_json(config.DB_PATH, default={}) or {}
 
+    # כיוונון אוטומטי יומי (פעם ביום, לפני הניחושים) — מחיל קונפיג טוב יותר אם יש
+    try:
+        import backtest
+        backtest.maybe_autotune(db)
+    except Exception as exc:  # noqa: BLE001
+        log.error("כיוונון אוטומטי יומי נכשל: %s", exc)
+
     predictions = predictor.predict_all(db)
     fantasy_result = fantasy.build_fantasy(db, predictions)
 

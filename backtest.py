@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import itertools
+import json
 
 import config
 import predictor
@@ -186,6 +187,47 @@ def format_tune_report(t: dict) -> str:
               "⚠ in-sample על מעט תוצאות — נוטה ל-overfit. החל רק אם השיפור עקבי",
               "  והערך הגיוני; אמת מול הבייסליינים לפני deploy."]
     return "\n".join(lines)
+
+
+def maybe_autotune(db: dict | None = None, scoring: dict | None = None,
+                   min_gain: float = 0.10) -> dict:
+    """כיוונון אוטומטי **פעם ביום** (נקרא מהדוח היומי, לפני הניחושים). מריץ tune,
+    ומחיל את הקונפיג הטוב ביותר **רק אם** הוא משפר ב-≥min_gain ppg ובתחום שפוי.
+    שומר ל-data/tuning.json (ש-config טוען בריצות הבאות) ומחיל בזיכרון לריצה הנוכחית.
+    best-effort; לא זורק."""
+    from datetime import date
+    path = config.DATA_DIR / "tuning.json"
+    today = date.today().isoformat()
+    cur = {}
+    if path.exists():
+        try:
+            cur = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            cur = {}
+    if cur.get("date") == today:            # כבר רץ היום — לא שוב
+        return cur
+    try:
+        db = db if db is not None else (utils.load_json(config.DB_PATH, default={}) or {})
+        if len(_clean_results(db)) < 10:    # מעט מדי תוצאות לכיול אמין
+            log.info("auto-tune יומי דולג — פחות מ-10 תוצאות")
+            return cur
+        t = tune(db, scoring)
+        best, gain = t["best"], t["best"]["ppg"] - t["current_ppg"]
+        out = {"date": today, "current_ppg": t["current_ppg"],
+               "best_ppg": best["ppg"], "gain": round(gain, 3)}
+        if gain >= min_gain:
+            out.update(best["config"])
+            for k, v in best["config"].items():     # החלה מיידית לריצה הנוכחית
+                setattr(config, k, v)
+            log.info("auto-tune יומי: הוחל %s (שיפור %.3f ppg)", best["config"], gain)
+        else:
+            out.update({k: getattr(config, k, None) for k in TUNE_GRID})
+            log.info("auto-tune יומי: אין שיפור משמעותי (%.3f) — נשמר הקיים", gain)
+        json.dump(out, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        return out
+    except Exception as exc:  # noqa: BLE001
+        log.error("auto-tune יומי נכשל: %s", exc)
+        return cur
 
 
 if __name__ == "__main__":

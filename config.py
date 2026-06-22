@@ -1,5 +1,6 @@
 """מרכז ההגדרות של המערכת. טוען משתנים מקובץ .env."""
 from pathlib import Path
+import json
 import os
 
 from dotenv import load_dotenv
@@ -49,7 +50,9 @@ HOST_NATIONS = {
     "USA", "United States", "United States of America", "US",
     "Mexico", "México", "Canada",
 }
-HOST_HOME_ADVANTAGE = 0.30     # יתרון ביתי למארחת שמשחקת בביתה
+# בונוס *מעל* היתרון הניטרלי (יחסי) — כך גם אם auto-tune מעלה את HOME_ADVANTAGE,
+# מארחת תמיד גבוהה ממנו. host_adv = HOME_ADVANTAGE + HOST_HOME_BONUS.
+HOST_HOME_BONUS = 0.20
 DEFAULT_GOALS_FOR = 1.3        # ערך fallback ממוצע שערים למשחק
 DEFAULT_GOALS_AGAINST = 1.3
 MAX_GOALS_GRID = 6             # תקרת שערים בחישוב מטריצת ההסתברויות
@@ -133,3 +136,26 @@ def mail_enabled() -> bool:
 
 def telegram_enabled() -> bool:
     return bool(TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID)
+
+
+# --- כיוונון אוטומטי שמור (data/tuning.json) — דורס ידיות מודל בתחום שפוי בלבד ---
+_TUNING_BOUNDS = {"MAX_XG": (3.0, 5.5), "HOME_ADVANTAGE": (0.0, 0.4)}
+
+
+def _apply_saved_tuning() -> None:
+    """טוען ערכי כיוונון שנשמרו על-ידי auto-tune היומי ומחיל אותם (בגבולות שפויים)."""
+    path = DATA_DIR / "tuning.json"
+    if not path.exists():
+        return
+    try:
+        t = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return
+    g = globals()
+    for key, (lo, hi) in _TUNING_BOUNDS.items():
+        v = t.get(key)
+        if isinstance(v, (int, float)) and lo <= float(v) <= hi:
+            g[key] = float(v)
+
+
+_apply_saved_tuning()

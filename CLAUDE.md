@@ -3,6 +3,14 @@
 Operational guide for this project. Read this first; it explains the architecture,
 how to run/deploy, and the non-obvious gotchas.
 
+## ⚠️ Sync discipline — do this EVERY session (mobile, Cowork, local)
+This repo is worked on from several places (local, `claude.ai/code` on mobile, Cowork) **and a cloud bot auto-commits `data/*.json` continuously**. To stay in sync:
+1. **At the very start of every session, before any work:** `git pull --rebase origin main`. Never edit files (especially `data/db.json`, `data/my_predictions.json`) without pulling first — the cloud commits them often.
+2. **After committing any change:** `git push` (and `git pull --rebase` first if the push is rejected). Do this as part of finishing the task, not later.
+3. **One live session at a time** on the same files — concurrent edits in two places cause conflicts.
+4. **On a rebase conflict in `data/*.json`:** these are generated/append-only — take the incoming version (`git checkout --theirs <file>`) or regenerate, then `git add` + continue. Never hand-merge them.
+The user expects sync to "just work" across devices — owning the pull-first / push-last flow is part of every task here, not optional.
+
 ## What it does
 A Hebrew (RTL) system for the 2026 FIFA World Cup that:
 1. **Predicts match results** — 1X2 + exact score + confidence (Poisson model blended with market odds).

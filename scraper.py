@@ -1,9 +1,10 @@
 """
-איסוף נתונים ממקורות חינמיים והרכבתם לסכמה אחידה ב-data/db.json.
+איסוף נתונים והרכבתם לסכמה אחידה ב-data/db.json.
 
-מקור ראשי: Gemini עם עיגון לחיפוש Google (נתונים עדכניים).
-מקור משלים: ה-JSON הציבורי של Sofascore.
-בכל כשל — נרשם לוג, מוחזרים ערכי fallback, וההרצה ממשיכה.
+מקור אמת ראשי: ה-feed הרשמי הציבורי של FIFA World Cup Fantasy
+(players/squads/rounds.json) — שחקנים, לוח, תוצאות, נבחרות.
+מקור העשרה משלים: Gemini עם עיגון לחיפוש Google — אודדס שוק (מ-config.ODDS_SOURCES)
+ו-xG/פציעות. בכל כשל — נרשם לוג, מוחזרים ערכי fallback, וההרצה ממשיכה.
 """
 from __future__ import annotations
 

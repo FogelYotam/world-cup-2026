@@ -38,6 +38,9 @@ PERPLEXITY_API_KEY = _clean_key(os.getenv("PERPLEXITY_API_KEY"))
 # --- טלגרם (ערוץ ההפצה המועדף) ---
 TELEGRAM_BOT_TOKEN = _clean_key(os.getenv("TELEGRAM_BOT_TOKEN"))
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+# קליטת הבוט (קריאת צילומים/צ'אט) כבויה — הניחושים נעשים מ-claude.ai/code בנייד.
+# הדוח היומי עדיין נשלח (זה ג'וב נפרד ב-main.py). הפוך ל-True כדי להפעיל מחדש.
+TELEGRAM_INTAKE_ENABLED = os.getenv("TELEGRAM_INTAKE_ENABLED", "0").strip() in ("1", "true", "True")
 
 # --- מייל (אופציונלי) ---
 GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS", "").strip()

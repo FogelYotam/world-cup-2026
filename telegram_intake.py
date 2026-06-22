@@ -651,6 +651,9 @@ def run_bot_once(poll_timeout: int = 15) -> dict:
     if not config.telegram_enabled():
         log.warning("טלגרם לא מוגדר — הבוט לא יכול לרוץ")
         return {"handled": 0}
+    if not getattr(config, "TELEGRAM_INTAKE_ENABLED", False):
+        # קליטת הבוט כבויה — הניחושים נעשים מ-claude.ai/code. לא קוראים צילומים/צ'אט.
+        return {"handled": 0, "disabled": True}
 
     gemini = scraper.GeminiClient()
     # קודם כל — לעבד תמונות שהמתינו (נשמרו כשהמכסה אזלה), כעת כשאולי יש מכסה

@@ -154,7 +154,7 @@ _TEMPLATE = Template(
       <div class="pitch-row">
         {% for d in players %}
         <div class="player">
-          <div class="pname">{{ d.player_name }}</div>
+          <div class="pname">{{ d.player_name }}{% if d.scouting_bonus %} ⭐{% endif %}</div>
           <div class="pmeta">{{ d.team }}{% if d.ownership is not none %} · {{ d.ownership }}%{% endif %}</div>
         </div>
         {% endfor %}
@@ -373,12 +373,14 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
     pos_labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
     if any(diffs.get(p) for p in ("GK", "DEF", "MID", "FWD")):
-        lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% · מובטחי-דקות):")
+        lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% · מובטחי-דקות · "
+                     f"⭐ = מתחת ל-5% → זכאי scouting bonus +2):")
 
         def _diff_tag(d):
             own = d.get("ownership")
             suffix = f" {own}%" if own is not None else ""
-            return f"{escape(str(d['player_name']))}{suffix}"
+            star = " ⭐" if d.get("scouting_bonus") else ""
+            return f"{escape(str(d['player_name']))}{suffix}{star}"
 
         for pos in ("GK", "DEF", "MID", "FWD"):
             items = diffs.get(pos) or []

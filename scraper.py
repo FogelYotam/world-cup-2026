@@ -446,6 +446,17 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
         d = fd.get(team, {}).get("difficulty") if isinstance(fd.get(team), dict) else None
         return (1.0 - d) if isinstance(d, (int, float)) else 0.5  # 1=קל מאוד
 
+    sb_thr = getattr(config, "SCOUTING_BONUS_OWNERSHIP", 5.0)
+    sb_pts = getattr(config, "SCOUTING_BONUS_POINTS", 2.0)
+
+    def _scouting_bonus(p, eff_points):
+        # תוחלת ה-scouting bonus: רק שחקנים מתחת ל-5% בעלות זכאים, והבונוס מותנה
+        # בכך שיזכו 4+ נקודות. מקרבים את ההסתברות לכך לפי תוחלת הנקודות האפקטיבית.
+        if _num(p.get("ownership"), 999) >= sb_thr:
+            return 0.0
+        p_return = min(1.0, eff_points / 8.0)          # eff≈8 → כמעט בטוח 4+
+        return sb_pts * p_return
+
     def _value(p):
         # קושי המשחק *מכפיל* את תוחלת הנקודות (משחק קשה מקטין סיכוי לנקד),
         # במקום תוספת קטנה — כך שחקן מול יריבה חזקה יורד גם אם ניקודו הגולמי גבוה.
@@ -458,6 +469,7 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
         return (w["points"] * eff_points
                 + w["form"] * _num(p.get("form"), 0)
                 + w["ownership"] * diff_bonus
+                + _scouting_bonus(p, eff_points)         # תוחלת ה-scouting bonus
                 + starter)
 
     out: dict[str, list] = {}
@@ -476,8 +488,11 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
             "ownership": p.get("ownership"), "price": p.get("price"),
             "expected_points": p.get("recent_points"),
             "expected_start": p.get("expected_start"),
+            "scouting_bonus": _num(p.get("ownership"), 999) < sb_thr,
             "reason": (f"ממוצע {p.get('recent_points')} נק' · "
-                       f"{_diff_label(_ease(p.get('team')))} · בעלות {p.get('ownership')}%"),
+                       f"{_diff_label(_ease(p.get('team')))} · בעלות {p.get('ownership')}%"
+                       + (f" · ⭐ scouting bonus (<{sb_thr:g}%)"
+                          if _num(p.get("ownership"), 999) < sb_thr else "")),
         } for p in cands[:n]]
     return out
 

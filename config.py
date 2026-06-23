@@ -100,6 +100,11 @@ DIFFERENTIAL_WEIGHTS = {"points": 1.0, "form": 0.5, "fixture": 3.0,
                         "ownership": 1.5, "starter": 2.0}
 # כמה דיפרנציאלים להציג לכל עמדה — מבנה סגל מלא (מתמקדים במובטחי-דקות)
 DIFFERENTIAL_COUNTS = {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3}
+# Scouting bonus (חוקת WC Fantasy 2026): שחקן מתחת ל-SCOUTING_BONUS_OWNERSHIP%
+# בעלות שמזכה 4+ נקודות במחזור מקבל +SCOUTING_BONUS_POINTS. לכן דיפרנציאל זול עם
+# פוטנציאל ניקוד גבוה שווה יותר — מתוגמל בדירוג (ראה _value ב-official_differentials).
+SCOUTING_BONUS_OWNERSHIP = 5.0
+SCOUTING_BONUS_POINTS = 2.0
 
 # --- מקור רשמי של FIFA World Cup Fantasy (מקור האמת לבריכת השחקנים) ---
 # קבצי JSON ציבוריים (ללא אימות) — הסגלים הרשמיים בלבד, עם מחיר/בעלות/כושר/נקודות.

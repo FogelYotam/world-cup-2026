@@ -1013,6 +1013,28 @@ def test_clean_sheet_probabilities_match_matrix_margins():
     assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
 
 
+def test_scouting_bonus_promotes_sub5_high_upside(monkeypatch):
+    """מודעות scouting bonus (#4): שחקן מתחת ל-5% בעלות עם פוטנציאל ניקוד גבוה
+    מתוגמל בדירוג ומסומן. בלי הבונוס הפופולרי (ניקוד בסיס גבוה) מוביל; עם הבונוס
+    הזול עוקף."""
+    import scraper, config
+    pool = [
+        {"player_name": "Popular", "team": "A", "position": "FWD", "ownership": 6.0,
+         "price": 7.0, "recent_points": 8.0, "form": 5.0, "injury_status": "fit",
+         "suspension_status": "available", "expected_start": None},
+        {"player_name": "Cheap", "team": "A", "position": "FWD", "ownership": 4.0,
+         "price": 7.0, "recent_points": 7.5, "form": 5.0, "injury_status": "fit",
+         "suspension_status": "available", "expected_start": None},
+    ]
+    d = scraper.official_differentials(pool, counts={"FWD": 2})
+    assert d["FWD"][0]["player_name"] == "Cheap"
+    assert d["FWD"][0]["scouting_bonus"] is True and "scouting" in d["FWD"][0]["reason"]
+    assert d["FWD"][1]["scouting_bonus"] is False
+    monkeypatch.setattr(config, "SCOUTING_BONUS_POINTS", 0.0)
+    d2 = scraper.official_differentials(pool, counts={"FWD": 2})
+    assert d2["FWD"][0]["player_name"] == "Popular"   # בלי הבונוס — הפופולרי מוביל
+
+
 def test_predicted_score_not_exaggerated():
     """ניחוש הדוח לא מגזים בשערים: MAX_XG≤3.5 (מעל זה _round_goals מחזיר 4),
     וגבול הכיוונון חוסם ניפוח חוזר. אפילו במפגש הכי לא-שוויוני — מקס 3 לקבוצה."""

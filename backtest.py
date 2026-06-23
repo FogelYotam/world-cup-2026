@@ -122,6 +122,62 @@ def run_backtest(db: dict | None = None, scoring: dict | None = None) -> dict:
         "model": evaluate(results, _model_predict_fn(teams_by_name, odds_by_pair), scoring),
         "baseline_home_1_0": evaluate(results, lambda h, a: (1, 0), scoring),
         "baseline_draw_1_1": evaluate(results, lambda h, a: (1, 1), scoring),
+        "calibration": model_calibration(db),
+    }
+
+
+def _result_outcome(r: dict) -> str | None:
+    ah, aa = r.get("home_goals"), r.get("away_goals")
+    if ah is None or aa is None:
+        return None
+    return "home_win" if ah > aa else "away_win" if aa > ah else "draw"
+
+
+def model_calibration(db: dict | None = None) -> dict:
+    """כיול ההסתברויות של המודל מול התוצאות (#6).
+
+    - **Brier** (רב-מחלקתי): ממוצע על המשחקים של Σ_o (p_o − y_o)². נמוך=טוב.
+      0=מושלם · 0.667=ניחוש אחיד (3 תוצאות) · מתחת ל-~0.6 = מודל שימושי.
+    - **כיול הפייבוריט:** שיעור הפגיעה של הפייבוריט מול הביטחון הממוצע בו —
+      קרובים זה לזה = מכויל היטב (לא בטוח-מדי / לא ביישן-מדי).
+    בתוך-מדגם (המודל למד מהתוצאות) — אינדיקציה, לא ערובה.
+    """
+    db = db if db is not None else (utils.load_json(config.DB_PATH, default={}) or {})
+    results = _clean_results(db)
+    teams_by_name = {t.get("team_name"): t for t in db.get("teams", [])}
+    odds_by_pair = {frozenset((str(r["home"]).lower(), str(r["away"]).lower())):
+                    r["market_probabilities"]
+                    for r in results if r.get("market_probabilities")}
+    keys = ("home_win", "draw", "away_win")
+    n = 0
+    brier = 0.0
+    fav_hit = 0
+    fav_conf = 0.0
+    for r in results:
+        actual = _result_outcome(r)
+        if actual is None:
+            continue
+        match = {"home_team": r["home"], "away_team": r["away"]}
+        mp = odds_by_pair.get(frozenset((str(r["home"]).lower(), str(r["away"]).lower())))
+        if mp:
+            match["market_probabilities"] = mp
+        probs = predictor.predict_match(match, teams_by_name).get("outcome_probabilities", {})
+        if not probs:
+            continue
+        n += 1
+        brier += sum((probs.get(k, 0.0) - (1.0 if k == actual else 0.0)) ** 2 for k in keys)
+        fav = max(keys, key=lambda k: probs.get(k, 0.0))
+        fav_conf += probs.get(fav, 0.0)
+        if fav == actual:
+            fav_hit += 1
+    if not n:
+        return {"n": 0}
+    return {
+        "n": n,
+        "brier": round(brier / n, 4),
+        "brier_uniform": 0.6667,
+        "favorite_hit_rate": round(fav_hit / n, 3),
+        "favorite_avg_confidence": round(fav_conf / n, 3),
     }
 
 
@@ -141,8 +197,20 @@ def format_report(bt: dict) -> str:
                                     bt["baseline_draw_1_1"]["ppg"])
     verdict = "✓ המודל מכה את הבייסליין" if edge > 0 else (
         "= שווה לבייסליין" if edge == 0 else "✗ המודל מתחת לבייסליין")
-    lines += ["", f"יתרון המודל מול הבייסליין הטוב: {edge:+.3f} נק/משחק — {verdict}",
-              "", "הערה: in-sample (המודל למד מהתוצאות) — השווה יחסית בין גרסאות."]
+    lines += ["", f"יתרון המודל מול הבייסליין הטוב: {edge:+.3f} נק/משחק — {verdict}"]
+
+    cal = bt.get("calibration") or {}
+    if cal.get("n"):
+        b = cal["brier"]
+        quality = ("מצוין" if b < 0.55 else "טוב" if b < 0.62 else "חלש")
+        lines += [
+            "",
+            f"כיול הסתברויות (Brier): {b} מול {cal['brier_uniform']} (ניחוש אחיד) — {quality}",
+            f"  פייבוריט: פוגע {cal['favorite_hit_rate']:.0%} · ביטחון ממוצע "
+            f"{cal['favorite_avg_confidence']:.0%} "
+            f"({'מכויל' if abs(cal['favorite_hit_rate'] - cal['favorite_avg_confidence']) < 0.06 else 'לא מכויל'})",
+        ]
+    lines += ["", "הערה: in-sample (המודל למד מהתוצאות) — השווה יחסית בין גרסאות."]
     return "\n".join(lines)
 
 

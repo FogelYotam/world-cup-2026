@@ -1013,6 +1013,22 @@ def test_clean_sheet_probabilities_match_matrix_margins():
     assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
 
 
+def test_model_calibration_brier():
+    """כיול Brier (#6): מנבא בטוח ונכון נותן Brier נמוך מניחוש אחיד, ופוגע בפייבוריט."""
+    import backtest
+    db = {
+        "teams": [{"team_name": "A", "goals_for": 2.6, "goals_against": 0.6},
+                  {"team_name": "B", "goals_for": 0.6, "goals_against": 2.6}],
+        "results": [{"home": "A", "away": "B", "home_goals": 3, "away_goals": 0}],
+    }
+    cal = backtest.model_calibration(db)
+    assert cal["n"] == 1
+    assert cal["brier"] < cal["brier_uniform"]      # טוב מניחוש אחיד
+    assert cal["favorite_hit_rate"] == 1.0          # A היה הפייבוריט וניצח
+    # מופיע גם בדוח ה-backtest
+    assert "Brier" in backtest.format_report(backtest.run_backtest(db))
+
+
 def test_md_fantasy_builds_legal_matchday_squad():
     """מחולל ההרכב למחזור (#5): סגל 15 חוקי, 11 פותחים, קפטן, וטקסט קריא."""
     import md_fantasy

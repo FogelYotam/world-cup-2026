@@ -986,6 +986,44 @@ def test_predictions_log_record_settle_summary(monkeypatch, tmp_path):
     assert s["model_exact"] == (0, 2)
 
 
+def test_settle_backfills_missing_date_from_result(monkeypatch, tmp_path):
+    """יישוב מול תוצאה רשמית ממלא תאריך חסר בניחוש (שיפור #3) —
+    מונע backfill ידני של תאריכים בעתיד."""
+    import predictions_log
+    monkeypatch.setattr(predictions_log, "_PATH", tmp_path / "p.json")
+    predictions_log.record_predictions([
+        {"home": "Spain", "away": "Brazil",            # ללא date
+         "user_home": 2, "user_away": 1, "model_home": 1, "model_away": 1}])
+    n = predictions_log.settle_with_results([
+        {"home": "Spain", "away": "Brazil", "home_goals": 3, "away_goals": 0,
+         "date": "2026-06-20"}])
+    assert n == 1
+    rec = predictions_log._load()["predictions"][0]
+    assert rec["date"] == "2026-06-20" and rec["settled"]
+
+
+def test_clean_sheet_probabilities_match_matrix_margins():
+    """שער נקי לבית = סכום עמודה 0 (האורחת לא כובשת); לאורחת = סכום שורה 0."""
+    import predictor
+    m = predictor.score_matrix(1.6, 0.9, 6)
+    cs = predictor.clean_sheet_probabilities(m)
+    total = sum(p for row in m for p in row)
+    assert abs(cs["home"] - sum(row[0] for row in m) / total) < 1e-3   # מעוגל ל-4 ספרות
+    assert abs(cs["away"] - sum(m[0]) / total) < 1e-3
+    assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
+
+
+def test_predict_match_exposes_goals_and_clean_sheet():
+    """predict_match מחזיר total_expected_goals + clean_sheet לדוח (שיפור #2)."""
+    import predictor
+    teams = {"A": {"team_name": "A", "attack": 1.8, "defense": 1.0},
+             "B": {"team_name": "B", "attack": 0.8, "defense": 1.4}}
+    pred = predictor.predict_match({"home_team": "A", "away_team": "B"}, teams)
+    assert "total_expected_goals" in pred and pred["total_expected_goals"] > 0
+    cs = pred["clean_sheet"]
+    assert 0.0 <= cs["home"] <= 1.0 and 0.0 <= cs["away"] <= 1.0
+
+
 def test_predictions_log_handles_flipped_orientation(monkeypatch, tmp_path):
     import predictions_log
     monkeypatch.setattr(predictions_log, "_PATH", tmp_path / "p.json")

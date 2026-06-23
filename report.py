@@ -89,6 +89,12 @@ _TEMPLATE = Template(
       <div class="probs">סיכויים — {{ p.home_team }}: {{ (p.outcome_probabilities.home_win*100)|round|int }}%
         · תיקו: {{ (p.outcome_probabilities.draw*100)|round|int }}%
         · {{ p.away_team }}: {{ (p.outcome_probabilities.away_win*100)|round|int }}%</div>
+      {% if p.total_expected_goals is defined %}
+      <div class="probs">⚽ שערים צפויים: <b>{{ '%.1f'|format(p.expected_goals.home) }}–{{ '%.1f'|format(p.expected_goals.away) }}</b>
+        (סה״כ {{ '%.1f'|format(p.total_expected_goals) }})
+        · 🧤 שער נקי — {{ p.home_team }}: {{ (p.clean_sheet.home*100)|round|int }}%
+        · {{ p.away_team }}: {{ (p.clean_sheet.away*100)|round|int }}%</div>
+      {% endif %}
       <div class="explain">{{ p.explanation }}</div>
       {% endif %}
     </div>
@@ -442,6 +448,15 @@ def build_telegram_text(predictions: list[dict], fantasy_result: dict,
                 f"{away} {round(o.get('away_win',0)*100)}% · אמון {p.get('confidence',0)}%)"
                 f"{market_tag}"
             )
+            cs = p.get("clean_sheet")
+            if cs and p.get("expected_goals"):
+                eg = p["expected_goals"]
+                lines.append(
+                    f"   ⚽ שערים צפ' {eg.get('home',0):.1f}–{eg.get('away',0):.1f} "
+                    f"(סה״כ {p.get('total_expected_goals',0):.1f}) · "
+                    f"🧤 שער נקי {home} {round(cs.get('home',0)*100)}% · "
+                    f"{away} {round(cs.get('away',0)*100)}%"
+                )
     else:
         lines.append("<i>אין משחקים היום. כל הניחושים המלאים בדוח המצורף 📄</i>")
 

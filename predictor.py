@@ -104,6 +104,18 @@ def outcome_probabilities(matrix: list[list[float]]) -> dict:
     }
 
 
+def clean_sheet_probabilities(matrix: list[list[float]]) -> dict:
+    """
+    הסתברות שער נקי לכל צד מתוך מטריצת התוצאות:
+    - home = הסתברות שהאורחת לא כובשת (עמודה 0)
+    - away = הסתברות שהמארחת לא כובשת (שורה 0)
+    """
+    total = sum(p for row in matrix for p in row) or 1.0
+    home_cs = sum(row[0] for row in matrix)          # away scores 0
+    away_cs = sum(matrix[0]) if matrix else 0.0       # home scores 0
+    return {"home": round(home_cs / total, 4), "away": round(away_cs / total, 4)}
+
+
 def ranked_scorelines(matrix: list[list[float]], top: int = 4) -> list[dict]:
     """התוצאות המדויקות בעלות ההסתברות הגבוהה ביותר."""
     cells = [
@@ -291,6 +303,8 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
         "kickoff": match.get("kickoff"),
         "stage": match.get("stage"),
         "expected_goals": {"home": home_xg, "away": away_xg},
+        "total_expected_goals": round(home_xg + away_xg, 2),   # תוחלת שערים סהכ
+        "clean_sheet": clean_sheet_probabilities(matrix),      # שער נקי לכל צד
         "predicted_score": predicted,                # ניחוש הדוח — מגוון/ריאלי (xG+1X2)
         "recommended_score": recommended,            # ממוקסם לפי תוחלת נקודות (שמרני)
         "recommended_ep": recommended_ep,            # תוחלת הנקודות של ההמלצה

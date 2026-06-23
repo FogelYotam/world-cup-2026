@@ -94,6 +94,9 @@ def settle_with_results(results: list[dict]) -> int:
             continue
         ah, aa = int(ah), int(aa)
         rec["actual_home"], rec["actual_away"] = ah, aa
+        # תאריך אוטומטי מהתוצאה הרשמית — מונע backfill ידני בעתיד (שיפור #3)
+        if not rec.get("date") and r.get("date"):
+            rec["date"] = r["date"]
         act = _outcome(ah, aa)
         uh, ua = rec.get("user_home"), rec.get("user_away")
         mh, ma = rec.get("model_home"), rec.get("model_away")

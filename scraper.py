@@ -1085,13 +1085,15 @@ def collect(days_ahead: int = 3) -> dict:
     # --- העשרת Gemini ממוקדת רק במשחקים הקרובים (חוסכת מכסה) ---
     window = max(days_ahead, getattr(config, "REPORT_UPCOMING_DAYS", 5))
     near = _matches_within_days(matches, window)
+    # אודדס קודם — קריאה *אחת* בלבד, וערך גבוה לניבוי. ניתנת לה עדיפות במכסה
+    # החינמית הקטנה (~20/יום) לפני קריאות ה-context הרבות (אחת לכל משחק).
+    odds_map = odds_mod.fetch_consensus_odds(gemini, near)
+    odds_mod.attach_to_matches(near, odds_map)
     players: list[dict] = []
     for match in near:
         context = fetch_match_context(gemini, match)   # פציעות/הרכבים צפויים
         match["context"] = _summarize_context(context)
         players.extend(_extract_players(context, match))
-    odds_map = odds_mod.fetch_consensus_odds(gemini, near)
-    odds_mod.attach_to_matches(near, odds_map)
 
     # בריכה: רשמית (מקור אמת) → נפילה ל-Gemini
     pool = official_pool or fetch_fantasy_player_pool(gemini)

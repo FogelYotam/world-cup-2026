@@ -1167,3 +1167,26 @@ def test_market_weight_tunable_via_archived_odds():
     finally:
         config.MARKET_BLEND_WEIGHT = old
     assert ppg_market != ppg_model        # האודדס המארכבים אכן משפיעים
+
+
+def test_consensus_odds_one_batched_call():
+    """אודדס נמשכים בקריאת Gemini אחת לכל המשחקים (לא אחת-לכל-משחק) — קריטי
+    למכסה החינמית הקטנה."""
+    import odds
+    calls = []
+
+    class _G:
+        enabled = True
+
+        def ask_json(self, prompt, default=None):
+            calls.append(prompt)
+            return {"matches": [
+                {"id": 1, "home_win": 0.60, "draw": 0.25, "away_win": 0.15},
+                {"id": 2, "home_win": 0.20, "draw": 0.30, "away_win": 0.50}]}
+
+    matches = [{"match_id": 1, "home_team": "A", "away_team": "B"},
+               {"match_id": 2, "home_team": "C", "away_team": "D"}]
+    o = odds.fetch_consensus_odds(_G(), matches)
+    assert len(calls) == 1                       # קריאה אחת בלבד
+    assert set(o) == {1, 2}
+    assert abs(sum(o[1][k] for k in ("home_win", "draw", "away_win")) - 1.0) < 1e-3

@@ -1,10 +1,10 @@
 """
-שקלול אודדס מאתרי הימורים — ממיר אודדס דצימליים מ-10 מקורות נפוצים
-להסתברויות 1X2 נטולות מרווח (vig), וממצע ביניהם לקונצנזוס שוק.
+שקלול אודדס שוק — קונצנזוס 1X2 מ-5 הבוקמייקרים החדים (config.ODDS_SOURCES),
+נטול מרווח (vig), לשקלול לתוך הניבוי.
 
-מקור הנתונים: Gemini עם עיגון לחיפוש Google (כשמוגדר מפתח). בלי מפתח —
-מוחזר מה שכבר שמור ב-db.json, ואם אין כלום מוחזר מילון ריק והמערכת
-נשענת על מודל הפואסון בלבד. לעולם לא זורק חריגה.
+מקור הנתונים: Gemini (הערכת אנליסט המשקפת את השוק). **קריאה אחת לכל המשחקים**
+— כי המכסה החינמית קטנה (~20 בקשות/יום) וקריאה-לכל-משחק מפוצצת אותה. בלי מכסה/
+מפתח — מוחזר ריק והמערכת נשענת על מודל הפואסון בלבד. לעולם לא זורק חריגה.
 """
 from __future__ import annotations
 
@@ -130,37 +130,46 @@ def _market_probs_from_raw(raw: dict) -> dict | None:
 # --------------------------------------------------------------------------- #
 def fetch_consensus_odds(gemini, matches: list[dict]) -> dict[str, dict]:
     """
-    מחזיר מיפוי match_id -> {home_win, draw, away_win, sources} לפי קונצנזוס
-    של מקורות ההימורים. בכל כשל מחזיר מה שאפשר (אולי ריק).
+    מחזיר מיפוי match_id -> {home_win, draw, away_win, sources} לפי קונצנזוס השוק.
+
+    **קריאת Gemini אחת לכל המשחקים** (לא אחת-לכל-משחק) — קריטי כי המכסה החינמית
+    קטנה (~20/יום), וקריאה-לכל-משחק הייתה מפוצצת אותה לבדה. בכל כשל מחזיר ריק.
     """
     out: dict[str, dict] = {}
     if gemini is None or not getattr(gemini, "enabled", False):
-        log.info("Gemini מושבת — מדלג על שליפת אודדס חיה")
+        log.info("Gemini מושבת — מדלג על שליפת אודדס")
+        return out
+    valid = [m for m in matches
+             if m.get("match_id") is not None and m.get("home_team") and m.get("away_team")]
+    if not valid:
         return out
 
+    by_id = {str(m["match_id"]): m["match_id"] for m in valid}
+    lines = "\n".join(f'{m["match_id"]}: {m["home_team"]} vs {m["away_team"]}' for m in valid)
     source_list = ", ".join(config.ODDS_SOURCES)
-    for match in matches:
-        mid = match.get("match_id")
-        home, away = match.get("home_team"), match.get("away_team")
-        if not (mid and home and away):
+    prompt = (
+        f"אתה אנליסט הימורים. לכל משחק ברשימה הערך את הסתברויות התוצאה (1X2) "
+        f"המשקפות את קונצנזוס השוק ({source_list}) וחוזק/כושר הנבחרות "
+        f"ב-{config.COMPETITION}:\n{lines}\n"
+        "החזר אך ורק JSON: {\"matches\": [{\"id\": <match_id מהרשימה>, "
+        "\"home_win\": num, \"draw\": num, \"away_win\": num}]} — הסתברויות "
+        "מנורמלות (סכום 1) לכל משחק."
+    )
+    raw = gemini.ask_json(prompt, default=None)
+    rows = (raw or {}).get("matches") if isinstance(raw, dict) else None
+    if not isinstance(rows, list):
+        log.warning("שליפת אודדס: לא התקבל מידע שמיש (מכסה/פורמט)")
+        return out
+    n_src = len(config.ODDS_SOURCES)
+    for r in rows:
+        if not isinstance(r, dict):
             continue
-        prompt = (
-            f"חפש את הסיכויים האמיתיים לתוצאת 1X2 במשחק {home} נגד {away} "
-            f"ב-{config.COMPETITION}, לפי קונצנזוס המקורות: {source_list}. "
-            "העדף הסתברויות מאגרגטורים (Oddschecker, Opta) על פני ניחוש. "
-            "החזר JSON עם הסתברויות מנורמלות (סכום 1): "
-            "{\"probabilities\": {\"home_win\": num, \"draw\": num, "
-            "\"away_win\": num}, \"source_count\": int}. "
-            "אם יש לך אודדס דצימליים אמיתיים פר-סוכן, החזר במקום: "
-            "{\"sources\": [{\"bookmaker\": str, \"home\": num, \"draw\": num, "
-            "\"away\": num}]}. אל תמציא — אם אין נתון, החזר source_count נמוך."
-        )
-        raw = gemini.ask_json(prompt, default=None)
-        probs = _market_probs_from_raw(raw) if raw else None
-        if probs:
-            out[mid] = probs
-            log.info("אודדס למשחק %s: %s מקורות", mid, probs.get("sources"))
-    log.info("נאספו אודדס ל-%d משחקים", len(out))
+        mid = by_id.get(str(r.get("id")))
+        norm = remove_vig(r.get("home_win"), r.get("draw"), r.get("away_win"))
+        if mid is not None and norm and _is_plausible(norm):
+            norm["sources"] = n_src
+            out[mid] = norm
+    log.info("נאספו אודדס ל-%d משחקים (קריאה אחת)", len(out))
     return out
 
 

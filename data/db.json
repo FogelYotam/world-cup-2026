@@ -33884,27 +33884,30 @@
         "price": 4.2,
         "expected_points": 7.0,
         "expected_start": true,
-        "reason": "ממוצע 7.0 נק' · משחק בינוני · בעלות 0.2%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 7.0 נק' · משחק בינוני · בעלות 0.2% · ⭐ scouting bonus (<5%)"
       },
       {
         "player_name": "Yahia Fofana",
         "team": "Côte d'Ivoire",
         "position": "GK",
-        "ownership": 1.1,
+        "ownership": 1.6,
         "price": 4.2,
         "expected_points": 5.5,
         "expected_start": true,
-        "reason": "ממוצע 5.5 נק' · משחק קל · בעלות 1.1%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 5.5 נק' · משחק קל · בעלות 1.6% · ⭐ scouting bonus (<5%)"
       },
       {
-        "player_name": "Yassine Bounou",
-        "team": "Morocco",
+        "player_name": "Vozinha",
+        "team": "Cabo Verde",
         "position": "GK",
-        "ownership": 5.0,
-        "price": 4.7,
+        "ownership": 1.9,
+        "price": 3.9,
         "expected_points": 6.0,
         "expected_start": true,
-        "reason": "ממוצע 6.0 נק' · משחק קל · בעלות 5.0%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 6.0 נק' · משחק קל · בעלות 1.9% · ⭐ scouting bonus (<5%)"
       }
     ],
     "DEF": [
@@ -33912,21 +33915,23 @@
         "player_name": "Facundo Medina",
         "team": "Argentina",
         "position": "DEF",
-        "ownership": 2.0,
+        "ownership": 2.5,
         "price": 4.0,
         "expected_points": 10.0,
         "expected_start": true,
-        "reason": "ממוצע 10.0 נק' · משחק קל · בעלות 2.0%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 10.0 נק' · משחק קל · בעלות 2.5% · ⭐ scouting bonus (<5%)"
       },
       {
         "player_name": "Alexander Freeman",
         "team": "USA",
         "position": "DEF",
-        "ownership": 2.1,
+        "ownership": 2.5,
         "price": 4.0,
         "expected_points": 11.5,
         "expected_start": true,
-        "reason": "ממוצע 11.5 נק' · משחק בינוני · בעלות 2.1%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 11.5 נק' · משחק בינוני · בעלות 2.5% · ⭐ scouting bonus (<5%)"
       },
       {
         "player_name": "Ramin Rezaeian",
@@ -33936,49 +33941,43 @@
         "price": 4.0,
         "expected_points": 11.0,
         "expected_start": true,
-        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 1.0%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 1.0% · ⭐ scouting bonus (<5%)"
       },
       {
         "player_name": "Lisandro Martínez",
         "team": "Argentina",
         "position": "DEF",
-        "ownership": 4.2,
+        "ownership": 4.4,
         "price": 4.6,
         "expected_points": 9.0,
         "expected_start": true,
-        "reason": "ממוצע 9.0 נק' · משחק קל · בעלות 4.2%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 9.0 נק' · משחק קל · בעלות 4.4% · ⭐ scouting bonus (<5%)"
       },
       {
         "player_name": "Sergiño Dest",
         "team": "USA",
         "position": "DEF",
-        "ownership": 4.2,
+        "ownership": 4.4,
         "price": 4.3,
         "expected_points": 10.5,
         "expected_start": true,
-        "reason": "ממוצע 10.5 נק' · משחק בינוני · בעלות 4.2%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 10.5 נק' · משחק בינוני · בעלות 4.4% · ⭐ scouting bonus (<5%)"
       }
     ],
     "MID": [
       {
-        "player_name": "Ismael Saibari",
-        "team": "Morocco",
-        "position": "MID",
-        "ownership": 5.5,
-        "price": 6.8,
-        "expected_points": 10.5,
-        "expected_start": true,
-        "reason": "ממוצע 10.5 נק' · משחק קל · בעלות 5.5%"
-      },
-      {
         "player_name": "Felix Nmecha",
         "team": "Germany",
         "position": "MID",
-        "ownership": 4.3,
+        "ownership": 4.8,
         "price": 5.6,
         "expected_points": 11.5,
         "expected_start": true,
-        "reason": "ממוצע 11.5 נק' · משחק בינוני · בעלות 4.3%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 11.5 נק' · משחק בינוני · בעלות 4.8% · ⭐ scouting bonus (<5%)"
       },
       {
         "player_name": "Luis Romo",
@@ -33988,17 +33987,30 @@
         "price": 5.5,
         "expected_points": 12.0,
         "expected_start": true,
-        "reason": "ממוצע 12.0 נק' · משחק בינוני · בעלות 0.1%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 12.0 נק' · משחק בינוני · בעלות 0.1% · ⭐ scouting bonus (<5%)"
       },
       {
         "player_name": "Daichi Kamada",
         "team": "Japan",
         "position": "MID",
-        "ownership": 2.7,
+        "ownership": 2.9,
         "price": 5.8,
         "expected_points": 11.0,
         "expected_start": true,
-        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 2.7%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 2.9% · ⭐ scouting bonus (<5%)"
+      },
+      {
+        "player_name": "Ismael Saibari",
+        "team": "Morocco",
+        "position": "MID",
+        "ownership": 6.7,
+        "price": 6.8,
+        "expected_points": 10.5,
+        "expected_start": true,
+        "scouting_bonus": false,
+        "reason": "ממוצע 10.5 נק' · משחק קל · בעלות 6.7%"
       },
       {
         "player_name": "Matías Galarza",
@@ -34008,29 +34020,32 @@
         "price": 4.8,
         "expected_points": 11.0,
         "expected_start": true,
-        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 0.0%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · בעלות 0.0% · ⭐ scouting bonus (<5%)"
       }
     ],
     "FWD": [
       {
-        "player_name": "Cody Gakpo",
-        "team": "Netherlands",
-        "position": "FWD",
-        "ownership": 4.8,
-        "price": 7.7,
-        "expected_points": 10.5,
-        "expected_start": true,
-        "reason": "ממוצע 10.5 נק' · משחק קל · בעלות 4.8%"
-      },
-      {
         "player_name": "Jonathan David",
         "team": "Canada",
         "position": "FWD",
-        "ownership": 1.4,
+        "ownership": 1.5,
         "price": 7.0,
         "expected_points": 13.0,
         "expected_start": true,
-        "reason": "ממוצע 13.0 נק' · משחק קשה · בעלות 1.4%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 13.0 נק' · משחק קשה · בעלות 1.5% · ⭐ scouting bonus (<5%)"
+      },
+      {
+        "player_name": "Cody Gakpo",
+        "team": "Netherlands",
+        "position": "FWD",
+        "ownership": 5.6,
+        "price": 7.7,
+        "expected_points": 10.5,
+        "expected_start": true,
+        "scouting_bonus": false,
+        "reason": "ממוצע 10.5 נק' · משחק קל · בעלות 5.6%"
       },
       {
         "player_name": "Alexander Isak",
@@ -34040,31 +34055,12 @@
         "price": 8.0,
         "expected_points": 11.5,
         "expected_start": true,
-        "reason": "ממוצע 11.5 נק' · משחק בינוני · בעלות 3.9%"
+        "scouting_bonus": true,
+        "reason": "ממוצע 11.5 נק' · משחק בינוני · בעלות 3.9% · ⭐ scouting bonus (<5%)"
       }
     ]
   },
   "fixture_difficulty": {
-    "Portugal": {
-      "opponent": "Uzbekistan",
-      "difficulty": 0.37,
-      "date": "2026-06-23"
-    },
-    "Uzbekistan": {
-      "opponent": "Portugal",
-      "difficulty": 0.78,
-      "date": "2026-06-23"
-    },
-    "England": {
-      "opponent": "Ghana",
-      "difficulty": 0.4,
-      "date": "2026-06-23"
-    },
-    "Ghana": {
-      "opponent": "England",
-      "difficulty": 0.92,
-      "date": "2026-06-23"
-    },
     "Panama": {
       "opponent": "Croatia",
       "difficulty": 0.47,
@@ -34265,6 +34261,26 @@
       "difficulty": 0.43,
       "date": "2026-06-27"
     },
+    "Ghana": {
+      "opponent": "Croatia",
+      "difficulty": 0.47,
+      "date": "2026-06-27"
+    },
+    "England": {
+      "opponent": "Panama",
+      "difficulty": 0.3,
+      "date": "2026-06-27"
+    },
+    "Uzbekistan": {
+      "opponent": "Congo DR",
+      "difficulty": 0.38,
+      "date": "2026-06-28"
+    },
+    "Portugal": {
+      "opponent": "Colombia",
+      "difficulty": 0.55,
+      "date": "2026-06-28"
+    },
     "Jordan": {
       "opponent": "Argentina",
       "difficulty": 0.87,
@@ -34335,5 +34351,85 @@
     "USA",
     "Uruguay",
     "Uzbekistan"
-  ]
+  ],
+  "top_picks": {
+    "GK": [
+      {
+        "player_name": "Emiliano Martínez",
+        "team": "Argentina",
+        "position": "GK",
+        "ownership": 24.7,
+        "price": 5.0,
+        "expected_points": 7.0,
+        "opponent": "Jordan",
+        "reason": "ממוצע 7.0 נק' · משחק קל · מול Jordan · בעלות 24.7%"
+      }
+    ],
+    "DEF": [
+      {
+        "player_name": "Virgil van Dijk",
+        "team": "Netherlands",
+        "position": "DEF",
+        "ownership": 21.9,
+        "price": 5.5,
+        "expected_points": 5.0,
+        "opponent": "Tunisia",
+        "reason": "ממוצע 5.0 נק' · משחק קל · מול Tunisia · בעלות 21.9%"
+      },
+      {
+        "player_name": "Denzel Dumfries",
+        "team": "Netherlands",
+        "position": "DEF",
+        "ownership": 15.5,
+        "price": 5.7,
+        "expected_points": 4.5,
+        "opponent": "Tunisia",
+        "reason": "ממוצע 4.5 נק' · משחק קל · מול Tunisia · בעלות 15.5%"
+      }
+    ],
+    "MID": [
+      {
+        "player_name": "Vinícius Júnior",
+        "team": "Brazil",
+        "position": "MID",
+        "ownership": 20.4,
+        "price": 10.0,
+        "expected_points": 10.0,
+        "opponent": "Scotland",
+        "reason": "ממוצע 10.0 נק' · משחק בינוני · מול Scotland · בעלות 20.4%"
+      },
+      {
+        "player_name": "Luis Díaz",
+        "team": "Colombia",
+        "position": "MID",
+        "ownership": 17.8,
+        "price": 8.1,
+        "expected_points": 11.0,
+        "opponent": "Congo DR",
+        "reason": "ממוצע 11.0 נק' · משחק בינוני · מול Congo DR · בעלות 17.8%"
+      }
+    ],
+    "FWD": [
+      {
+        "player_name": "Lionel Messi",
+        "team": "Argentina",
+        "position": "FWD",
+        "ownership": 28.1,
+        "price": 10.0,
+        "expected_points": 16.5,
+        "opponent": "Jordan",
+        "reason": "ממוצע 16.5 נק' · משחק קל · מול Jordan · בעלות 28.1%"
+      },
+      {
+        "player_name": "Kai Havertz",
+        "team": "Germany",
+        "position": "FWD",
+        "ownership": 14.4,
+        "price": 7.8,
+        "expected_points": 7.5,
+        "opponent": "Ecuador",
+        "reason": "ממוצע 7.5 נק' · משחק בינוני · מול Ecuador · בעלות 14.4%"
+      }
+    ]
+  }
 }

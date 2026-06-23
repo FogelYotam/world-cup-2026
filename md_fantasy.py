@@ -113,6 +113,62 @@ def format_squad(result: dict) -> str:
     return "\n".join(lines)
 
 
+def squad_context(db: dict | None = None) -> list[dict]:
+    """מרכז הקשר לכל שחקן ב-data/my_team.json **מתוך db.json בלבד** (ללא רשת) —
+    יריבה, קלות-משחק, שער-נקי%, נקודות, זמינות, ו-scouting bonus. נועד לחוות-דעת
+    מהירה מהנייד (claude.ai/code) בלי pip install. לעולם לא זורק."""
+    import lineup_alerts
+    import predictor
+    db = db if db is not None else (utils.load_json(config.DB_PATH, default={}) or {})
+    squad = lineup_alerts.load_my_squad()
+    pool = db.get("players", []) or []
+    fd = db.get("fixture_difficulty", {}) or {}
+    tbn = {t.get("team_name"): t for t in db.get("teams", [])}
+    sb_thr = getattr(config, "SCOUTING_BONUS_OWNERSHIP", 5.0)
+    by_norm = {}
+    for p in pool:
+        by_norm.setdefault(lineup_alerts._norm(p.get("player_name")), p)
+    cs_cache: dict = {}
+
+    def _cs(team):
+        if team in cs_cache:
+            return cs_cache[team]
+        d = fd.get(team, {})
+        opp = d.get("opponent") if isinstance(d, dict) else None
+        val = None
+        if opp and team in tbn:
+            try:
+                pr = predictor.predict_match(
+                    {"home_team": team, "away_team": opp, "stage": "GROUP"}, tbn)
+                val = round(pr["clean_sheet"]["home"] * 100)
+            except Exception:  # noqa: BLE001
+                val = None
+        cs_cache[team] = (opp, val)
+        return cs_cache[team]
+
+    out = []
+    for sp in squad:
+        nm = sp.get("player_name")
+        pl = lineup_alerts._match(nm, pool, by_norm) or {}
+        team = pl.get("team") or sp.get("team")
+        opp, cs = _cs(team) if team else (None, None)
+        own = _num(pl.get("ownership"))
+        ease = None
+        d = fd.get(team, {})
+        if isinstance(d, dict) and isinstance(d.get("difficulty"), (int, float)):
+            ease = round(1 - d["difficulty"], 2)
+        avail = lineup_alerts._bad_status(pl)
+        out.append({
+            "name": pl.get("player_name") or nm, "team": team,
+            "position": pl.get("position") or sp.get("position"),
+            "opponent": opp, "ease": ease, "clean_sheet_pct": cs,
+            "recent_points": pl.get("recent_points"), "ownership": own,
+            "scouting_bonus": own is not None and own < sb_thr,
+            "availability": (avail[1] if avail else "✅ זמין/פותח"),
+        })
+    return out
+
+
 def main() -> None:
     result = build_matchday_squad()
     text = format_squad(result)

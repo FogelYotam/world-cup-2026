@@ -715,12 +715,20 @@ def official_fixture_difficulty(rounds: list[dict], db: dict,
     nxt: dict[str, tuple] = {}
     for r in rounds or []:
         for m in r.get("tournaments", []) or []:
-            if not isinstance(m, dict) or m.get("status") == "complete":
+            if not isinstance(m, dict):
+                continue
+            # רק משחקים שטרם החלו — מדלגים גם על 'playing' (משחק חי), אחרת המשחק
+            # שמתנהל כרגע נתפס כ"הבא" במקום המשחק הבא באמת.
+            if m.get("status") in ("complete", "playing"):
                 continue
             home, away = m.get("homeSquadName"), m.get("awaySquadName")
             date = _iso_date(m.get("date"))
             for me, opp in ((home, away), (away, home)):
-                if me and opp and me not in nxt:
+                if not (me and opp):
+                    continue
+                cur = nxt.get(me)
+                # בוחרים את המשחק ה**מוקדם ביותר לפי תאריך**, לא הראשון באיטרציה.
+                if cur is None or (date and (not cur[1] or date < cur[1])):
                     nxt[me] = (opp, date)
     out = {}
     for team, (opp, date) in nxt.items():

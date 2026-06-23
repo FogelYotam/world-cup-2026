@@ -1013,6 +1013,22 @@ def test_clean_sheet_probabilities_match_matrix_margins():
     assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
 
 
+def test_fixture_difficulty_skips_in_progress_picks_earliest_scheduled():
+    """רגרסיה: משחק 'playing' (חי) מוקדם לא ייתפס כ'המשחק הבא' במקום משחק
+    scheduled מאוחר יותר — בוחרים את המוקדם *לפי תאריך* מבין אלה שטרם החלו."""
+    import scraper
+    rounds = [
+        {"id": 2, "tournaments": [{"homeSquadName": "England", "awaySquadName": "Ghana",
+                                   "status": "playing", "date": "2026-06-23"}]},
+        {"id": 3, "tournaments": [{"homeSquadName": "Panama", "awaySquadName": "England",
+                                   "status": "scheduled", "date": "2026-06-27"}]},
+    ]
+    db = {"teams": [{"team_name": "England"}, {"team_name": "Ghana"},
+                    {"team_name": "Panama"}]}
+    fd = scraper.official_fixture_difficulty(rounds, db, pool=[])
+    assert fd["England"]["opponent"] == "Panama"      # לא Ghana (המשחק החי)
+
+
 def test_lineup_alerts_detect_benched_and_unavailable():
     """התראת הרכב: מתריעה על שחקן שלך על הספסל/פצוע/מורחק, לא על מי שפותח או
     שהרכבו עוד לא פורסם; ולא חוזרת על אותו אירוע."""

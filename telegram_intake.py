@@ -655,6 +655,16 @@ def run_bot_once(poll_timeout: int = 15) -> dict:
     if not config.telegram_enabled():
         log.warning("טלגרם לא מוגדר — הבוט לא יכול לרוץ")
         return {"handled": 0}
+
+    # התראות הרכב — רצות *תמיד* (גם כשקליטת הבוט כבויה), כי הן רק שולחות, לא קולטות.
+    try:
+        import lineup_alerts
+        st = _load_state()
+        if lineup_alerts.run_lineup_alerts(_send_message, st):
+            _save_state(st)
+    except Exception as exc:  # noqa: BLE001
+        log.error("התראות הרכב נכשלו: %s", exc)
+
     if not getattr(config, "TELEGRAM_INTAKE_ENABLED", False):
         # קליטת הבוט כבויה — הניחושים נעשים מ-claude.ai/code. לא קוראים צילומים/צ'אט.
         return {"handled": 0, "disabled": True}

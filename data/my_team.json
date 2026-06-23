@@ -1,85 +1,25 @@
 {
-  "note": "עודכן מצילום עם מחירים (FIFA WC Fantasy).",
+  "note": "עודכן מצילום ההרכב (FIFA WC Fantasy, מחזור 3) — 23/06.",
   "budget": 100.0,
-  "bank": 0.7,
-  "free_transfers": 2,
-  "captain": "Kimmich",
-  "vice_captain": "Haaland",
+  "bank": 0.0,
+  "free_transfers": 1,
+  "captain": "Vinícius Júnior",
+  "vice_captain": "Franck Kessié",
   "squad": [
-    {
-      "player_name": "Kobel",
-      "team": "",
-      "position": "GK"
-    },
-    {
-      "player_name": "Varela",
-      "team": "",
-      "position": "DEF"
-    },
-    {
-      "player_name": "Kimmich",
-      "team": "",
-      "position": "DEF"
-    },
-    {
-      "player_name": "Cucurella",
-      "team": "",
-      "position": "DEF"
-    },
-    {
-      "player_name": "McTominay",
-      "team": "",
-      "position": "MID"
-    },
-    {
-      "player_name": "Wirtz",
-      "team": "",
-      "position": "MID"
-    },
-    {
-      "player_name": "Olise",
-      "team": "",
-      "position": "MID"
-    },
-    {
-      "player_name": "Bruno Fer_",
-      "team": "",
-      "position": "MID"
-    },
-    {
-      "player_name": "Haaland",
-      "team": "",
-      "position": "FWD"
-    },
-    {
-      "player_name": "Oyarzabal",
-      "team": "",
-      "position": "FWD"
-    },
-    {
-      "player_name": "Havertz",
-      "team": "",
-      "position": "FWD"
-    },
-    {
-      "player_name": "Galindez",
-      "team": "",
-      "position": "GK"
-    },
-    {
-      "player_name": "Muñoz",
-      "team": "",
-      "position": "DEF"
-    },
-    {
-      "player_name": "Nuno Men...",
-      "team": "",
-      "position": "DEF"
-    },
-    {
-      "player_name": "Sabitzer",
-      "team": "",
-      "position": "MID"
-    }
+    { "player_name": "Raúl Rangel", "team": "Mexico", "position": "GK" },
+    { "player_name": "Unai Simón", "team": "Spain", "position": "GK" },
+    { "player_name": "Achraf Hakimi", "team": "Morocco", "position": "DEF" },
+    { "player_name": "Sergiño Dest", "team": "USA", "position": "DEF" },
+    { "player_name": "Marc Cucurella", "team": "Spain", "position": "DEF" },
+    { "player_name": "Denzel Dumfries", "team": "Netherlands", "position": "DEF" },
+    { "player_name": "Facundo Medina", "team": "Argentina", "position": "DEF" },
+    { "player_name": "Keito Nakamura", "team": "Japan", "position": "MID" },
+    { "player_name": "Franck Kessié", "team": "Côte d'Ivoire", "position": "MID" },
+    { "player_name": "Vinícius Júnior", "team": "Brazil", "position": "MID" },
+    { "player_name": "Mohamed Salah", "team": "Egypt", "position": "MID" },
+    { "player_name": "Brahim Díaz", "team": "Morocco", "position": "MID" },
+    { "player_name": "Cody Gakpo", "team": "Netherlands", "position": "FWD" },
+    { "player_name": "Harry Kane", "team": "England", "position": "FWD" },
+    { "player_name": "Lionel Messi", "team": "Argentina", "position": "FWD" }
   ]
 }

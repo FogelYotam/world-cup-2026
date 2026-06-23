@@ -1013,6 +1013,43 @@ def test_clean_sheet_probabilities_match_matrix_margins():
     assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
 
 
+def test_lineup_alerts_detect_benched_and_unavailable():
+    """התראת הרכב: מתריעה על שחקן שלך על הספסל/פצוע/מורחק, לא על מי שפותח או
+    שהרכבו עוד לא פורסם; ולא חוזרת על אותו אירוע."""
+    import lineup_alerts as la
+    squad = [{"player_name": "Messi"}, {"player_name": "Kane"},
+             {"player_name": "Bounou"}, {"player_name": "Rece"}]
+    pool = [
+        {"player_name": "Lionel Messi", "team": "Argentina", "expected_start": False,
+         "injury_status": "fit", "suspension_status": "available"},       # ספסל
+        {"player_name": "Harry Kane", "team": "England", "expected_start": True,
+         "injury_status": "fit", "suspension_status": "available"},         # פותח
+        {"player_name": "Yassine Bounou", "team": "Morocco", "expected_start": None,
+         "injury_status": "fit", "suspension_status": "available"},         # הרכב לא פורסם
+        {"player_name": "Rece James", "team": "England", "expected_start": True,
+         "injury_status": "injured", "suspension_status": "available"},     # פצוע
+    ]
+    already = {}
+    a1 = la.check_alerts(pool, squad, already)
+    names = {x["name"] for x in a1}
+    assert names == {"Lionel Messi", "Rece James"}        # רק ספסל + פצוע
+    assert la.check_alerts(pool, squad, already) == []     # אין כפילות בריצה שנייה
+    pool[0]["expected_start"] = True                        # מסי חזר להרכב
+    la.check_alerts(pool, squad, already)
+    assert "messi" not in already                          # ה-dedup התאפס
+
+
+def test_run_lineup_alerts_sends_once(monkeypatch):
+    import lineup_alerts as la
+    monkeypatch.setattr(la, "load_my_squad", lambda path=None: [{"player_name": "Messi"}])
+    pool = [{"player_name": "Lionel Messi", "team": "Argentina", "expected_start": False,
+             "injury_status": "fit", "suspension_status": "available"}]
+    sent, state = [], {}
+    assert la.run_lineup_alerts(lambda m: sent.append(m), state, pool=pool) == 1
+    assert la.run_lineup_alerts(lambda m: sent.append(m), state, pool=pool) == 0
+    assert len(sent) == 1 and "Messi" in sent[0] and "ספסל" in sent[0]
+
+
 def test_model_calibration_brier():
     """כיול Brier (#6): מנבא בטוח ונכון נותן Brier נמוך מניחוש אחיד, ופוגע בפייבוריט."""
     import backtest

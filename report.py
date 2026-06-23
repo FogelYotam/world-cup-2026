@@ -145,6 +145,24 @@ _TEMPLATE = Template(
     <div class="muted" style="margin-top:6px;font-size:.85em">לנעילת חילוף: שלח בבוט "תוציא [שם]".</div>
   </div>
   {% endif %}
+  {% if star_rows %}
+  <div class="card">
+    <strong>⭐ כוכבי המחזור</strong>
+    <span class="muted">(פרימיום · משחק קל · "קח אותם")</span>
+    <div class="pitch">
+      {% for pos, players in star_rows %}
+      <div class="pitch-row">
+        {% for d in players %}
+        <div class="player">
+          <div class="pname">{{ d.player_name }}</div>
+          <div class="pmeta">{{ d.team }}{% if d.opponent %} · v{{ d.opponent }}{% endif %}{% if d.ownership is not none %} · {{ d.ownership }}%{% endif %}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
   {% if diff_pitch.rows %}
   <div class="card">
     <strong>🎯 דיפרנציאלים מומלצים</strong>
@@ -263,9 +281,13 @@ def render_html(predictions: list[dict], fantasy_result: dict,
     # ההרכב האישי כמערך על המגרש + דיפרנציאלים (2 מגרש + 1 ספסל לעמדה)
     advice_pitch = None
     diff_pitch = {"rows": [], "bench": []}
+    star_rows = []
     if advice and advice.get("available"):
         advice_pitch = _pitch_rows(advice.get("starting_eleven"))
         diff_pitch = _differentials_split(advice.get("differentials"))
+        _stars = advice.get("top_picks") or {}
+        star_rows = [(pos, _stars[pos]) for pos in ("GK", "DEF", "MID", "FWD")
+                     if _stars.get(pos)]
 
     html = _TEMPLATE.render(
         predictions=window,
@@ -274,6 +296,7 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         advice=advice or {},
         advice_pitch=advice_pitch,
         diff_pitch=diff_pitch,
+        star_rows=star_rows,
         diff_threshold=config.DIFFERENTIAL_MAX_OWNERSHIP,
         reveal_hours=config.ODDS_REVEAL_HOURS,
         window_days=window_days,
@@ -369,9 +392,26 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
         names = ", ".join(escape(str(f["player_name"])) for f in flags[:4])
         lines.append(f"⚠️ בעייתי בסגל שלך: {names}")
 
+    pos_labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
+
+    stars = advice.get("top_picks") or {}
+    if any(stars.get(p) for p in ("GK", "DEF", "MID", "FWD")):
+        lines.append("<b>⭐ כוכבי המחזור</b> (פרימיום · משחק קל · קח אותם):")
+        for pos in ("GK", "DEF", "MID", "FWD"):
+            items = stars.get(pos) or []
+            if not items:
+                continue
+            tags = []
+            for d in items:
+                own = d.get("ownership")
+                opp = d.get("opponent")
+                vs = f" v{escape(str(opp))}" if opp else ""
+                ow = f" {own}%" if own is not None else ""
+                tags.append(f"{escape(str(d['player_name']))}{vs}{ow}")
+            lines.append(f"{pos_labels[pos]}: " + " · ".join(tags))
+
     diffs = advice.get("differentials") or {}
     thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
-    pos_labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
     if any(diffs.get(p) for p in ("GK", "DEF", "MID", "FWD")):
         lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% · מובטחי-דקות · "
                      f"⭐ = מתחת ל-5% → זכאי scouting bonus +2):")

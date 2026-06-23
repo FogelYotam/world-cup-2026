@@ -105,6 +105,8 @@ DIFFERENTIAL_COUNTS = {"GK": 3, "DEF": 5, "MID": 5, "FWD": 3}
 # פוטנציאל ניקוד גבוה שווה יותר — מתוגמל בדירוג (ראה _value ב-official_differentials).
 SCOUTING_BONUS_OWNERSHIP = 5.0
 SCOUTING_BONUS_POINTS = 2.0
+# "כוכבי המחזור" = פרימיום פופולרי (בעלות ≥ הסף) עם משחק קל — המשלים לדיפרנציאלים.
+STAR_MIN_OWNERSHIP = 10.0
 
 # --- מקור רשמי של FIFA World Cup Fantasy (מקור האמת לבריכת השחקנים) ---
 # קבצי JSON ציבוריים (ללא אימות) — הסגלים הרשמיים בלבד, עם מחיר/בעלות/כושר/נקודות.

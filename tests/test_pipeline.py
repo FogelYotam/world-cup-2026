@@ -1013,6 +1013,31 @@ def test_clean_sheet_probabilities_match_matrix_margins():
     assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
 
 
+def test_official_top_picks_are_premium_easy_fixture():
+    """כוכבי המחזור: רק פרימיום (בעלות ≥ סף) עם משחק קל, ממוין לפי נקודות×קלות —
+    נבדל מהדיפרנציאלים (נמוכי-בעלות)."""
+    import scraper
+    pool = [
+        {"player_name": "Star", "team": "Easy", "position": "FWD", "ownership": 30.0,
+         "price": 10.0, "recent_points": 9.0, "form": 6.0, "injury_status": "fit",
+         "suspension_status": "available", "expected_start": None},
+        {"player_name": "Diff", "team": "Easy", "position": "FWD", "ownership": 2.0,
+         "price": 7.0, "recent_points": 12.0, "form": 6.0, "injury_status": "fit",
+         "suspension_status": "available", "expected_start": None},
+        {"player_name": "HardStar", "team": "Hard", "position": "FWD", "ownership": 30.0,
+         "price": 10.0, "recent_points": 9.0, "form": 6.0, "injury_status": "fit",
+         "suspension_status": "available", "expected_start": None},
+    ]
+    fd = {"Easy": {"difficulty": 0.1, "opponent": "Weak"},
+          "Hard": {"difficulty": 0.9, "opponent": "Strong"}}
+    tp = scraper.official_top_picks(pool, counts={"FWD": 5}, fixture_difficulty=fd)
+    names = [d["player_name"] for d in tp["FWD"]]
+    assert "Star" in names                 # פרימיום + משחק קל
+    assert "Diff" not in names             # בעלות נמוכה — לא כוכב (זה דיפרנציאל)
+    assert "HardStar" not in names         # משחק קשה — מסונן
+    assert tp["FWD"][0]["opponent"] == "Weak"
+
+
 def test_scouting_bonus_promotes_sub5_high_upside(monkeypatch):
     """מודעות scouting bonus (#4): שחקן מתחת ל-5% בעלות עם פוטנציאל ניקוד גבוה
     מתוגמל בדירוג ומסומן. בלי הבונוס הפופולרי (ניקוד בסיס גבוה) מוביל; עם הבונוס

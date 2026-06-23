@@ -534,6 +534,7 @@ def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
             "differentials": differentials_for_user(
                 db.get("differentials") if isinstance(db, dict) else None,
                 my_scored, scored),
+            "top_picks": db.get("top_picks") if isinstance(db, dict) else None,
         }
     except Exception as exc:  # noqa: BLE001
         log.error("יועץ הפנטזי האישי נכשל: %s", exc)

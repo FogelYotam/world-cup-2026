@@ -497,6 +497,51 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
     return out
 
 
+def official_top_picks(pool: list[dict], counts: dict | None = None,
+                       fixture_difficulty: dict | None = None,
+                       min_ease: float = 0.55, min_ownership: float | None = None) -> dict:
+    """כוכבי המחזור: השחקני ה**פרימיום הפופולריים** (בעלות גבוהה = template מוכח)
+    **עם משחק קל**, מדורגים לפי תוחלת נקודות × קלות המשחק. זה המשלים לדיפרנציאלים:
+    ה'בטוחים' שכדאי לקחת (להבדיל מהדיפרנציאלים, שהם נמוכי-בעלות). מחזיר לפי עמדה."""
+    counts = counts or {"GK": 1, "DEF": 2, "MID": 2, "FWD": 2}
+    min_own = (min_ownership if min_ownership is not None
+               else getattr(config, "STAR_MIN_OWNERSHIP", 10.0))
+    fd = fixture_difficulty or {}
+
+    def _ease(team):
+        d = fd.get(team, {}).get("difficulty") if isinstance(fd.get(team), dict) else None
+        return (1.0 - d) if isinstance(d, (int, float)) else 0.5
+
+    def _opp(team):
+        return fd.get(team, {}).get("opponent") if isinstance(fd.get(team), dict) else None
+
+    def _value(p):
+        eff = _num(p.get("recent_points"), 0) * (0.6 + 0.8 * _ease(p.get("team")))
+        return eff + 0.5 * _num(p.get("form"), 0)
+
+    out: dict[str, list] = {}
+    for pos, n in counts.items():
+        cands = [p for p in pool
+                 if p.get("position") == pos
+                 and p.get("injury_status") not in ("out", "injured")
+                 and p.get("suspension_status") != "suspended"
+                 and p.get("expected_start") is not False
+                 and _ease(p.get("team")) >= min_ease
+                 and _num(p.get("ownership"), 0) >= min_own]   # פרימיום פופולרי בלבד
+        cands.sort(key=_value, reverse=True)
+        out[pos] = [{
+            "player_name": p["player_name"], "team": p["team"], "position": pos,
+            "ownership": p.get("ownership"), "price": p.get("price"),
+            "expected_points": p.get("recent_points"),
+            "opponent": _opp(p.get("team")),
+            "reason": (f"ממוצע {p.get('recent_points')} נק' · "
+                       f"{_diff_label(_ease(p.get('team')))}"
+                       + (f" · מול {_opp(p.get('team'))}" if _opp(p.get('team')) else "")
+                       + f" · בעלות {p.get('ownership')}%"),
+        } for p in cands[:n]]
+    return out
+
+
 def _diff_label(ease: float) -> str:
     """תווית מילולית לקלות המשחק הקרוב."""
     if ease >= 0.66:
@@ -1092,6 +1137,9 @@ def collect(days_ahead: int = 3) -> dict:
         db["differentials"] = (
             official_differentials(official_pool, fixture_difficulty=db["fixture_difficulty"])
             if official_pool else fetch_differentials(gemini)) or db.get("differentials", {})
+        if official_pool:
+            db["top_picks"] = official_top_picks(
+                official_pool, fixture_difficulty=db["fixture_difficulty"]) or db.get("top_picks", {})
         odds_map = odds_mod.fetch_market_odds(existing, gemini)
         odds_mod.attach_to_matches(existing, odds_map)
         filter_to_participants(db)
@@ -1138,6 +1186,10 @@ def collect(days_ahead: int = 3) -> dict:
     db["differentials"] = (
         official_differentials(official_pool, fixture_difficulty=db["fixture_difficulty"])
         if official_pool else fetch_differentials(gemini)) or db.get("differentials", {})
+    # כוכבי המחזור — פרימיום עם משחק קל (המשלים לדיפרנציאלים)
+    if official_pool:
+        db["top_picks"] = official_top_picks(
+            official_pool, fixture_difficulty=db["fixture_difficulty"]) or db.get("top_picks", {})
 
     filter_to_participants(db)
     utils.save_json(config.DB_PATH, db)

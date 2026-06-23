@@ -630,6 +630,9 @@ def _maybe_refresh_model(gemini) -> None:
             db["differentials"] = (scraper.official_differentials(
                 pool, fixture_difficulty=db["fixture_difficulty"])
                 or db.get("differentials", {}))
+            db["top_picks"] = (scraper.official_top_picks(
+                pool, fixture_difficulty=db["fixture_difficulty"])
+                or db.get("top_picks", {}))
         # העשרת xG/xA (Gemini) — רק אם יש מכסה
         if getattr(gemini, "enabled", False):
             scraper._enrich_fantasy_data(gemini, db)

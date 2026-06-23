@@ -29,7 +29,8 @@ _EXT_BY_MIME = {"image/jpeg": "jpg", "image/jpg": "jpg",
 _VALID_POS = {"GK", "DEF", "MID", "FWD"}
 _MAX_PER_NATION = 3
 _SQUAD_SIZE = 15
-_REFRESH_MIN_HOURS = 5          # רענון מודל לכל היותר כל 5 שעות (~כמה פעמים ביום)
+_REFRESH_MIN_HOURS = 2          # רענון מודל לכל היותר כל שעתיים — פציעות/כושר/בעלות
+                                # מהפיד הרשמי (זול, ללא Gemini), כדי שהנתונים ירגישו חיים
 
 
 def _norm(s) -> str:

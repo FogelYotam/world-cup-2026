@@ -412,10 +412,11 @@ def fetch_official_pool() -> list[dict]:
             "form": stats.get("form"),
             "expected_start": True if mstat == "start"
             else (False if mstat in ("sub", "not_in_squad") else None),
-            # זמינות לפי הסטטוס הרשמי: 'playing' = פעיל; 'transferred'/לא-בסגל = בחוץ.
-            # לא נשענים על matchStatus (בין מחזורים הוא ריק לכולם).
-            "injury_status": "fit" if (status == "playing" and mstat != "not_in_squad")
-            else "out",
+            # זמינות לפי הסטטוס הרשמי החי: 'injured' נשמר בנפרד (כדי להציג פציעות),
+            # 'transferred'/לא-בסגל = 'out'. לא נשענים על matchStatus (בין מחזורים ריק).
+            "injury_status": ("injured" if status == "injured"
+                              else "fit" if (status == "playing" and mstat != "not_in_squad")
+                              else "out"),
             "suspension_status": "suspended" if status == "suspended" else "available",
         })
         # נקודות פנטזי רשמיות (ממוצע למחזור) — אות 'recent_points' שמנוע הפנטזי משלב
@@ -465,7 +466,7 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
         # ובעלות מתחת לתקרה. בין מחזורים אין הרכב מאומת — לא מסננים על כך.
         cands = [p for p in pool
                  if p.get("position") == pos
-                 and p.get("injury_status") != "out"
+                 and p.get("injury_status") not in ("out", "injured")
                  and p.get("suspension_status") != "suspended"
                  and p.get("expected_start") is not False
                  and _num(p.get("ownership"), 999) <= thr]

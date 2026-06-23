@@ -1013,6 +1013,20 @@ def test_clean_sheet_probabilities_match_matrix_margins():
     assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
 
 
+def test_md_fantasy_builds_legal_matchday_squad():
+    """מחולל ההרכב למחזור (#5): סגל 15 חוקי, 11 פותחים, קפטן, וטקסט קריא."""
+    import md_fantasy
+    db = {"players": _big_pool()}
+    result = md_fantasy.build_matchday_squad(db, predictions=[])
+    assert result["available"] is True
+    e = result["starting_eleven"]
+    assert len(e["squad"]) == 15 and len(e["lineup"]) == 11
+    assert e["captain"] is not None
+    assert e["total_cost"] <= fantasy.DEFAULT_BUDGET + 1e-6
+    txt = md_fantasy.format_squad(result)
+    assert "הרכב פנטזי" in txt and "קפטן" in txt and "ספסל" in txt
+
+
 def test_official_top_picks_are_premium_easy_fixture():
     """כוכבי המחזור: רק פרימיום (בעלות ≥ סף) עם משחק קל, ממוין לפי נקודות×קלות —
     נבדל מהדיפרנציאלים (נמוכי-בעלות)."""

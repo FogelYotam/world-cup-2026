@@ -33,6 +33,8 @@ log = utils.get_logger("backtest")
 TUNE_GRID = {
     "MAX_XG": [3.5, 4.0, 4.5, 5.0],
     "HOME_ADVANTAGE": [0.10, 0.20, 0.25, 0.35],
+    # משקל השוק — מכוונן רק כשלתוצאות יש אודדס מארכבים (אחרת inert, חסר השפעה)
+    "MARKET_BLEND_WEIGHT": [0.4, 0.5, 0.6, 0.7, 0.8],
 }
 
 
@@ -83,15 +85,24 @@ def evaluate(results: list[dict], predict_fn, scoring: dict) -> dict:
     }
 
 
-def _model_predict_fn(teams_by_name: dict):
-    """מחזיר predict_fn שמשתמש במודל האמיתי (recommended_score)."""
+def _model_predict_fn(teams_by_name: dict, odds_by_pair: dict | None = None):
+    """מחזיר predict_fn שמשתמש במודל האמיתי (recommended_score). אם יש אודדס
+    מארכבים לזוג — מצורפים, כך ש-MARKET_BLEND_WEIGHT משפיע על ה-backtest."""
+    odds_by_pair = odds_by_pair or {}
+
     def f(home: str, away: str):
-        pred = predictor.predict_match(
-            {"home_team": home, "away_team": away}, teams_by_name)
+        match = {"home_team": home, "away_team": away}
+        mp = odds_by_pair.get(frozenset((str(home).lower(), str(away).lower())))
+        if mp:
+            match["market_probabilities"] = mp
+        pred = predictor.predict_match(match, teams_by_name)
+        # מנקדים את הניחוש שמוצג בדוח (predicted_score) — הוא מושפע משקלול השוק,
+        # כך שכיוונון MARKET_BLEND_WEIGHT באמת משפיע, וה-tune מייעל את מה שאתה רואה.
+        score = pred.get("predicted_score") or pred.get("recommended_score", "")
         try:
-            ph, pa = (int(x) for x in pred["recommended_score"].split("-"))
+            ph, pa = (int(x) for x in score.split("-"))
             return ph, pa
-        except (KeyError, ValueError, AttributeError):
+        except (ValueError, AttributeError):
             return None
     return f
 
@@ -102,10 +113,13 @@ def run_backtest(db: dict | None = None, scoring: dict | None = None) -> dict:
     scoring = scoring or config.PREDICTION_SCORING
     results = _clean_results(db)
     teams_by_name = {t.get("team_name"): t for t in db.get("teams", [])}
+    odds_by_pair = {frozenset((str(r["home"]).lower(), str(r["away"]).lower())):
+                    r["market_probabilities"]
+                    for r in results if r.get("market_probabilities")}
 
     return {
         "n_results": len(results),
-        "model": evaluate(results, _model_predict_fn(teams_by_name), scoring),
+        "model": evaluate(results, _model_predict_fn(teams_by_name, odds_by_pair), scoring),
         "baseline_home_1_0": evaluate(results, lambda h, a: (1, 0), scoring),
         "baseline_draw_1_1": evaluate(results, lambda h, a: (1, 1), scoring),
     }

@@ -155,7 +155,8 @@ def telegram_enabled() -> bool:
 
 
 # --- כיוונון אוטומטי שמור (data/tuning.json) — דורס ידיות מודל בתחום שפוי בלבד ---
-_TUNING_BOUNDS = {"MAX_XG": (3.0, 5.5), "HOME_ADVANTAGE": (0.0, 0.4)}
+_TUNING_BOUNDS = {"MAX_XG": (3.0, 5.5), "HOME_ADVANTAGE": (0.0, 0.4),
+                  "MARKET_BLEND_WEIGHT": (0.0, 1.0)}
 
 
 def _apply_saved_tuning() -> None:

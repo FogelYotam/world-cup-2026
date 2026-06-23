@@ -1144,3 +1144,26 @@ def test_core_runs_without_optional_deps():
     r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True,
                        cwd=str(Path(__file__).resolve().parent.parent))
     assert r.returncode == 0 and "OK" in r.stdout, r.stderr
+
+
+def test_market_weight_tunable_via_archived_odds():
+    """עם אודדס מארכבים בתוצאה, שינוי MARKET_BLEND_WEIGHT משנה את ניקוד ה-backtest
+    — כלומר המשקל באמת מכוונן (לא inert)."""
+    import backtest
+    db = {
+        "teams": [{"team_name": "A", "goals_for": 2.2, "goals_against": 0.7},
+                  {"team_name": "B", "goals_for": 0.7, "goals_against": 2.2}],
+        # A חזקה מאוד, אבל השוק נותן ל-B 85% (והיא ניצחה 0-2)
+        "results": [{"home": "A", "away": "B", "home_goals": 0, "away_goals": 2,
+                     "date": "d1", "market_probabilities":
+                     {"home_win": 0.05, "draw": 0.10, "away_win": 0.85}}],
+    }
+    old = config.MARKET_BLEND_WEIGHT
+    try:
+        config.MARKET_BLEND_WEIGHT = 0.0
+        ppg_model = backtest.run_backtest(db)["model"]["ppg"]
+        config.MARKET_BLEND_WEIGHT = 0.9
+        ppg_market = backtest.run_backtest(db)["model"]["ppg"]
+    finally:
+        config.MARKET_BLEND_WEIGHT = old
+    assert ppg_market != ppg_model        # האודדס המארכבים אכן משפיעים

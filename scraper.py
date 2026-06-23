@@ -585,6 +585,11 @@ def _record_results(db: dict, rows: list[dict]) -> int:
     db.setdefault("results", [])
     seen = {(_norm(r.get("home")), _norm(r.get("away")), str(r.get("date")))
             for r in db["results"]}
+    # אודדס שהיו צמודים למשחק (db['matches']) — נארכבים לתוצאה כדי שניתן יהיה
+    # לכייל את MARKET_BLEND_WEIGHT ב-backtest (שאחרת מנבא בלי שוק).
+    odds_by_pair = {frozenset((_norm(m.get("home_team")), _norm(m.get("away_team")))):
+                    m.get("market_probabilities")
+                    for m in db.get("matches", []) if m.get("market_probabilities")}
     added = 0
     for r in rows:
         home, away = r.get("home"), r.get("away")
@@ -599,6 +604,10 @@ def _record_results(db: dict, rows: list[dict]) -> int:
         for extra in ("home_pen", "away_pen", "stage"):
             if r.get(extra) is not None:
                 rec[extra] = r.get(extra)
+        mp = r.get("market_probabilities") or odds_by_pair.get(
+            frozenset((_norm(home), _norm(away))))
+        if mp:
+            rec["market_probabilities"] = mp
         db["results"].append(rec)
         seen.add(key)
         added += 1

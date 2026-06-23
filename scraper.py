@@ -1076,7 +1076,7 @@ def collect(days_ahead: int = 3) -> dict:
         db["differentials"] = (
             official_differentials(official_pool, fixture_difficulty=db["fixture_difficulty"])
             if official_pool else fetch_differentials(gemini)) or db.get("differentials", {})
-        odds_map = odds_mod.fetch_consensus_odds(gemini, existing)
+        odds_map = odds_mod.fetch_market_odds(existing, gemini)
         odds_mod.attach_to_matches(existing, odds_map)
         filter_to_participants(db)
         utils.save_json(config.DB_PATH, db)
@@ -1085,9 +1085,9 @@ def collect(days_ahead: int = 3) -> dict:
     # --- העשרת Gemini ממוקדת רק במשחקים הקרובים (חוסכת מכסה) ---
     window = max(days_ahead, getattr(config, "REPORT_UPCOMING_DAYS", 5))
     near = _matches_within_days(matches, window)
-    # אודדס קודם — קריאה *אחת* בלבד, וערך גבוה לניבוי. ניתנת לה עדיפות במכסה
-    # החינמית הקטנה (~20/יום) לפני קריאות ה-context הרבות (אחת לכל משחק).
-    odds_map = odds_mod.fetch_consensus_odds(gemini, near)
+    # אודדס קודם — מקור ראשי the-odds-api (קריאה אחת, אמין), ונפילה ל-Gemini.
+    # ערך גבוה לניבוי; מקבל עדיפות במכסה החינמית לפני קריאות ה-context הרבות.
+    odds_map = odds_mod.fetch_market_odds(near, gemini)
     odds_mod.attach_to_matches(near, odds_map)
     players: list[dict] = []
     for match in near:

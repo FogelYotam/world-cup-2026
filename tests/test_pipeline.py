@@ -1190,3 +1190,77 @@ def test_consensus_odds_one_batched_call():
     assert len(calls) == 1                       # קריאה אחת בלבד
     assert set(o) == {1, 2}
     assert abs(sum(o[1][k] for k in ("home_win", "draw", "away_win")) - 1.0) < 1e-3
+
+
+class _OddsResp:
+    def __init__(self, payload):
+        self._p = payload
+
+    def json(self):
+        return self._p
+
+
+def _odds_api_event(home, away, h, d, a):
+    """אירוע the-odds-api מינימלי עם בוקמייקר יחיד ושוק h2h."""
+    return {"home_team": home, "away_team": away,
+            "bookmakers": [{"title": "Pinnacle", "markets": [
+                {"key": "h2h", "outcomes": [
+                    {"name": home, "price": h},
+                    {"name": "Draw", "price": d},
+                    {"name": away, "price": a}]}]}]}
+
+
+def test_odds_api_one_call_and_alias_mapping(monkeypatch):
+    """the-odds-api נמשך ב*קריאה אחת* לכל הטורניר, וממופה למשחקים שלנו —
+    כולל שמות-אליאס (South Korea -> Korea Republic)."""
+    import odds
+    calls = []
+    payload = [
+        _odds_api_event("Argentina", "Jordan", 1.3, 5.0, 9.0),
+        _odds_api_event("South Korea", "Czechia", 2.2, 3.3, 3.3),
+    ]
+
+    def fake_get(url, params=None, **kw):
+        calls.append((url, params))
+        return _OddsResp(payload)
+
+    monkeypatch.setattr(odds.config, "ODDS_API_KEY", "k")
+    monkeypatch.setattr(odds.utils, "safe_get", fake_get)
+    matches = [{"match_id": 10, "home_team": "Argentina", "away_team": "Jordan"},
+               {"match_id": 11, "home_team": "Korea Republic", "away_team": "Czechia"}]
+    out = odds.fetch_odds_api(matches)
+    assert len(calls) == 1                          # קריאה אחת לכל הטורניר
+    assert set(out) == {10, 11}                     # כולל התאמה דרך אליאס
+    assert out[10]["home_win"] > out[10]["away_win"]  # ארגנטינה פייבוריט
+    assert abs(sum(out[10][k] for k in ("home_win", "draw", "away_win")) - 1.0) < 1e-3
+
+
+def test_fetch_market_odds_api_first_then_gemini_fills_gaps(monkeypatch):
+    """מקור משולב: ה-API מכסה משחק אחד, ו-Gemini ממלא את החסר."""
+    import odds
+    monkeypatch.setattr(odds.config, "ODDS_API_KEY", "k")
+    monkeypatch.setattr(odds.utils, "safe_get",
+                        lambda url, params=None, **kw: _OddsResp(
+                            [_odds_api_event("Argentina", "Jordan", 1.3, 5.0, 9.0)]))
+
+    class _G:
+        enabled = True
+
+        def ask_json(self, prompt, default=None):
+            return {"matches": [{"id": 11, "home_win": 0.5, "draw": 0.3, "away_win": 0.2}]}
+
+    matches = [{"match_id": 10, "home_team": "Argentina", "away_team": "Jordan"},
+               {"match_id": 11, "home_team": "Spain", "away_team": "Uruguay"}]
+    out = odds.fetch_market_odds(matches, _G())
+    assert set(out) == {10, 11}                     # 10 מה-API, 11 מ-Gemini
+
+
+def test_fetch_odds_api_empty_without_key(monkeypatch):
+    """בלי מפתח — לא נורית קריאת רשת, מוחזר ריק (נפילה ל-Gemini/מודל)."""
+    import odds
+    monkeypatch.setattr(odds.config, "ODDS_API_KEY", None)
+    called = []
+    monkeypatch.setattr(odds.utils, "safe_get",
+                        lambda *a, **k: called.append(1) or None)
+    out = odds.fetch_odds_api([{"match_id": 1, "home_team": "A", "away_team": "B"}])
+    assert out == {} and not called

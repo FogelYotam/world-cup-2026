@@ -126,6 +126,16 @@ ODDS_SOURCES = [
 ODDS_CHANGE_THRESHOLD = 0.10      # שינוי בהסתברות הפייבוריט שמפעיל עדכון
 ODDS_REVEAL_HOURS = 2             # המלצת ההימור נחשפת רק כך וכך שעות לפני פתיחה
 
+# --- אודדס אמיתיים מ-API (the-odds-api.com) — המקור הראשי, אמין, בלי תלות במכסת Gemini ---
+# קריאה *אחת* מחזירה את כל משחקי הטורניר → ~30 קריאות/חודש, הרבה בתוך המכסה החינמית
+# (500/חודש). בלי מפתח — נופלים בחזרה לקונצנזוס Gemini, ואז למודל הפואסון בלבד.
+# מפתח חינמי: https://the-odds-api.com/  →  נשמר ב-.env וב-GitHub Secrets כ-ODDS_API_KEY.
+ODDS_API_KEY = _clean_key(os.getenv("ODDS_API_KEY"))
+ODDS_API_BASE = os.getenv("ODDS_API_BASE", "https://api.the-odds-api.com/v4").strip()
+ODDS_API_SPORT = os.getenv("ODDS_API_SPORT", "soccer_fifa_world_cup").strip()
+ODDS_API_REGIONS = os.getenv("ODDS_API_REGIONS", "eu,uk").strip()
+USE_ODDS_API = bool(ODDS_API_KEY)
+
 # --- מקורות פנטזי מומלצים (לאיסוף טפסים/מחירים/בעלות/xG) ---
 # הרשימה שבחר המשתמש — מקורות אלה נמסרים ל-Gemini לחיפוש מעוגן.
 # האתר הרשמי (play.fifa.com/fantasy) הוא המקור לאחוזי הבעלות (ownership).

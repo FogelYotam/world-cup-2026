@@ -348,8 +348,11 @@ def send_email(html: str) -> bool:
 _TG_LIMIT = 4096  # תקרת תווים להודעת טלגרם
 
 
+_POS_EMOJI = {"GK": "🧤 שוער", "DEF": "🛡️ הגנה", "MID": "⚙️ קישור", "FWD": "⚔️ חלוץ"}
+
+
 def _group_lineup(players: list[dict]) -> str:
-    """שורה אחת מקובצת לפי עמדה: GK | DEF | MID | FWD."""
+    """שורה אחת מקובצת לפי עמדה (לספסל): GK | DEF | MID | FWD."""
     by = {"GK": [], "DEF": [], "MID": [], "FWD": []}
     for p in players:
         by.setdefault(p.get("position"), []).append(escape(str(p.get("player_name"))))
@@ -357,79 +360,102 @@ def _group_lineup(players: list[dict]) -> str:
     return " | ".join(parts)
 
 
+def _lineup_block(players: list[dict], cap_name=None, vice_name=None) -> list[str]:
+    """הרכב רב-שורתי, שורה לכל קו עם אמוג'י עמדה; קפטן/סגן מסומנים בשם."""
+    by = {"GK": [], "DEF": [], "MID": [], "FWD": []}
+    for p in players:
+        nm = escape(str(p.get("player_name")))
+        if cap_name and p.get("player_name") == cap_name:
+            nm += " 👑"
+        elif vice_name and p.get("player_name") == vice_name:
+            nm += " 🅥"
+        by.setdefault(p.get("position"), []).append(nm)
+    return [f"{_POS_EMOJI[pos]}: " + " · ".join(by[pos])
+            for pos in ("GK", "DEF", "MID", "FWD") if by[pos]]
+
+
 def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     """מוסיף את בלוק ההמלצות האישיות (לפי my_team.json) לטלגרם."""
     if not (advice and advice.get("available")):
         return
-    lines.append("<b>👤 הקבוצה שלך — המלצות אישיות</b>")
-    cap = (advice.get("recommended_captain") or {}).get("player_name", "—")
-    vice = (advice.get("recommended_vice") or {}).get("player_name", "—")
-    line = f"מערך {advice['formation']} · 👑 קפטן מומלץ: <b>{escape(str(cap))}</b> · סגן: {escape(str(vice))}"
+    pos_labels = {"GK": "🧤 שוער", "DEF": "🛡️ הגנה", "MID": "⚙️ קישור", "FWD": "⚔️ חלוץ"}
+    lines.append("➖➖➖➖➖➖➖➖➖➖")
+    lines.append("<b>💎 פנטזי — המחזור הקרוב</b>")
+    lines.append("")
+
+    # 1) ההרכב שלך — רב-שורתי, עם קפטן/סגן מסומנים
+    cap = (advice.get("recommended_captain") or {}).get("player_name")
+    vice = (advice.get("recommended_vice") or {}).get("player_name")
+    head = f"<b>👤 ההרכב שלך</b> · מערך {advice.get('formation', '?')}"
+    lines.append(head)
+    cap_line = f"👑 קפטן: <b>{escape(str(cap or '—'))}</b> · 🅥 סגן: {escape(str(vice or '—'))}"
     if advice.get("captain_change") and advice.get("owner_captain"):
-        line += f" <i>(שינוי מ-{escape(str(advice['owner_captain']))})</i>"
-    lines.append(line)
-    lines.append(f"הרכב: {_group_lineup(advice['starting_eleven'])}")
+        cap_line += f" <i>(שינוי מ-{escape(str(advice['owner_captain']))})</i>"
+    lines.append(cap_line)
+    lines.extend(_lineup_block(advice.get("starting_eleven") or [], cap, vice))
     if advice.get("bench"):
         lines.append(f"🪑 ספסל: {_group_lineup(advice['bench'])}")
 
+    # 2) חילופים מומלצים
     recs = advice.get("transfer_recs") or []
     if recs:
-        hdr = "<b>🔁 חילופים לפי קושי המחזור</b> (קשה יוצא · קל נכנס):"
+        lines.append("")
+        hdr = "<b>🔁 חילופים מומלצים</b> <i>(קשה יוצא · קל נכנס)</i>:"
         if advice.get("forced_out"):
-            hdr = hdr[:-1] + f" · 🔒 {escape(str(advice['forced_out']))}):"
+            hdr = hdr[:-1] + f" 🔒 {escape(str(advice['forced_out']))}:"
         lines.append(hdr)
-        for i, o in enumerate(recs[:4], 1):
+        for i, o in enumerate(recs[:3], 1):
             outs = " + ".join(escape(str(p["player_name"])) for p in o["out"])
             ins = " + ".join(
                 f"<b>{escape(str(p['player_name']))}</b>"
                 f"{(' v'+escape(str(p['opponent']))) if p.get('opponent') else ''}"
                 for p in o["in"])
-            lines.append(f"{i}. {outs} → {ins} <i>({o['in_cost']}≤"
-                         f"{round(o['out_cost'] + (advice.get('bank') or 0),1)})</i>")
+            lines.append(f"  {i}. {outs} ⬅️ {ins}")
         lines.append("<i>לנעילת חילוף: כתוב 'תוציא [שם]'.</i>")
     flags = advice.get("flags") or []
     if flags:
         names = ", ".join(escape(str(f["player_name"])) for f in flags[:4])
-        lines.append(f"⚠️ בעייתי בסגל שלך: {names}")
+        lines.append(f"⚠️ בעייתי בסגל: {names}")
 
-    pos_labels = {"GK": "שוער", "DEF": "הגנה", "MID": "קישור", "FWD": "חלוץ"}
-
+    # 3) כוכבי המחזור — פרימיום בטוח
     stars = advice.get("top_picks") or {}
     if any(stars.get(p) for p in ("GK", "DEF", "MID", "FWD")):
-        lines.append("<b>⭐ כוכבי המחזור</b> (פרימיום · משחק קל · קח אותם):")
+        lines.append("")
+        lines.append("<b>⭐ כוכבי המחזור</b> <i>(פרימיום · משחק קל · \"קח אותם\")</i>:")
         for pos in ("GK", "DEF", "MID", "FWD"):
-            items = stars.get(pos) or []
+            items = (stars.get(pos) or [])[:2]
             if not items:
                 continue
             tags = []
             for d in items:
-                own = d.get("ownership")
                 opp = d.get("opponent")
-                vs = f" v{escape(str(opp))}" if opp else ""
-                ow = f" {own}%" if own is not None else ""
+                vs = f" <i>מול {escape(str(opp))}</i>" if opp else ""
+                own = d.get("ownership")
+                ow = f" ({own}%)" if own is not None else ""
                 tags.append(f"{escape(str(d['player_name']))}{vs}{ow}")
             lines.append(f"{pos_labels[pos]}: " + " · ".join(tags))
 
+    # 4) דיפרנציאלים — פוטנציאל גבוה, בעלות נמוכה
     diffs = advice.get("differentials") or {}
     thr = getattr(config, "DIFFERENTIAL_MAX_OWNERSHIP", 5.0)
     if any(diffs.get(p) for p in ("GK", "DEF", "MID", "FWD")):
-        lines.append(f"<b>🎯 דיפרנציאלים</b> (בעלות &lt; {thr}% · מובטחי-דקות · "
-                     f"⭐ = מתחת ל-5% → זכאי scouting bonus +2):")
+        lines.append("")
+        lines.append("<b>🎯 דיפרנציאלים</b> <i>(פוטנציאל גבוה · ⭐ = בעלות &lt;5% → "
+                     "scouting bonus +2)</i>:")
 
         def _diff_tag(d):
             own = d.get("ownership")
-            suffix = f" {own}%" if own is not None else ""
+            suffix = f" ({own}%)" if own is not None else ""
             star = " ⭐" if d.get("scouting_bonus") else ""
             return f"{escape(str(d['player_name']))}{suffix}{star}"
 
         for pos in ("GK", "DEF", "MID", "FWD"):
-            items = diffs.get(pos) or []
+            items = (diffs.get(pos) or [])[:3]
             if not items:
                 continue
-            lines.append(f"{pos_labels[pos]}: "
-                         + " · ".join(_diff_tag(d) for d in items))
+            lines.append(f"{pos_labels[pos]}: " + " · ".join(_diff_tag(d) for d in items))
     else:
-        lines.append(f"<i>🎯 דיפרנציאלים (בעלות &lt; {thr}%) יופיעו כשייכנסו נתוני בעלות מהאתרים.</i>")
+        lines.append(f"<i>🎯 דיפרנציאלים יופיעו כשייכנסו נתוני בעלות.</i>")
     lines.append("")
 
 

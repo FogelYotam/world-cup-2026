@@ -1013,6 +1013,20 @@ def test_clean_sheet_probabilities_match_matrix_margins():
     assert cs["home"] > cs["away"]          # הבית חזק יותר → סיכוי שער נקי גבוה יותר
 
 
+def test_predicted_score_not_exaggerated():
+    """ניחוש הדוח לא מגזים בשערים: MAX_XG≤3.5 (מעל זה _round_goals מחזיר 4),
+    וגבול הכיוונון חוסם ניפוח חוזר. אפילו במפגש הכי לא-שוויוני — מקס 3 לקבוצה."""
+    import predictor, config
+    assert config.MAX_XG <= 3.5
+    assert config._TUNING_BOUNDS["MAX_XG"][1] <= 3.5
+    teams = {"S": {"team_name": "S", "goals_for": 3.6, "goals_against": 0.3},
+             "W": {"team_name": "W", "goals_for": 0.3, "goals_against": 3.6}}
+    pred = predictor.predict_match({"home_team": "S", "away_team": "W"}, teams)
+    h, a = map(int, pred["predicted_score"].split("-"))
+    assert max(h, a) <= 3
+    assert pred["expected_goals"]["home"] <= 3.5    # התקרה אוכפת
+
+
 def test_predict_match_exposes_goals_and_clean_sheet():
     """predict_match מחזיר total_expected_goals + clean_sheet לדוח (שיפור #2)."""
     import predictor

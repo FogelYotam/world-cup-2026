@@ -1218,7 +1218,9 @@ def test_match_points_tiers():
     s = {"exact": 3, "direction": 1, "reversed": -1}
     assert predictor.match_points(2, 1, 2, 1, s) == 3    # מדויק
     assert predictor.match_points(2, 1, 1, 0, s) == 1    # כיוון נכון, לא מדויק
-    assert predictor.match_points(2, 1, 0, 1, s) == -1   # תוצאה הפוכה
+    assert predictor.match_points(2, 1, 1, 2, s) == -1   # קנס: ההפך *המדויק* (מראה)
+    assert predictor.match_points(2, 1, 0, 1, s) == 0    # כיוון שגוי אך לא מראה = פספוס
+    assert predictor.match_points(2, 1, 0, 3, s) == 0    # כיוון שגוי, לא מראה = פספוס
     assert predictor.match_points(1, 1, 2, 0, s) == 0    # ניחשת תיקו, נצחון בית
     assert predictor.match_points(2, 0, 1, 1, s) == 0    # ניחשת נצחון, תיקו
 

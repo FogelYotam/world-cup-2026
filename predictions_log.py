@@ -113,7 +113,9 @@ def settle_with_results(results: list[dict]) -> int:
 
 
 def _points(ph, pa, ah, aa) -> int | None:
-    """ניקוד KICKOFF: מדויק=3, כיוון נכון=1, הפוך=-1."""
+    """ניקוד KICKOFF: מדויק=3, כיוון נכון=1, **הפך-מדויק (מראה)=−1**, אחרת=0.
+    קנס (−1) חל רק כשהניחוש הוא ההפך המדויק של התוצאה (ניחשת 2-1, יצא 1-2);
+    כיוון שגוי שאינו מראה = פספוס (0)."""
     if None in (ph, pa, ah, aa):
         return None
     if ph == ah and pa == aa:
@@ -121,7 +123,7 @@ def _points(ph, pa, ah, aa) -> int | None:
     dp, da = _outcome(ph, pa), _outcome(ah, aa)
     if dp == da:
         return 1
-    if dp != "D" and da != "D" and dp != da:
+    if ph == aa and pa == ah:          # ההפך המדויק בלבד
         return -1
     return 0
 

@@ -141,9 +141,9 @@ def match_points(ph: int, pa: int, ah: int, aa: int, scoring: dict) -> float:
     dp, da = _sign(ph, pa), _sign(ah, aa)
     if dp == da:                       # כיוון נכון (כולל תיקו נכון)
         return scoring.get("direction", 1)
-    if dp != 0 and da != 0 and dp == -da:   # תוצאה הפוכה ממש
+    if ph == aa and pa == ah:          # קנס: **ההפך המדויק** של התוצאה (מראה)
         return scoring.get("reversed", -1)
-    return 0.0                         # כיוון שגוי אך לא הפוך (אחד תיקו)
+    return 0.0                         # כיוון שגוי שאינו ההפך-המדויק = פספוס
 
 
 def expected_points(ph: int, pa: int, matrix: list[list[float]], scoring: dict) -> float:

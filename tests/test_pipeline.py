@@ -1157,6 +1157,20 @@ def test_predicted_score_not_exaggerated():
     assert pred["expected_goals"]["home"] <= 3.5    # התקרה אוכפת
 
 
+def test_report_next_round_not_day_window():
+    """הדוח מציג את *הסיבוב הקרוב* בלבד, לא חלון-ימים שמערבב סיבובים."""
+    import report
+    import datetime as _dt
+    preds = [
+        {"home_team": "A", "away_team": "B", "date": "2026-06-24", "round": 2},  # עבר
+        {"home_team": "C", "away_team": "D", "date": "2026-06-26", "round": 3},
+        {"home_team": "E", "away_team": "F", "date": "2026-06-27", "round": 3},
+        {"home_team": "G", "away_team": "H", "date": "2026-07-01", "round": 4},  # רחוק
+    ]
+    nr = report._next_round(preds, now=_dt.datetime(2026, 6, 25, 8, 0))
+    assert {p["round"] for p in nr} == {3} and len(nr) == 2
+
+
 def test_predict_match_exposes_goals_and_clean_sheet():
     """predict_match מחזיר total_expected_goals + clean_sheet לדוח (שיפור #2)."""
     import predictor

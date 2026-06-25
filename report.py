@@ -72,8 +72,8 @@ _TEMPLATE = Template(
   <h1>⚽ מונדיאל 2026 — דוח יומי</h1>
   <div class="date">{{ date_str }}</div>
 
-  <h2>ניחושי משחקים — {{ window_days }} הימים הקרובים</h2>
-  <div class="muted" style="margin-bottom:8px">מוצגים כל המשחקים ב-{{ window_days }} הימים הקרובים. המלצת ההימור נחשפת כ-{{ reveal_hours }} שעות לפני פתיחת כל משחק.</div>
+  <h2>ניחושי משחקים — {% if round_no %}סיבוב {{ round_no }}{% else %}הסיבוב הקרוב{% endif %}</h2>
+  <div class="muted" style="margin-bottom:8px">מוצגים כל משחקי הסיבוב הקרוב. המלצת ההימור נחשפת כ-{{ reveal_hours }} שעות לפני פתיחת כל משחק.</div>
   {% if predictions %}
     {% for p in predictions %}
     <div class="card">
@@ -100,7 +100,7 @@ _TEMPLATE = Template(
     </div>
     {% endfor %}
   {% else %}
-    <div class="card muted">אין משחקים ב-{{ window_days }} הימים הקרובים.</div>
+    <div class="card muted">אין משחקים בסיבוב הקרוב.</div>
   {% endif %}
 
   {% if advice.available %}
@@ -203,6 +203,27 @@ def _conf_class(score: int) -> str:
     return "low"
 
 
+def _next_round(predictions: list[dict], now=None) -> list[dict]:
+    """מחזיר את משחקי **הסיבוב הקרוב** (matchday) — לא חלון-ימים שמערבב סיבובים.
+    הסיבוב נקבע לפי המשחק העתידי המוקדם ביותר (date ≥ היום), ומוצגים כל משחקי
+    אותו `round`. נדרש שהניחושים תויגו ב-`round` (ב-main.py). נופל ל-5 ימים אם לא."""
+    now = now or datetime.now()
+    today = now.date()
+    dated = []
+    for p in predictions:
+        if p.get("round") is None:
+            continue
+        d = utils._parse_dt(p.get("kickoff")) or utils._parse_dt(p.get("date"))
+        if d and d.date() >= today:
+            dated.append((p, d))
+    if not dated:
+        return _within_days(predictions, config.REPORT_UPCOMING_DAYS, now)
+    next_rd = min(dated, key=lambda x: x[1])[0]["round"]      # סיבוב המשחק המוקדם
+    out = [p for p, _ in dated if p["round"] == next_rd]
+    out.sort(key=lambda p: utils._parse_dt(p.get("kickoff")) or utils._parse_dt(p.get("date")) or now)
+    return out
+
+
 def _within_days(predictions: list[dict], days: int, now=None) -> list[dict]:
     """מסנן משחקים לחלון של N הימים הקרובים (מהיום ועד היום+N-1).
     אם לאף משחק אין תאריך תקין — מחזיר הכל (לא חוסם בגלל נתונים חסרים)."""
@@ -274,9 +295,10 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         p["is_today"] = bool(_dt and _dt.date() == today)
         p["reveal_label"] = _kickoff_label(p) or (p.get("date") or "")
 
-    # מציגים בדוח את כל המשחקים ב-N הימים הקרובים
+    # מציגים בדוח את משחקי **הסיבוב הקרוב** (לא חלון-ימים שמערבב סיבובים)
     window_days = config.REPORT_UPCOMING_DAYS
-    window = _within_days(predictions, window_days, now)
+    window = _next_round(predictions, now)
+    round_no = window[0].get("round") if window else None
 
     # ההרכב האישי כמערך על המגרש + דיפרנציאלים (2 מגרש + 1 ספסל לעמדה)
     advice_pitch = None
@@ -300,6 +322,7 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         diff_threshold=config.DIFFERENTIAL_MAX_OWNERSHIP,
         reveal_hours=config.ODDS_REVEAL_HOURS,
         window_days=window_days,
+        round_no=round_no,
         date_str=now.strftime("%d/%m/%Y"),
         generated_at=now.strftime("%d/%m/%Y %H:%M"),
     )

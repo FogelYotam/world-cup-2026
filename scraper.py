@@ -699,6 +699,21 @@ def _team_quality(pool: list[dict]) -> dict:
             for t, v in by.items() if v}
 
 
+def round_by_pair(rounds: list[dict]) -> dict:
+    """מיפוי זוג-נבחרות (frozenset מנורמל) → מזהה הסיבוב (matchday). מאפשר להציג
+    בדוח את משחקי **הסיבוב הקרוב** במקום חלון-ימים שמערבב סיבובים."""
+    out: dict = {}
+    for r in rounds or []:
+        rid = r.get("id")
+        for m in r.get("tournaments", []) or []:
+            if not isinstance(m, dict):
+                continue
+            h, a = m.get("homeSquadName"), m.get("awaySquadName")
+            if h and a:
+                out[frozenset((_norm(h), _norm(a)))] = rid
+    return out
+
+
 def official_fixture_difficulty(rounds: list[dict], db: dict,
                                 pool: list[dict] | None = None) -> dict:
     """קושי המשחק הקרוב לכל נבחרת — לפי חוזק היריבה. משלב **איכות סגל** (פרוקסי

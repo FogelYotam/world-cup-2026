@@ -79,6 +79,18 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
         log.error("כיוונון אוטומטי יומי נכשל: %s", exc)
 
     predictions = predictor.predict_all(db)
+    # תיוג כל ניחוש במזהה הסיבוב (matchday) — כדי שהדוח יציג את *הסיבוב הקרוב*
+    # בלבד, לא חלון-ימים שמערבב סיבובים.
+    try:
+        import scraper
+        _rounds = scraper.fetch_official_rounds()
+        _p2r = scraper.round_by_pair(_rounds) if _rounds else {}
+        if _p2r:
+            for _p in predictions:
+                _p["round"] = _p2r.get(frozenset((scraper._norm(_p.get("home_team")),
+                                                   scraper._norm(_p.get("away_team")))))
+    except Exception as exc:  # noqa: BLE001
+        log.error("תיוג סיבוב נכשל: %s", exc)
     fantasy_result = fantasy.build_fantasy(db, predictions)
 
     # פנטזי למחזור הקרוב בלבד (דוח קצר וממוקד)

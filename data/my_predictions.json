@@ -94,7 +94,7 @@
       "user_away": 0,
       "model_home": 1,
       "model_away": 0,
-      "saved_at": "2026-06-25T05:27:25.376087+00:00",
+      "saved_at": "2026-06-25T15:33:26.631253+00:00",
       "actual_home": 4,
       "actual_away": 1,
       "user_outcome_ok": true,
@@ -755,15 +755,15 @@
       "date": "2026-06-24",
       "user_home": 0,
       "user_away": 2,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 1,
+      "model_away": 2,
       "saved_at": "2026-06-25T04:50:25.105760+00:00",
       "actual_home": 0,
       "actual_away": 1,
       "user_outcome_ok": true,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": true,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -772,15 +772,15 @@
       "date": "2026-06-24",
       "user_home": 3,
       "user_away": 1,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 2,
+      "model_away": 1,
       "saved_at": "2026-06-25T04:50:25.105760+00:00",
       "actual_home": 1,
       "actual_away": 0,
       "user_outcome_ok": true,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": true,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -789,15 +789,15 @@
       "date": "2026-06-24",
       "user_home": 2,
       "user_away": 0,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 2,
+      "model_away": 1,
       "saved_at": "2026-06-25T04:50:25.105760+00:00",
       "actual_home": 3,
       "actual_away": 1,
       "user_outcome_ok": true,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": true,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -806,15 +806,15 @@
       "date": "2026-06-24",
       "user_home": 0,
       "user_away": 2,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 1,
+      "model_away": 1,
       "saved_at": "2026-06-25T04:50:25.105760+00:00",
       "actual_home": 0,
       "actual_away": 3,
       "user_outcome_ok": true,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": false,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -823,15 +823,15 @@
       "date": "2026-06-24",
       "user_home": 3,
       "user_away": 0,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 2,
+      "model_away": 0,
       "saved_at": "2026-06-25T04:50:25.105760+00:00",
       "actual_home": 4,
       "actual_away": 2,
       "user_outcome_ok": true,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": true,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -840,15 +840,15 @@
       "date": "2026-06-23",
       "user_home": 2,
       "user_away": 1,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 2,
+      "model_away": 1,
       "saved_at": "2026-06-25T04:50:25.105760+00:00",
       "actual_home": 5,
       "actual_away": 0,
       "user_outcome_ok": true,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": true,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -857,15 +857,15 @@
       "date": "2026-06-23",
       "user_home": 3,
       "user_away": 0,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 2,
+      "model_away": 1,
       "saved_at": "2026-06-25T04:50:25.105760+00:00",
       "actual_home": 0,
       "actual_away": 0,
       "user_outcome_ok": false,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": false,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -874,15 +874,15 @@
       "date": "2026-06-25",
       "user_home": 0,
       "user_away": 1,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 0,
+      "model_away": 2,
       "saved_at": "2026-06-25T05:26:00.809865+00:00",
       "actual_home": 0,
       "actual_away": 3,
       "user_outcome_ok": true,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": true,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -891,15 +891,15 @@
       "date": "2026-06-24",
       "user_home": 1,
       "user_away": 1,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 1,
+      "model_away": 1,
       "saved_at": "2026-06-25T05:26:00.809865+00:00",
       "actual_home": 2,
       "actual_away": 1,
       "user_outcome_ok": false,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": false,
+      "model_exact_ok": false
     },
     {
       "settled": true,
@@ -908,15 +908,15 @@
       "date": "2026-06-25",
       "user_home": 1,
       "user_away": 2,
-      "model_home": null,
-      "model_away": null,
+      "model_home": 1,
+      "model_away": 1,
       "saved_at": "2026-06-25T05:26:00.809865+00:00",
       "actual_home": 1,
       "actual_away": 0,
       "user_outcome_ok": false,
       "user_exact_ok": false,
-      "model_outcome_ok": null,
-      "model_exact_ok": null
+      "model_outcome_ok": false,
+      "model_exact_ok": false
     }
   ]
 }

@@ -74,6 +74,20 @@ def _resolve_team(name, teams_by_name) -> str | None:
     return None
 
 
+def _report_model(th, ta):
+    """ניחוש המודל מהדוח השמור (`data/report_predictions.json`) — **טרום-משחק,
+    הוגן** — מיושר ל-(th=בית, ta=חוץ). מחזיר (None,None) אם אין. מ-`report.py`
+    מתועד שם בכל הרצה; כאן רק קוראים. כך השוואת אתה-מול-מודל הוגנת אוטומטית."""
+    store = utils.load_json(config.DATA_DIR / "report_predictions.json", default={}) or {}
+    direct = store.get(f"{_norm(th)}|{_norm(ta)}")
+    if direct:
+        return direct.get("model_home"), direct.get("model_away")
+    rev = store.get(f"{_norm(ta)}|{_norm(th)}")     # הדוח רשם בכיוון ההפוך
+    if rev:
+        return rev.get("model_away"), rev.get("model_home")
+    return None, None
+
+
 def process(games: list[dict], db: dict | None = None) -> str:
     """מקבל רשימת ניחושים שחולצו מצילומים, שומר, מיישב, ומחזיר טקסט סיכום.
 
@@ -92,8 +106,11 @@ def process(games: list[dict], db: dict | None = None) -> str:
         home, away = g.get("home"), g.get("away")
         th, ta = _resolve_team(home, teams_by_name), _resolve_team(away, teams_by_name)
         mh, ma = g.get("model_home"), g.get("model_away")
-        # אם ניחוש המודל סופק מהדוח (ההוגן — לפני המשחק) — משתמשים בו כמו שהוא.
-        # אחרת מחשבים (שים לב: לעבר זה in-sample/מנופח — עדיף לספק מהדוח).
+        # 1) אם ניחוש המודל סופק במפורש (מהדוח) — משתמשים בו.
+        # 2) אחרת — מנסים מהדוח **השמור** (`report_predictions.json`, הוגן/טרום-משחק).
+        # 3) רק אם אין בכלל — מחשבים (לעבר זה in-sample/מנופח).
+        if (mh is None or ma is None) and th and ta:
+            mh, ma = _report_model(th, ta)
         if (mh is None or ma is None) and th and ta:
             pred = predictor.predict_match({"home_team": th, "away_team": ta}, teams_by_name)
             try:

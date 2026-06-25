@@ -203,6 +203,45 @@ def _conf_class(score: int) -> str:
     return "low"
 
 
+def _norm_team(s) -> str:
+    import unicodedata
+    d = unicodedata.normalize("NFKD", str(s or "").lower())
+    return "".join(c for c in d if not unicodedata.combining(c)).strip()
+
+
+def _archive_report_predictions(predictions: list[dict], now=None) -> None:
+    """שומר את ניחוש המודל (predicted_score) של **משחקים עתידיים** ל-
+    `data/report_predictions.json` — כדי שבעתיד, כשהמשתמש יעלה את ניחושיו, ההשוואה
+    תשתמש בניחוש ה**טרום-משחק** (הוגן) ולא תחשב מחדש in-sample. לא דורס משחקי עבר
+    (משמר את הניחוש כפי שהיה לפני המשחק). לעולם לא זורק."""
+    try:
+        now = now or datetime.now()
+        today = now.date()
+        path = config.DATA_DIR / "report_predictions.json"
+        store = utils.load_json(path, default={}) or {}
+        changed = False
+        for p in predictions:
+            d = utils._parse_dt(p.get("kickoff")) or utils._parse_dt(p.get("date"))
+            if not (d and d.date() >= today):       # רק עתידיים — לא לדרוס עבר
+                continue
+            score = p.get("predicted_score") or p.get("recommended_score")
+            if not score or "-" not in str(score):
+                continue
+            try:
+                mh, ma = (int(x) for x in str(score).split("-"))
+            except ValueError:
+                continue
+            key = f"{_norm_team(p.get('home_team'))}|{_norm_team(p.get('away_team'))}"
+            store[key] = {"home": p.get("home_team"), "away": p.get("away_team"),
+                          "model_home": mh, "model_away": ma,
+                          "date": p.get("date"), "saved_at": utils.now_iso()}
+            changed = True
+        if changed:
+            utils.save_json(path, store)
+    except Exception as exc:  # noqa: BLE001
+        log.error("ארכוב ניחושי הדוח נכשל: %s", exc)
+
+
 def _next_round(predictions: list[dict], now=None) -> list[dict]:
     """מחזיר את משחקי **הסיבוב הקרוב** (matchday) — לא חלון-ימים שמערבב סיבובים.
     הסיבוב נקבע לפי המשחק העתידי המוקדם ביותר (date ≥ היום), ומוצגים כל משחקי
@@ -294,6 +333,9 @@ def render_html(predictions: list[dict], fantasy_result: dict,
         _dt = utils._parse_dt(p.get("kickoff")) or utils._parse_dt(p.get("date"))
         p["is_today"] = bool(_dt and _dt.date() == today)
         p["reveal_label"] = _kickoff_label(p) or (p.get("date") or "")
+
+    # ארכוב ניחושי המודל (טרום-משחק) להשוואה הוגנת עתידית — לפני כל סינון
+    _archive_report_predictions(predictions, now)
 
     # מציגים בדוח את משחקי **הסיבוב הקרוב** (לא חלון-ימים שמערבב סיבובים)
     window_days = config.REPORT_UPCOMING_DAYS

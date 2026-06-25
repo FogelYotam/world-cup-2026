@@ -986,6 +986,27 @@ def test_predictions_log_record_settle_summary(monkeypatch, tmp_path):
     assert s["model_exact"] == (0, 2)
 
 
+def test_kickoff_uses_archived_report_model(monkeypatch, tmp_path):
+    """ההשוואה משתמשת אוטומטית בניחוש-הדוח השמור (הוגן/טרום-משחק) במקום לחשב
+    מחדש (in-sample), כשהמשתמש לא מספק model_* במפורש."""
+    import json as _json
+    import kickoff_predictions as kp
+    import predictions_log
+    import config
+    monkeypatch.setattr(config, "DATA_DIR", tmp_path)
+    (tmp_path / "report_predictions.json").write_text(
+        _json.dumps({"team a|team b": {"home": "Team A", "away": "Team B",
+                                       "model_home": 2, "model_away": 0}}),
+        encoding="utf-8")
+    monkeypatch.setattr(predictions_log, "_PATH", tmp_path / "p.json")
+    db = {"teams": [{"team_name": "Team A"}, {"team_name": "Team B"}],
+          "results": [{"home": "Team A", "away": "Team B",
+                       "home_goals": 3, "away_goals": 1}]}
+    kp.process([{"home": "Team A", "away": "Team B", "user_home": 1, "user_away": 0}], db=db)
+    rec = predictions_log._load()["predictions"][0]
+    assert rec["model_home"] == 2 and rec["model_away"] == 0   # מהדוח, לא חישוב
+
+
 def test_settle_backfills_missing_date_from_result(monkeypatch, tmp_path):
     """יישוב מול תוצאה רשמית ממלא תאריך חסר בניחוש (שיפור #3) —
     מונע backfill ידני של תאריכים בעתיד."""

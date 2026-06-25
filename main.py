@@ -79,18 +79,24 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
         log.error("כיוונון אוטומטי יומי נכשל: %s", exc)
 
     predictions = predictor.predict_all(db)
-    # תיוג כל ניחוש במזהה הסיבוב (matchday) — כדי שהדוח יציג את *הסיבוב הקרוב*
-    # בלבד, לא חלון-ימים שמערבב סיבובים.
+    # תיוג כל ניחוש בסיבוב, וסימון משחקים שכבר התקיימו/מתנהלים. הדוח מציג רק
+    # משחקים **שטרם התקיימו** (לא הסתיימו ולא 'playing'), ורק את הסיבוב הקרוב.
+    report_predictions = predictions
     try:
         import scraper
         _rounds = scraper.fetch_official_rounds()
         _p2r = scraper.round_by_pair(_rounds) if _rounds else {}
-        if _p2r:
-            for _p in predictions:
-                _p["round"] = _p2r.get(frozenset((scraper._norm(_p.get("home_team")),
-                                                   scraper._norm(_p.get("away_team")))))
+        _played = {frozenset((scraper._norm(r.get("home")), scraper._norm(r.get("away"))))
+                   for r in db.get("results", [])}
+        _status = {frozenset((scraper._norm(m.get("home_team")), scraper._norm(m.get("away_team")))):
+                   m.get("status") for m in db.get("matches", [])}
+        for _p in predictions:
+            _k = frozenset((scraper._norm(_p.get("home_team")), scraper._norm(_p.get("away_team"))))
+            _p["round"] = _p2r.get(_k)
+            _p["_played"] = (_k in _played) or (_status.get(_k) in ("complete", "playing"))
+        report_predictions = [p for p in predictions if not p.get("_played")]
     except Exception as exc:  # noqa: BLE001
-        log.error("תיוג סיבוב נכשל: %s", exc)
+        log.error("תיוג סיבוב/סינון משחקים שהתקיימו נכשל: %s", exc)
     fantasy_result = fantasy.build_fantasy(db, predictions)
 
     # פנטזי למחזור הקרוב בלבד (דוח קצר וממוקד)
@@ -115,7 +121,7 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
     should_send, reasons = state.decide(prev_state, snapshot, force=force)
 
     try:
-        html = report.render_html(predictions, fantasy_result, plan=plan, advice=advice)
+        html = report.render_html(report_predictions, fantasy_result, plan=plan, advice=advice)
     except Exception as exc:  # noqa: BLE001
         log.error("הפקת הדוח נכשלה: %s", exc)
         html = ""
@@ -132,7 +138,7 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
     if send_mail:
         html_path = config.OUTPUT_DIR / "report.html"
         sent_telegram = report.send_telegram(
-            predictions, fantasy_result, html_path, reasons=reasons,
+            report_predictions, fantasy_result, html_path, reasons=reasons,
             plan=plan, advice=advice
         )
         # מייל נשלח רק אם טלגרם לא מוגדר, וכגיבוי

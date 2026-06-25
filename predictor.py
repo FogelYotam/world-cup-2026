@@ -63,11 +63,35 @@ def expected_goals(home: dict, away: dict, context: dict | None) -> tuple[float,
 # --------------------------------------------------------------------------- #
 # מטריצת הסתברויות
 # --------------------------------------------------------------------------- #
+def _dc_tau(i: int, j: int, lam: float, mu: float, rho: float) -> float:
+    """תיקון Dixon-Coles לתלות בתוצאות-נמוכות (פואסון עצמאי מנבא שגוי 0-0/1-0/0-1/1-1).
+    ρ שלילי מגביר תיקו (0-0,1-1) ומקטין 1-0/0-1 — כמו בכדורגל אמיתי."""
+    if i == 0 and j == 0:
+        return 1.0 - lam * mu * rho
+    if i == 0 and j == 1:
+        return 1.0 + lam * rho
+    if i == 1 and j == 0:
+        return 1.0 + mu * rho
+    if i == 1 and j == 1:
+        return 1.0 - rho
+    return 1.0
+
+
 def score_matrix(home_xg: float, away_xg: float, max_goals: int) -> list[list[float]]:
-    """מטריצת הסתברות לכל תוצאה i:j עד max_goals שערים לכל צד."""
+    """מטריצת הסתברות לכל תוצאה i:j עד max_goals שערים לכל צד.
+    אם `config.DIXON_COLES_RHO` ≠ 0 — מוחל תיקון Dixon-Coles ל-4 התאים הנמוכים
+    והמטריצה מנורמלת מחדש. ρ=0 → פואסון עצמאי כמקודם (תאימות לאחור)."""
     home_p = [poisson_pmf(i, home_xg) for i in range(max_goals + 1)]
     away_p = [poisson_pmf(j, away_xg) for j in range(max_goals + 1)]
-    return [[home_p[i] * away_p[j] for j in range(max_goals + 1)] for i in range(max_goals + 1)]
+    m = [[home_p[i] * away_p[j] for j in range(max_goals + 1)] for i in range(max_goals + 1)]
+    rho = getattr(config, "DIXON_COLES_RHO", 0.0)
+    if not rho:
+        return m
+    for i in range(min(2, max_goals + 1)):
+        for j in range(min(2, max_goals + 1)):
+            m[i][j] *= _dc_tau(i, j, home_xg, away_xg, rho)
+    total = sum(p for row in m for p in row) or 1.0
+    return [[max(0.0, p) / total for p in row] for row in m]
 
 
 def blend_probabilities(model: dict, market: dict | None, weight: float) -> dict:

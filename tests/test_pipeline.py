@@ -1235,6 +1235,21 @@ def test_docgen_block_has_inventory():
 # --------------------------------------------------------------------------- #
 # אופטימיזציה לפי שיטת הניקוד (תוחלת נקודות)
 # --------------------------------------------------------------------------- #
+def test_dixon_coles_shifts_low_scores(monkeypatch):
+    """תיקון Dixon-Coles (#8): ρ שלילי מגביר 0-0/1-1 ומקטין 1-0/0-1, והמטריצה
+    מנורמלת. ρ=0 → פואסון עצמאי (תאימות לאחור)."""
+    import predictor
+    import config as _c
+    lam, mu, mg = 1.3, 1.1, 6
+    monkeypatch.setattr(_c, "DIXON_COLES_RHO", 0.0)
+    base = predictor.score_matrix(lam, mu, mg)
+    monkeypatch.setattr(_c, "DIXON_COLES_RHO", -0.10)
+    dc = predictor.score_matrix(lam, mu, mg)
+    assert dc[0][0] > base[0][0] and dc[1][1] > base[1][1]      # תיקו עולה
+    assert dc[1][0] < base[1][0] and dc[0][1] < base[0][1]      # 1-0/0-1 יורד
+    assert abs(sum(p for row in dc for p in row) - 1.0) < 1e-6  # מנורמל
+
+
 def test_match_points_tiers():
     s = {"exact": 3, "direction": 1, "reversed": -1}
     assert predictor.match_points(2, 1, 2, 1, s) == 3    # מדויק

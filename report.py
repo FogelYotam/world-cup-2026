@@ -416,6 +416,15 @@ _TG_LIMIT = 4096  # תקרת תווים להודעת טלגרם
 _POS_EMOJI = {"GK": "🧤 שוער", "DEF": "🛡️ הגנה", "MID": "⚙️ קישור", "FWD": "⚔️ חלוץ"}
 
 
+def _he_day(iso_date) -> str:
+    """תאריך ISO → 'DD/MM' לתצוגה."""
+    try:
+        from datetime import date
+        return date.fromisoformat(str(iso_date)[:10]).strftime("%d/%m")
+    except Exception:  # noqa: BLE001
+        return str(iso_date)
+
+
 def _group_lineup(players: list[dict]) -> str:
     """שורה אחת מקובצת לפי עמדה (לספסל): GK | DEF | MID | FWD."""
     by = {"GK": [], "DEF": [], "MID": [], "FWD": []}
@@ -446,6 +455,9 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     pos_labels = {"GK": "🧤 שוער", "DEF": "🛡️ הגנה", "MID": "⚙️ קישור", "FWD": "⚔️ חלוץ"}
     lines.append("➖➖➖➖➖➖➖➖➖➖")
     lines.append("<b>💎 פנטזי — המחזור הקרוב</b>")
+    stp = advice.get("squad_total_points")
+    if stp and stp.get("total") is not None:
+        lines.append(f"📊 סך נקודות הסגל שלך עד כה: <b>{stp['total']}</b>")
     lines.append("")
 
     # 1) ההרכב שלך — רב-שורתי, עם קפטן/סגן מסומנים
@@ -453,13 +465,28 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     vice = (advice.get("recommended_vice") or {}).get("player_name")
     head = f"<b>👤 ההרכב שלך</b> · מערך {advice.get('formation', '?')}"
     lines.append(head)
-    cap_line = f"👑 קפטן: <b>{escape(str(cap or '—'))}</b> · 🅥 סגן: {escape(str(vice or '—'))}"
-    if advice.get("captain_change") and advice.get("owner_captain"):
-        cap_line += f" <i>(שינוי מ-{escape(str(advice['owner_captain']))})</i>"
-    lines.append(cap_line)
+    # קפטן — אם הנוכחי "בוער" (9+ במחזור האחרון), שומרים ולא ממליצים להחליף
+    if advice.get("captain_keep") and advice.get("owner_captain"):
+        lines.append(f"👑 קפטן: <b>{escape(str(advice['owner_captain']))}</b> — "
+                     f"🔥 שמור! (עשה {advice.get('captain_last_points')} נק' במחזור האחרון)")
+    else:
+        cap_line = f"👑 קפטן: <b>{escape(str(cap or '—'))}</b> · 🅥 סגן: {escape(str(vice or '—'))}"
+        if advice.get("captain_change") and advice.get("owner_captain"):
+            cap_line += f" <i>(שינוי מ-{escape(str(advice['owner_captain']))})</i>"
+        lines.append(cap_line)
     lines.extend(_lineup_block(advice.get("starting_eleven") or [], cap, vice))
     if advice.get("bench"):
         lines.append(f"🪑 ספסל: {_group_lineup(advice['bench'])}")
+
+    # 1b) חילופי ספסל לפי יום-משחק (שעון מקומי) — מה להכניס בכל יום
+    dsubs = [d for d in (advice.get("daily_subs") or []) if d.get("swaps")]
+    if dsubs:
+        lines.append("")
+        lines.append("<b>🔄 חילופי ספסל לפי יום-משחק</b> <i>(שעון ישראל)</i>:")
+        for d in dsubs:
+            day = _he_day(d["date"])
+            pairs = " · ".join(f"{escape(s['in'])} ⬅️ {escape(s['out'])}" for s in d["swaps"])
+            lines.append(f"📅 {day}: {pairs}")
 
     # 2) חילופים מומלצים
     recs = advice.get("transfer_recs") or []

@@ -1142,6 +1142,24 @@ def test_official_top_picks_are_premium_easy_fixture():
     assert tp["FWD"][0]["opponent"] == "Weak"
 
 
+def test_squad_total_and_daily_subs_by_matchday():
+    """סך נקודות הסגל + הצעות חילוף לפי יום-משחק (שעון מקומי)."""
+    import advisor
+    db = {"players": [{"player_name": "A", "team": "T1", "fifa_total_points": 10},
+                      {"player_name": "B", "team": "T2", "fifa_total_points": 5}],
+          "fixture_difficulty": {"T1": {"date": "2026-06-27T20:00:00+01:00"},
+                                 "T2": {"date": "2026-06-28T20:00:00+01:00"}}}
+    my_team = {"squad": [{"player_name": "A", "team": "T1"},
+                         {"player_name": "B", "team": "T2"}]}
+    stp = advisor.squad_total_points(my_team, db)
+    assert stp["total"] == 15 and stp["counted"] == 2
+    lineup = [{"player_name": "A", "team": "T1", "position": "FWD"}]
+    bench = [{"player_name": "B", "team": "T2", "position": "FWD"}]
+    ds = advisor.daily_substitutions(lineup, bench, db)
+    day28 = next(d for d in ds if d["date"].endswith("06-28"))
+    assert day28["swaps"] == [{"out": "A", "in": "B", "position": "FWD"}]
+
+
 def test_scouting_bonus_promotes_sub5_high_upside(monkeypatch):
     """מודעות scouting bonus (#4): שחקן מתחת ל-5% בעלות עם פוטנציאל ניקוד גבוה
     מתוגמל בדירוג ומסומן. בלי הבונוס הפופולרי (ניקוד בסיס גבוה) מוביל; עם הבונוס

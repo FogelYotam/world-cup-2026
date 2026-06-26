@@ -423,6 +423,7 @@ def fetch_official_pool() -> list[dict]:
         # נקודות פנטזי רשמיות (ממוצע למחזור) — אות 'recent_points' שמנוע הפנטזי משלב
         rec["recent_points"] = _num(stats.get("avgPoints"), None)
         rec["fifa_total_points"] = _num(stats.get("totalPoints"), None)
+        rec["last_round_points"] = _num(stats.get("lastRoundPoints"), None)
         pool.append(rec)
     log.info("בריכה רשמית מ-FIFA: %d שחקנים (%d נבחרות)", len(pool), len(squad_name))
     return pool

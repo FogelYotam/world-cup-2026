@@ -482,6 +482,75 @@ def transfer_recommendations(my_team: dict | None, db: dict,
     return options
 
 
+def _norm_name(s) -> str:
+    import unicodedata
+    d = unicodedata.normalize("NFKD", str(s or "").lower())
+    return "".join(c for c in d if not unicodedata.combining(c)).strip()
+
+
+def _owned_pool(my_team: dict, db: dict) -> dict:
+    """ממפה שם-שחקן מנורמל → רשומת הבריכה הרשמית, עבור שחקני הסגל שלך."""
+    by_name = {}
+    for p in (db.get("players") or []):
+        by_name.setdefault(_norm_name(p.get("player_name")), p)
+    out = {}
+    for s in my_team.get("squad", []):
+        p = by_name.get(_norm_name(s.get("player_name")))
+        if p:
+            out[_norm_name(s.get("player_name"))] = p
+    return out
+
+
+def squad_total_points(my_team: dict, db: dict) -> dict:
+    """סך נקודות הפנטזי שצברו שחקני הסגל שלך עד כה (סכום fifa_total_points).
+    אומדן — לא הניקוד ההיסטורי המדויק של הקבוצה (שתלוי במי פתח/קפטן בכל מחזור)."""
+    owned = _owned_pool(my_team, db)
+    total = sum(p.get("fifa_total_points") or 0 for p in owned.values())
+    return {"total": round(total), "counted": len(owned), "squad": len(my_team.get("squad", []))}
+
+
+def daily_substitutions(lineup: list[dict], bench: list[dict], db: dict) -> list[dict]:
+    """הצעות חילוף מהספסל **לפי יום-משחק** (שעון מקומי): בכל יום, הכנס שחקן ספסל
+    שמשחק באותו יום במקום מתחיל מאותה עמדה שלא משחק באותו יום."""
+    import utils
+    fd = db.get("fixture_difficulty", {}) or {}
+
+    def matchday(p):
+        d = fd.get(p.get("team"))
+        dt = utils._parse_dt(d.get("date")) if isinstance(d, dict) else None
+        return dt.date() if dt else None
+
+    days: dict = {}
+    for p in lineup:
+        md = matchday(p)
+        if md:
+            days.setdefault(md, {"xi": [], "bench": []})["xi"].append(p)
+    for p in bench:
+        md = matchday(p)
+        if md:
+            days.setdefault(md, {"xi": [], "bench": []})["bench"].append(p)
+
+    out = []
+    for day in sorted(days):
+        grp = days[day]
+        xi_out = [p for p in lineup if matchday(p) != day]   # מתחילים שלא משחקים היום
+        used, swaps = set(), []
+        for bp in grp["bench"]:
+            cand = next((x for x in xi_out
+                         if x.get("position") == bp.get("position") and id(x) not in used), None)
+            if cand:
+                used.add(id(cand))
+                swaps.append({"out": cand.get("player_name"), "in": bp.get("player_name"),
+                              "position": bp.get("position")})
+        out.append({
+            "date": day.isoformat(),
+            "playing": [p.get("player_name") for p in grp["xi"]],
+            "bench_playing": [p.get("player_name") for p in grp["bench"]],
+            "swaps": swaps,
+        })
+    return out
+
+
 def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
                  matchday: int | None = None,
                  predictions: list[dict] | None = None) -> dict:
@@ -506,23 +575,33 @@ def build_advice(db: dict, scored: list[dict], my_team: dict | None = None,
             or p.get("suspension_status") in ("suspended", "banned")
         ]
 
-        # קפטן: ההמלצה שלנו מול הבחירה שבקובץ
+        # קפטן: ההמלצה שלנו מול הבחירה שבקובץ — אך אם הקפטן הנוכחי "בּוֹעֵר"
+        # (עשה ≥ CAPTAIN_KEEP_THRESHOLD במחזור האחרון) — לא ממליצים להחליפו.
         rec_cap = eleven["captain"]
         owner_cap = my_team.get("captain")
+        owned = _owned_pool(my_team, db)
+        cap_last = (owned.get(_norm_name(owner_cap)) or {}).get("last_round_points") if owner_cap else None
+        keep_cap = (cap_last is not None
+                    and cap_last >= getattr(config, "CAPTAIN_KEEP_THRESHOLD", 9.0))
+        captain_change = bool(rec_cap and owner_cap
+                              and rec_cap["player_name"] != owner_cap and not keep_cap)
 
         return {
             "available": True,
             "matchday": matchday,
             "free_transfers": free_t,
             "bank": bank,
+            "squad_total_points": squad_total_points(my_team, db),
             "starting_eleven": eleven["lineup"],
             "bench": eleven["bench"],
             "formation": eleven["formation"],
             "recommended_captain": rec_cap,
             "recommended_vice": eleven["vice_captain"],
             "owner_captain": owner_cap,
-            "captain_change": bool(rec_cap and owner_cap
-                                   and rec_cap["player_name"] != owner_cap),
+            "captain_change": captain_change,
+            "captain_keep": keep_cap,
+            "captain_last_points": cap_last,
+            "daily_subs": daily_substitutions(eleven["lineup"], eleven["bench"], db),
             "total_expected_points": eleven["total_expected_points"],
             "transfers": transfers[:4],
             "flags": flags,

@@ -42,32 +42,41 @@ def _round_pts_lookup(db: dict) -> dict:
     return out
 
 
-def record_round(round_id, fielded: list[str], captain: str | None = None,
-                 db: dict | None = None, transfer_hit: int = 0) -> str:
-    """רושם את ניקוד המחזור: סכום נק' המחזור של מי שפתח + קפטן כפול − עונש טרנספרים.
-    `fielded` = השחקנים שהנקודות שלהם נספרו לך (כולל חילופים יומיים). מחזיר סיכום."""
-    db = db if db is not None else (utils.load_json(config.DB_PATH, default={}) or {})
-    lut = _round_pts_lookup(db)
+def record_round(round_id, fielded: list[str] | None = None, captain: str | None = None,
+                 db: dict | None = None, transfer_hit: int = 0,
+                 app_score: float | None = None) -> str:
+    """רושם את ניקוד המחזור. אם `app_score` סופק (הניקוד הרשמי מהאפליקציה) —
+    משתמשים בו ישירות (הכי מדויק). אחרת מחושב: סכום נק' המחזור של מי שפתח
+    (`fielded`, כולל חילופים יומיים) + קפטן כפול − עונש טרנספרים. מחזיר סיכום."""
     rid = str(round_id)
+    fielded = list(fielded or [])
+    unknown = []
+    if app_score is not None:
+        score = round(float(app_score))
+        detail = "מהאפליקציה (רשמי)"
+    else:
+        db = db if db is not None else (utils.load_json(config.DB_PATH, default={}) or {})
+        lut = _round_pts_lookup(db)
 
-    def pts(name):
-        return float((lut.get(_norm(name)) or {}).get(rid, 0) or 0)
+        def pts(name):
+            return float((lut.get(_norm(name)) or {}).get(rid, 0) or 0)
 
-    base = sum(pts(n) for n in fielded)
-    cap_bonus = pts(captain) if captain else 0.0          # הקפטן נספר פעם נוספת
-    score = round(base + cap_bonus - (transfer_hit or 0))
-    unknown = [n for n in fielded if _norm(n) not in lut]
+        base = sum(pts(n) for n in fielded)
+        cap_bonus = pts(captain) if captain else 0.0      # הקפטן נספר פעם נוספת
+        score = round(base + cap_bonus - (transfer_hit or 0))
+        unknown = [n for n in fielded if _norm(n) not in lut]
+        detail = (f"{len(fielded)} שחקנים + קפטן {captain or '—'} כפול"
+                  + (f" − {transfer_hit} עונש" if transfer_hit else ""))
 
     d = _load()
     d["rounds"] = [r for r in d["rounds"] if str(r.get("round")) != rid]   # החלפה אם קיים
-    d["rounds"].append({"round": rid, "fielded": list(fielded), "captain": captain,
-                        "transfer_hit": transfer_hit, "score": score})
+    d["rounds"].append({"round": rid, "fielded": fielded, "captain": captain,
+                        "transfer_hit": transfer_hit, "score": score,
+                        "source": "app" if app_score is not None else "computed"})
     d["rounds"].sort(key=lambda r: int(r["round"]) if str(r["round"]).isdigit() else 999)
     _save(d)
 
-    lines = [f"✅ נרשם מחזור {rid}: {score} נק' "
-             f"({len(fielded)} שחקנים + קפטן {captain or '—'} כפול"
-             + (f" − {transfer_hit} עונש" if transfer_hit else "") + ")"]
+    lines = [f"✅ נרשם מחזור {rid}: {score} נק' ({detail})"]
     if unknown:
         lines.append(f"⚠️ לא זוהו בבריכה (0 נק'): {', '.join(unknown)}")
     lines.append("")

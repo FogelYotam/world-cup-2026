@@ -1,0 +1,28 @@
+{
+  "rounds": [
+    {
+      "round": "1",
+      "fielded": [],
+      "captain": "Muñoz",
+      "transfer_hit": 0,
+      "score": 85,
+      "source": "app"
+    },
+    {
+      "round": "2",
+      "fielded": [],
+      "captain": "Oyarzabal",
+      "transfer_hit": 0,
+      "score": 134,
+      "source": "app"
+    },
+    {
+      "round": "3",
+      "fielded": [],
+      "captain": "Vinícius Júnior",
+      "transfer_hit": 0,
+      "score": 54,
+      "source": "app"
+    }
+  ]
+}

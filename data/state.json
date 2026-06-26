@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T08:51:19.948801+00:00",
+  "generated_at": "2026-06-26T08:51:16.267465+00:00",
   "fixtures": [
     "45",
     "46",
@@ -300,115 +300,115 @@
   "odds": {
     "45": {
       "favorite": "home_win",
-      "prob": 0.922
+      "prob": 0.92
     },
     "46": {
       "favorite": "home_win",
-      "prob": 0.449
+      "prob": 0.443
     },
     "47": {
       "favorite": "away_win",
-      "prob": 0.56
+      "prob": 0.554
     },
     "48": {
       "favorite": "home_win",
-      "prob": 0.67
+      "prob": 0.666
     },
     "49": {
       "favorite": "home_win",
-      "prob": 0.459
+      "prob": 0.455
     },
     "50": {
       "favorite": "home_win",
-      "prob": 0.818
+      "prob": 0.816
     },
     "52": {
       "favorite": "home_win",
-      "prob": 0.88
+      "prob": 0.878
     },
     "51": {
       "favorite": "away_win",
-      "prob": 0.864
+      "prob": 0.862
     },
     "54": {
       "favorite": "draw",
-      "prob": 0.4
+      "prob": 0.412
     },
     "53": {
       "favorite": "away_win",
-      "prob": 0.902
+      "prob": 0.9
     },
     "55": {
       "favorite": "away_win",
-      "prob": 0.762
+      "prob": 0.758
     },
     "56": {
       "favorite": "away_win",
-      "prob": 0.807
+      "prob": 0.804
     },
     "57": {
       "favorite": "away_win",
-      "prob": 0.857
+      "prob": 0.855
     },
     "58": {
       "favorite": "home_win",
-      "prob": 0.64
+      "prob": 0.638
     },
     "59": {
       "favorite": "away_win",
-      "prob": 0.81
+      "prob": 0.807
     },
     "60": {
       "favorite": "away_win",
-      "prob": 0.527
+      "prob": 0.521
     },
     "61": {
       "favorite": "away_win",
-      "prob": 0.619
+      "prob": 0.616
     },
     "62": {
       "favorite": "home_win",
-      "prob": 0.784
+      "prob": 0.781
     },
     "63": {
       "favorite": "away_win",
-      "prob": 0.757
+      "prob": 0.754
     },
     "64": {
       "favorite": "home_win",
-      "prob": 0.607
+      "prob": 0.602
     },
     "65": {
       "favorite": "away_win",
-      "prob": 0.557
+      "prob": 0.551
     },
     "66": {
       "favorite": "home_win",
-      "prob": 0.527
+      "prob": 0.521
     },
     "68": {
-      "favorite": "away_win",
-      "prob": 0.357
+      "favorite": "draw",
+      "prob": 0.362
     },
     "67": {
       "favorite": "away_win",
-      "prob": 0.713
+      "prob": 0.71
     },
     "70": {
       "favorite": "home_win",
-      "prob": 0.654
+      "prob": 0.649
     },
     "69": {
       "favorite": "away_win",
-      "prob": 0.483
+      "prob": 0.476
     },
     "71": {
       "favorite": "away_win",
-      "prob": 0.941
+      "prob": 0.94
     },
     "72": {
       "favorite": "away_win",
-      "prob": 0.565
+      "prob": 0.56
     }
   }
 }

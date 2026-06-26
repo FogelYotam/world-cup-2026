@@ -455,6 +455,15 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     pos_labels = {"GK": "🧤 שוער", "DEF": "🛡️ הגנה", "MID": "⚙️ קישור", "FWD": "⚔️ חלוץ"}
     lines.append("➖➖➖➖➖➖➖➖➖➖")
     lines.append("<b>💎 פנטזי — המחזור הקרוב</b>")
+    # הניקוד ה*אמיתי* שלך (אם עדכנת את ההרכבים/חילופים שלך) — קודם, כי הוא המדויק
+    try:
+        import fantasy_score
+        _fs = fantasy_score.summary()
+        if _fs.get("by_round"):
+            lines.append(fantasy_score.format_he())
+    except Exception:  # noqa: BLE001
+        pass
+
     stp = advice.get("squad_total_points")
     if stp and stp.get("by_round"):
         br = " · ".join(f"ס{r['round']} {r['points']}" for r in stp["by_round"])

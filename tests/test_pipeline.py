@@ -1142,6 +1142,17 @@ def test_official_top_picks_are_premium_easy_fixture():
     assert tp["FWD"][0]["opponent"] == "Weak"
 
 
+def test_fantasy_score_record_round_with_captain(monkeypatch, tmp_path):
+    """ניקוד אמיתי לפי מחזור: סכום נק' המחזור של מי שפתח + קפטן כפול."""
+    import fantasy_score as fs
+    monkeypatch.setattr(fs, "_PATH", tmp_path / "score.json")
+    db = {"players": [{"player_name": "Messi", "round_points": {"2": 14}},
+                      {"player_name": "Vini", "round_points": {"2": 12}}]}
+    fs.record_round("2", fielded=["Messi", "Vini"], captain="Messi", db=db)
+    s = fs.summary()
+    assert s["total"] == 40 and s["by_round"][0]["score"] == 40   # 14+12 +14 קפטן
+
+
 def test_squad_total_and_daily_subs_by_matchday():
     """סך נקודות הסגל + הצעות חילוף לפי יום-משחק (שעון מקומי)."""
     import advisor

@@ -78,5 +78,8 @@
       "position": "MID"
     }
   ],
-  "captain": "Kimmich"
+  "captain": "Kimmich",
+  "lineup_alerts": {
+    "sergino dest": "bench"
+  }
 }

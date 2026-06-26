@@ -1178,6 +1178,18 @@ def test_predicted_score_not_exaggerated():
     assert pred["expected_goals"]["home"] <= 3.5    # התקרה אוכפת
 
 
+def test_parse_dt_and_now_use_local_israel_time(monkeypatch):
+    """זמנים מחושבים לפי שעון המשתמש (ישראל), לא UTC של השרת — קריטי כי משחקי
+    WC2026 בצפון אמריקה הם לילה בישראל, והדוח נקרא בצהריים."""
+    import utils
+    import config as _c
+    monkeypatch.setattr(_c, "LOCAL_TZ", "Asia/Jerusalem")
+    # 20:00 באירופה (+01:00) = 22:00 בישראל (קיץ, UTC+3)
+    dt = utils._parse_dt("2026-06-26T20:00:00+01:00")
+    assert dt.hour == 22 and dt.day == 26 and dt.tzinfo is None
+    assert utils.now_local().tzinfo is None      # naive, תואם _parse_dt
+
+
 def test_report_next_round_not_day_window():
     """הדוח מציג את *הסיבוב הקרוב* בלבד, לא חלון-ימים שמערבב סיבובים."""
     import report

@@ -31,6 +31,9 @@ def _clean_key(value: str) -> str:
     return value
 
 
+# אזור-זמן של המשתמש — כל ה"היום"/"עכשיו" בדוח מחושבים לפיו (לא לפי שעון השרת/UTC).
+LOCAL_TZ = os.getenv("LOCAL_TZ", "Asia/Jerusalem")
+
 # --- מפתחות ---
 GEMINI_API_KEY = _clean_key(os.getenv("GEMINI_API_KEY"))
 PERPLEXITY_API_KEY = _clean_key(os.getenv("PERPLEXITY_API_KEY"))

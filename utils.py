@@ -72,8 +72,25 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _local_tz():
+    """אזור-הזמן של המשתמש (config.LOCAL_TZ, ברירת מחדל ישראל). None אם לא זמין."""
+    try:
+        from zoneinfo import ZoneInfo
+        return ZoneInfo(getattr(config, "LOCAL_TZ", "Asia/Jerusalem"))
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def now_local() -> datetime:
+    """עכשיו לפי שעון המשתמש (ישראל), naive — תואם לפלט של _parse_dt."""
+    tz = _local_tz()
+    n = datetime.now(tz) if tz else datetime.now()
+    return n.replace(tzinfo=None)
+
+
 def _parse_dt(value):
-    """מפרסר ISO datetime/date לאובייקט naive מקומי. None אם לא תקין."""
+    """מפרסר ISO datetime/date ל-naive **לפי שעון המשתמש** (config.LOCAL_TZ).
+    כך 'היום'/'עכשיו' עקביים עם השעון שלך, לא עם UTC של השרת. None אם לא תקין."""
     if not value:
         return None
     try:
@@ -81,7 +98,8 @@ def _parse_dt(value):
     except ValueError:
         return None
     if dt.tzinfo is not None:
-        dt = dt.astimezone().replace(tzinfo=None)
+        tz = _local_tz()
+        dt = (dt.astimezone(tz) if tz else dt.astimezone()).replace(tzinfo=None)
     return dt
 
 

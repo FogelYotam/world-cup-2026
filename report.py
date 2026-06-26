@@ -215,7 +215,7 @@ def _archive_report_predictions(predictions: list[dict], now=None) -> None:
     תשתמש בניחוש ה**טרום-משחק** (הוגן) ולא תחשב מחדש in-sample. לא דורס משחקי עבר
     (משמר את הניחוש כפי שהיה לפני המשחק). לעולם לא זורק."""
     try:
-        now = now or datetime.now()
+        now = now or utils.now_local()
         today = now.date()
         path = config.DATA_DIR / "report_predictions.json"
         store = utils.load_json(path, default={}) or {}
@@ -246,7 +246,7 @@ def _next_round(predictions: list[dict], now=None) -> list[dict]:
     """מחזיר את משחקי **הסיבוב הקרוב** (matchday) — לא חלון-ימים שמערבב סיבובים.
     הסיבוב נקבע לפי המשחק העתידי המוקדם ביותר (date ≥ היום), ומוצגים כל משחקי
     אותו `round`. נדרש שהניחושים תויגו ב-`round` (ב-main.py). נופל ל-5 ימים אם לא."""
-    now = now or datetime.now()
+    now = now or utils.now_local()
     today = now.date()
     dated = []
     for p in predictions:
@@ -266,7 +266,7 @@ def _next_round(predictions: list[dict], now=None) -> list[dict]:
 def _within_days(predictions: list[dict], days: int, now=None) -> list[dict]:
     """מסנן משחקים לחלון של N הימים הקרובים (מהיום ועד היום+N-1).
     אם לאף משחק אין תאריך תקין — מחזיר הכל (לא חוסם בגלל נתונים חסרים)."""
-    now = now or datetime.now()
+    now = now or utils.now_local()
     today = now.date()
     upper = today + timedelta(days=max(0, days - 1))
     sel, any_dated = [], False
@@ -282,7 +282,7 @@ def _within_days(predictions: list[dict], days: int, now=None) -> list[dict]:
 def _upcoming(predictions: list[dict], n: int, now=None) -> list[dict]:
     """N המשחקים הקרובים מהיום והלאה, ממוינים לפי שעת פתיחה/תאריך.
     אם אין משחקים עתידיים — מחזיר את האחרונים; אם אין תאריכים — N הראשונים."""
-    now = now or datetime.now()
+    now = now or utils.now_local()
     today = now.date()
     dated = []
     for p in predictions:
@@ -324,7 +324,7 @@ def _differentials_split(diffs: dict | None) -> dict:
 def render_html(predictions: list[dict], fantasy_result: dict,
                 plan: dict | None = None, advice: dict | None = None) -> str:
     """מרנדר את דוח ה-HTML ושומר אותו ל-output/. מחזיר את ה-HTML."""
-    now = datetime.now()
+    now = utils.now_local()
     today = now.date()
     for p in predictions:
         p["conf_class"] = _conf_class(p.get("confidence", 0))
@@ -382,7 +382,7 @@ def send_email(html: str) -> bool:
         return False
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"⚽ מונדיאל 2026 — דוח {datetime.now():%d/%m/%Y}"
+    msg["Subject"] = f"⚽ מונדיאל 2026 — דוח {utils.now_local():%d/%m/%Y}"
     msg["From"] = config.GMAIL_ADDRESS
     msg["To"] = config.MAIL_TO
 
@@ -532,7 +532,7 @@ def _kickoff_label(match: dict) -> str:
 
 def _todays_matches(predictions: list[dict], now=None) -> list[dict]:
     """מסנן את המשחקים שמתקיימים היום (לפי kickoff או date), ממוין לפי שעה."""
-    now = now or datetime.now()
+    now = now or utils.now_local()
     today = now.date()
     out = []
     for p in predictions:
@@ -548,7 +548,7 @@ def build_telegram_text(predictions: list[dict], fantasy_result: dict,
                         plan: dict | None = None,
                         advice: dict | None = None) -> str:
     """בונה סיכום עברי קצר בפורמט HTML של טלגרם (תגיות מוגבלות)."""
-    today = datetime.now().strftime("%d/%m/%Y")
+    today = utils.now_local().strftime("%d/%m/%Y")
     lines = [f"<b>⚽ מונדיאל 2026 — דוח {today}</b>"]
     if reasons:
         lines.append("<i>סיבת עדכון: " + escape(" · ".join(reasons)) + "</i>")

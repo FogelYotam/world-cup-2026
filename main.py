@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import argparse
 import sys
-from datetime import datetime
 
 import advisor
 import config
@@ -95,12 +94,10 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
             _k = frozenset((scraper._norm(_p.get("home_team")), scraper._norm(_p.get("away_team"))))
             _p["round"] = _p2r.get(_k)
             # משחק "התקיים" אם הוא בתוצאות, מתנהל, או **ששעת הפתיחה שלו כבר עברה**
-            # (קריטי: הדוח נבנה בבוקר אבל נקרא מאוחר יותר — לא להראות משחקי-בוקר).
+            # (לפי שעון המשתמש — _parse_dt/now_local בישראל; הדוח נבנה בבוקר אך נקרא
+            # מאוחר יותר, לא להראות משחקים שכבר התחילו).
             _ko = utils._parse_dt(_p.get("kickoff"))
-            _started = False
-            if _ko is not None:
-                _now = datetime.now(_ko.tzinfo) if _ko.tzinfo else datetime.now()
-                _started = _ko <= _now
+            _started = bool(_ko and _ko <= utils.now_local())
             _p["_played"] = (_k in _played) or (_status.get(_k) in ("complete", "playing")) or _started
         report_predictions = [p for p in predictions if not p.get("_played")]
     except Exception as exc:  # noqa: BLE001

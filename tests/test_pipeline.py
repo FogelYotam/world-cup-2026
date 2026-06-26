@@ -44,7 +44,7 @@ def test_save_and_reload_roundtrip(tmp_path):
 def test_build_match_has_all_fields():
     keys = set(scraper.build_match({}))
     assert keys == {
-        "match_id", "competition", "season", "date", "home_team",
+        "match_id", "competition", "season", "date", "kickoff", "home_team",
         "away_team", "status", "venue", "stage", "score", "odds",
     }
 

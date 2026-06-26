@@ -8,508 +8,228 @@
   },
   "matches": [
     {
-      "match_id": 45,
+      "match_id": 62,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
-      "date": "2026-06-23",
-      "home_team": "Portugal",
-      "away_team": "Uzbekistan",
-      "status": "scheduled",
-      "venue": "Houston, Texas",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 46,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-23",
-      "home_team": "England",
-      "away_team": "Ghana",
-      "status": "scheduled",
-      "venue": "Foxborough, Massachusetts",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 47,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-24",
-      "home_team": "Panama",
-      "away_team": "Croatia",
-      "status": "scheduled",
+      "date": "2026-06-26",
+      "kickoff": "2026-06-26T20:00:00+01:00",
+      "home_team": "Senegal",
+      "away_team": "Iraq",
+      "status": "playing",
       "venue": "Toronto",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 48,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-24",
-      "home_team": "Colombia",
-      "away_team": "Congo DR",
-      "status": "scheduled",
-      "venue": "Guadalajara",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 49,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-24",
-      "home_team": "Switzerland",
-      "away_team": "Canada",
-      "status": "scheduled",
-      "venue": "Vancouver",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 50,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-24",
-      "home_team": "Bosnia and Herzegovina",
-      "away_team": "Qatar",
-      "status": "scheduled",
-      "venue": "Seattle, Washington",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 52,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-24",
-      "home_team": "Morocco",
-      "away_team": "Haiti",
-      "status": "scheduled",
-      "venue": "Atlanta, Georgia",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 51,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-24",
-      "home_team": "Scotland",
-      "away_team": "Brazil",
-      "status": "scheduled",
-      "venue": "Miami Gardens, Florida",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 54,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-25",
-      "home_team": "South Africa",
-      "away_team": "Korea Republic",
-      "status": "scheduled",
-      "venue": "Guadalupe",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 53,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-25",
-      "home_team": "Czechia",
-      "away_team": "Mexico",
-      "status": "scheduled",
-      "venue": "Mexico City",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 55,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-25",
-      "home_team": "Ecuador",
-      "away_team": "Germany",
-      "status": "scheduled",
-      "venue": "East Rutherford, New Jersey",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 56,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-25",
-      "home_team": "Curaçao",
-      "away_team": "Côte d'Ivoire",
-      "status": "scheduled",
-      "venue": "Philadelphia, Pennsylvania",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 57,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-26",
-      "home_team": "Tunisia",
-      "away_team": "Netherlands",
-      "status": "scheduled",
-      "venue": "Kansas City, Missouri",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 58,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-26",
-      "home_team": "Japan",
-      "away_team": "Sweden",
-      "status": "scheduled",
-      "venue": "Arlington, Texas",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 59,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-26",
-      "home_team": "Türkiye",
-      "away_team": "USA",
-      "status": "scheduled",
-      "venue": "Inglewood, California",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 60,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-26",
-      "home_team": "Paraguay",
-      "away_team": "Australia",
-      "status": "scheduled",
-      "venue": "Santa Clara, California",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 61,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-26",
+      "kickoff": "2026-06-26T20:00:00+01:00",
       "home_team": "Norway",
       "away_team": "France",
-      "status": "scheduled",
+      "status": "playing",
       "venue": "Foxborough, Massachusetts",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 62,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-26",
-      "home_team": "Senegal",
-      "away_team": "Iraq",
-      "status": "scheduled",
-      "venue": "Toronto",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 63,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-27",
+      "kickoff": "2026-06-27T01:00:00+01:00",
       "home_team": "Uruguay",
       "away_team": "Spain",
       "status": "scheduled",
       "venue": "Guadalajara",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 64,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-27",
+      "kickoff": "2026-06-27T01:00:00+01:00",
       "home_team": "Cabo Verde",
       "away_team": "Saudi Arabia",
       "status": "scheduled",
       "venue": "Houston, Texas",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
-    },
-    {
-      "match_id": 65,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-27",
-      "home_team": "New Zealand",
-      "away_team": "Belgium",
-      "status": "scheduled",
-      "venue": "Vancouver",
-      "stage": "GROUP",
-      "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 66,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-27",
+      "kickoff": "2026-06-27T04:00:00+01:00",
       "home_team": "Egypt",
       "away_team": "IR Iran",
       "status": "scheduled",
       "venue": "Seattle, Washington",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
+    },
+    {
+      "match_id": 65,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-27",
+      "kickoff": "2026-06-27T04:00:00+01:00",
+      "home_team": "New Zealand",
+      "away_team": "Belgium",
+      "status": "scheduled",
+      "venue": "Vancouver",
+      "stage": "GROUP",
+      "score": null,
+      "odds": null
     },
     {
       "match_id": 68,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-27",
+      "kickoff": "2026-06-27T22:00:00+01:00",
       "home_team": "Croatia",
       "away_team": "Ghana",
       "status": "scheduled",
       "venue": "Philadelphia, Pennsylvania",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 67,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-27",
+      "kickoff": "2026-06-27T22:00:00+01:00",
       "home_team": "Panama",
       "away_team": "England",
       "status": "scheduled",
       "venue": "East Rutherford, New Jersey",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 70,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-28",
+      "kickoff": "2026-06-28T00:30:00+01:00",
       "home_team": "Congo DR",
       "away_team": "Uzbekistan",
       "status": "scheduled",
       "venue": "Atlanta, Georgia",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 69,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-28",
+      "kickoff": "2026-06-28T00:30:00+01:00",
       "home_team": "Colombia",
       "away_team": "Portugal",
       "status": "scheduled",
       "venue": "Miami Gardens, Florida",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 71,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-28",
+      "kickoff": "2026-06-28T03:00:00+01:00",
       "home_team": "Jordan",
       "away_team": "Argentina",
       "status": "scheduled",
       "venue": "Arlington, Texas",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
     },
     {
       "match_id": 72,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
       "date": "2026-06-28",
+      "kickoff": "2026-06-28T03:00:00+01:00",
       "home_team": "Algeria",
       "away_team": "Austria",
       "status": "scheduled",
       "venue": "Kansas City, Missouri",
       "stage": "GROUP",
       "score": null,
-      "odds": null,
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "low"
-      }
+      "odds": null
+    },
+    {
+      "match_id": 73,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-28",
+      "kickoff": "2026-06-28T20:00:00+01:00",
+      "home_team": "South Africa",
+      "away_team": "Canada",
+      "status": "scheduled",
+      "venue": "Inglewood, California",
+      "stage": "R32",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 74,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-29",
+      "kickoff": "2026-06-29T18:00:00+01:00",
+      "home_team": "Brazil",
+      "away_team": "Japan",
+      "status": "scheduled",
+      "venue": "Houston, Texas",
+      "stage": "R32",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 75,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-30",
+      "kickoff": "2026-06-30T02:00:00+01:00",
+      "home_team": "Netherlands",
+      "away_team": "Morocco",
+      "status": "scheduled",
+      "venue": "Guadalupe",
+      "stage": "R32",
+      "score": null,
+      "odds": null
+    },
+    {
+      "match_id": 76,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-07-02",
+      "kickoff": "2026-07-02T01:00:00+01:00",
+      "home_team": "USA",
+      "away_team": "Bosnia and Herzegovina",
+      "status": "scheduled",
+      "venue": "Santa Clara, California",
+      "stage": "R32",
+      "score": null,
+      "odds": null
     }
   ],
   "teams": [

@@ -196,6 +196,7 @@ def build_match(raw: dict) -> dict:
         "competition": raw.get("competition", config.COMPETITION),
         "season": raw.get("season", config.SEASON),
         "date": raw.get("date"),
+        "kickoff": raw.get("kickoff"),   # שעת פתיחה מלאה (ISO עם אזור-זמן) לסינון
         "home_team": raw.get("home_team"),
         "away_team": raw.get("away_team"),
         "status": raw.get("status", "scheduled"),
@@ -610,6 +611,7 @@ def official_matches(rounds: list[dict]) -> list[dict]:
                 continue
             out.append(build_match({
                 "match_id": m.get("id"), "date": _iso_date(m.get("date")),
+                "kickoff": m.get("date"),   # מלא, עם שעה ואזור-זמן
                 "home_team": home, "away_team": away,
                 "venue": m.get("venueCity"), "stage": stage,
                 "status": m.get("status", "scheduled"),

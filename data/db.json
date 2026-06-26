@@ -4,7 +4,7 @@
     "season": "2026",
     "last_updated": "2026-06-23T08:51:19.491027+00:00",
     "note": "Matchday 1 — real fixtures. Injuries updated 2026-06-04 from ESPN/RotoWire: ter Stegen/Merino out, Messi/Yamal/Romero doubtful.",
-    "results_updated": "2026-06-25T04:47:45.438343+00:00"
+    "results_updated": "2026-06-26T10:38:15.041211+00:00"
   },
   "matches": [
     {
@@ -525,8 +525,8 @@
     },
     {
       "team_name": "Australia",
-      "goals_for": 1.13,
-      "goals_against": 1.05
+      "goals_for": 0.79,
+      "goals_against": 0.73
     },
     {
       "team_name": "Austria",
@@ -570,8 +570,8 @@
     },
     {
       "team_name": "Côte d'Ivoire",
-      "goals_for": 1.15,
-      "goals_against": 1.19
+      "goals_for": 1.4,
+      "goals_against": 0.83
     },
     {
       "team_name": "Croatia",
@@ -580,8 +580,8 @@
     },
     {
       "team_name": "Curaçao",
-      "goals_for": 0.63,
-      "goals_against": 3.15
+      "goals_for": 0.44,
+      "goals_against": 2.8
     },
     {
       "team_name": "Czechia",
@@ -590,8 +590,8 @@
     },
     {
       "team_name": "Ecuador",
-      "goals_for": 0.45,
-      "goals_against": 0.7
+      "goals_for": 0.92,
+      "goals_against": 0.79
     },
     {
       "team_name": "Egypt",
@@ -610,8 +610,8 @@
     },
     {
       "team_name": "Germany",
-      "goals_for": 3.78,
-      "goals_against": 0.96
+      "goals_for": 2.95,
+      "goals_against": 1.27
     },
     {
       "team_name": "Ghana",
@@ -641,8 +641,8 @@
     },
     {
       "team_name": "Japan",
-      "goals_for": 2.5,
-      "goals_against": 1.06
+      "goals_for": 2.05,
+      "goals_against": 1.04
     },
     {
       "team_name": "Jordan",
@@ -666,8 +666,8 @@
     },
     {
       "team_name": "Netherlands",
-      "goals_for": 2.87,
-      "goals_against": 1.32
+      "goals_for": 2.91,
+      "goals_against": 1.22
     },
     {
       "team_name": "New Zealand",
@@ -686,8 +686,8 @@
     },
     {
       "team_name": "Paraguay",
-      "goals_for": 1.03,
-      "goals_against": 1.84
+      "goals_for": 0.72,
+      "goals_against": 1.29
     },
     {
       "team_name": "Portugal",
@@ -726,8 +726,8 @@
     },
     {
       "team_name": "Sweden",
-      "goals_for": 2.57,
-      "goals_against": 2.27
+      "goals_for": 2.1,
+      "goals_against": 1.89
     },
     {
       "team_name": "Switzerland",
@@ -736,13 +736,13 @@
     },
     {
       "team_name": "Tunisia",
-      "goals_for": 0.73,
-      "goals_against": 3.4
+      "goals_for": 0.81,
+      "goals_against": 3.28
     },
     {
       "team_name": "Türkiye",
-      "goals_for": 0.55,
-      "goals_against": 1.39
+      "goals_for": 1.28,
+      "goals_against": 1.57
     },
     {
       "team_name": "Uruguay",
@@ -751,8 +751,8 @@
     },
     {
       "team_name": "USA",
-      "goals_for": 2.17,
-      "goals_against": 0.75
+      "goals_for": 2.12,
+      "goals_against": 1.42
     },
     {
       "team_name": "Uzbekistan",
@@ -33969,6 +33969,66 @@
       "home_goals": 1,
       "away_goals": 0,
       "date": "2026-06-25",
+      "home_pen": 0,
+      "away_pen": 0,
+      "stage": "GROUP"
+    },
+    {
+      "home": "Curaçao",
+      "away": "Côte d'Ivoire",
+      "home_goals": 0,
+      "away_goals": 2,
+      "date": "2026-06-25",
+      "home_pen": 0,
+      "away_pen": 0,
+      "stage": "GROUP"
+    },
+    {
+      "home": "Ecuador",
+      "away": "Germany",
+      "home_goals": 2,
+      "away_goals": 1,
+      "date": "2026-06-25",
+      "home_pen": 0,
+      "away_pen": 0,
+      "stage": "GROUP"
+    },
+    {
+      "home": "Japan",
+      "away": "Sweden",
+      "home_goals": 1,
+      "away_goals": 1,
+      "date": "2026-06-26",
+      "home_pen": 0,
+      "away_pen": 0,
+      "stage": "GROUP"
+    },
+    {
+      "home": "Tunisia",
+      "away": "Netherlands",
+      "home_goals": 1,
+      "away_goals": 3,
+      "date": "2026-06-26",
+      "home_pen": 0,
+      "away_pen": 0,
+      "stage": "GROUP"
+    },
+    {
+      "home": "Paraguay",
+      "away": "Australia",
+      "home_goals": 0,
+      "away_goals": 0,
+      "date": "2026-06-26",
+      "home_pen": 0,
+      "away_pen": 0,
+      "stage": "GROUP"
+    },
+    {
+      "home": "Türkiye",
+      "away": "USA",
+      "home_goals": 3,
+      "away_goals": 2,
+      "date": "2026-06-26",
       "home_pen": 0,
       "away_pen": 0,
       "stage": "GROUP"

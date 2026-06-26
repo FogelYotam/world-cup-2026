@@ -456,8 +456,11 @@ def _append_personal_advice(lines: list[str], advice: dict | None) -> None:
     lines.append("➖➖➖➖➖➖➖➖➖➖")
     lines.append("<b>💎 פנטזי — המחזור הקרוב</b>")
     stp = advice.get("squad_total_points")
-    if stp and stp.get("total") is not None:
-        lines.append(f"📊 סך נקודות הסגל שלך עד כה: <b>{stp['total']}</b>")
+    if stp and stp.get("by_round"):
+        br = " · ".join(f"ס{r['round']} {r['points']}" for r in stp["by_round"])
+        lines.append(f"📊 תרומת 15 השחקנים שלך לפי מחזור: {br}")
+        lines.append(f"<i>(מצטבר {stp['total']} — לא הניקוד שלך באפליקציה: סופר 15 ולא 11, "
+                     f"בלי קפטן כפול)</i>")
     lines.append("")
 
     # 1) ההרכב שלך — רב-שורתי, עם קפטן/סגן מסומנים

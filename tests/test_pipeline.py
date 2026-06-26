@@ -1145,14 +1145,16 @@ def test_official_top_picks_are_premium_easy_fixture():
 def test_squad_total_and_daily_subs_by_matchday():
     """סך נקודות הסגל + הצעות חילוף לפי יום-משחק (שעון מקומי)."""
     import advisor
-    db = {"players": [{"player_name": "A", "team": "T1", "fifa_total_points": 10},
-                      {"player_name": "B", "team": "T2", "fifa_total_points": 5}],
+    db = {"players": [{"player_name": "A", "team": "T1", "round_points": {"1": 6, "2": 4}},
+                      {"player_name": "B", "team": "T2", "round_points": {"1": 3, "2": 2}}],
           "fixture_difficulty": {"T1": {"date": "2026-06-27T20:00:00+01:00"},
                                  "T2": {"date": "2026-06-28T20:00:00+01:00"}}}
     my_team = {"squad": [{"player_name": "A", "team": "T1"},
                          {"player_name": "B", "team": "T2"}]}
     stp = advisor.squad_total_points(my_team, db)
-    assert stp["total"] == 15 and stp["counted"] == 2
+    assert stp["total"] == 15                                  # 9+6
+    assert stp["by_round"][0] == {"round": "1", "points": 9, "cumulative": 9}
+    assert stp["by_round"][1] == {"round": "2", "points": 6, "cumulative": 15}
     lineup = [{"player_name": "A", "team": "T1", "position": "FWD"}]
     bench = [{"player_name": "B", "team": "T2", "position": "FWD"}]
     ds = advisor.daily_substitutions(lineup, bench, db)

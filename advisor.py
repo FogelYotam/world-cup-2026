@@ -502,11 +502,20 @@ def _owned_pool(my_team: dict, db: dict) -> dict:
 
 
 def squad_total_points(my_team: dict, db: dict) -> dict:
-    """סך נקודות הפנטזי שצברו שחקני הסגל שלך עד כה (סכום fifa_total_points).
-    אומדן — לא הניקוד ההיסטורי המדויק של הקבוצה (שתלוי במי פתח/קפטן בכל מחזור)."""
+    """**תרומת 15 השחקנים הנוכחיים** לפי מחזור + מצטבר (סכום הנק' הרשמיות).
+    ⚠️ זה **לא** הניקוד האמיתי שלך: הוא סופר את כל ה-15 (לא רק 11 הפותחים), בלי
+    הכפלת קפטן, וכולל נק' שנצברו לפני טרנספרים. הניקוד המדויק — באפליקציה בלבד."""
     owned = _owned_pool(my_team, db)
-    total = sum(p.get("fifa_total_points") or 0 for p in owned.values())
-    return {"total": round(total), "counted": len(owned), "squad": len(my_team.get("squad", []))}
+    per_round: dict = {}
+    for p in owned.values():
+        for rd, pts in (p.get("round_points") or {}).items():
+            per_round[str(rd)] = per_round.get(str(rd), 0) + (pts or 0)
+    rounds = sorted(per_round, key=lambda x: int(x) if str(x).isdigit() else 999)
+    cum, by_round = 0, []
+    for rd in rounds:
+        cum += per_round[rd]
+        by_round.append({"round": rd, "points": round(per_round[rd]), "cumulative": round(cum)})
+    return {"by_round": by_round, "total": round(cum), "counted": len(owned)}
 
 
 def daily_substitutions(lineup: list[dict], bench: list[dict], db: dict) -> list[dict]:

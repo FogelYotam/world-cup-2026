@@ -424,6 +424,7 @@ def fetch_official_pool() -> list[dict]:
         rec["recent_points"] = _num(stats.get("avgPoints"), None)
         rec["fifa_total_points"] = _num(stats.get("totalPoints"), None)
         rec["last_round_points"] = _num(stats.get("lastRoundPoints"), None)
+        rec["round_points"] = dict(stats.get("roundPoints") or {})   # נק' לכל מחזור
         pool.append(rec)
     log.info("בריכה רשמית מ-FIFA: %d שחקנים (%d נבחרות)", len(pool), len(squad_name))
     return pool

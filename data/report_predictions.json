@@ -221,7 +221,7 @@
     "model_home": 1,
     "model_away": 1,
     "date": "2026-06-27",
-    "saved_at": "2026-06-26T08:51:16.267719+00:00"
+    "saved_at": "2026-06-27T08:51:21.334108+00:00"
   },
   "panama|england": {
     "home": "Panama",
@@ -229,7 +229,7 @@
     "model_home": 0,
     "model_away": 2,
     "date": "2026-06-27",
-    "saved_at": "2026-06-26T08:51:16.267724+00:00"
+    "saved_at": "2026-06-27T08:51:21.334122+00:00"
   },
   "congo dr|uzbekistan": {
     "home": "Congo DR",
@@ -237,7 +237,7 @@
     "model_home": 2,
     "model_away": 1,
     "date": "2026-06-28",
-    "saved_at": "2026-06-26T08:51:16.267730+00:00"
+    "saved_at": "2026-06-27T08:51:21.334132+00:00"
   },
   "colombia|portugal": {
     "home": "Colombia",
@@ -245,7 +245,7 @@
     "model_home": 1,
     "model_away": 1,
     "date": "2026-06-28",
-    "saved_at": "2026-06-26T08:51:16.267736+00:00"
+    "saved_at": "2026-06-27T08:51:21.334142+00:00"
   },
   "jordan|argentina": {
     "home": "Jordan",
@@ -253,7 +253,7 @@
     "model_home": 0,
     "model_away": 3,
     "date": "2026-06-28",
-    "saved_at": "2026-06-26T08:51:16.267741+00:00"
+    "saved_at": "2026-06-27T08:51:21.334151+00:00"
   },
   "algeria|austria": {
     "home": "Algeria",
@@ -261,6 +261,38 @@
     "model_home": 1,
     "model_away": 2,
     "date": "2026-06-28",
-    "saved_at": "2026-06-26T08:51:16.267747+00:00"
+    "saved_at": "2026-06-27T08:51:21.334160+00:00"
+  },
+  "south africa|canada": {
+    "home": "South Africa",
+    "away": "Canada",
+    "model_home": 1,
+    "model_away": 2,
+    "date": "2026-06-28",
+    "saved_at": "2026-06-27T08:51:21.334169+00:00"
+  },
+  "brazil|japan": {
+    "home": "Brazil",
+    "away": "Japan",
+    "model_home": 2,
+    "model_away": 1,
+    "date": "2026-06-29",
+    "saved_at": "2026-06-27T08:51:21.334180+00:00"
+  },
+  "netherlands|morocco": {
+    "home": "Netherlands",
+    "away": "Morocco",
+    "model_home": 3,
+    "model_away": 2,
+    "date": "2026-06-30",
+    "saved_at": "2026-06-27T08:51:21.334189+00:00"
+  },
+  "usa|bosnia and herzegovina": {
+    "home": "USA",
+    "away": "Bosnia and Herzegovina",
+    "model_home": 3,
+    "model_away": 2,
+    "date": "2026-07-02",
+    "saved_at": "2026-06-27T08:51:21.334198+00:00"
   }
 }

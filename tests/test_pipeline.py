@@ -1370,8 +1370,10 @@ def test_realistic_scoreline_varied_with_draws():
     import predictor as pr
     # פייבוריט ביתי ברור → מנצח, עם שערים מה-xG (לא 1-0)
     assert pr._realistic_scoreline(2.4, 0.6, {"home_win": 0.75, "draw": 0.16, "away_win": 0.09}) == "2-1"
-    # תיקו סביר (≥ סף) → תוצאת תיקו, גם אם הבית הכי סביר
-    assert pr._realistic_scoreline(1.4, 1.2, {"home_win": 0.45, "draw": 0.30, "away_win": 0.25}) == "1-1"
+    # פייבוריט בינוני אך ברור מהתיקו (45% > 30%) → מנצח, לא תיקו (אופטימלי ל-EV)
+    assert pr._realistic_scoreline(1.4, 1.2, {"home_win": 0.45, "draw": 0.30, "away_win": 0.25}) == "2-1"
+    # תיקו רק כשהמשחק *צמוד באמת* (אין פייבוריט ברור) → תוצאת תיקו
+    assert pr._realistic_scoreline(1.3, 1.2, {"home_win": 0.35, "draw": 0.33, "away_win": 0.32}) == "1-1"
     # פייבוריט חוץ → חוץ מנצח
     assert pr._realistic_scoreline(0.7, 2.2, {"home_win": 0.12, "draw": 0.20, "away_win": 0.68}) == "1-2"
     # מבטיח שהפייבוריט מנצח גם כשעיגול ה-xG שווה

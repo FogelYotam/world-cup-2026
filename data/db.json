@@ -58,31 +58,6 @@
       }
     },
     {
-      "match_id": 78,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-06-29",
-      "kickoff": "2026-06-29T21:30:00+01:00",
-      "home_team": "Germany",
-      "away_team": "Paraguay",
-      "status": "scheduled",
-      "venue": "Foxborough, Massachusetts",
-      "stage": "R32",
-      "score": null,
-      "odds": null,
-      "market_probabilities": {
-        "home_win": 0.7,
-        "draw": 0.2,
-        "away_win": 0.1,
-        "sources": 5
-      },
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
       "match_id": 75,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
@@ -104,6 +79,31 @@
       "context": {
         "home_advantage": 0.1,
         "injury_count": 2,
+        "lineup_confidence": "high"
+      }
+    },
+    {
+      "match_id": 76,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-07-02",
+      "kickoff": "2026-07-02T01:00:00+01:00",
+      "home_team": "USA",
+      "away_team": "Bosnia and Herzegovina",
+      "status": "scheduled",
+      "venue": "Santa Clara, California",
+      "stage": "R32",
+      "score": null,
+      "odds": null,
+      "market_probabilities": {
+        "home_win": 0.65,
+        "draw": 0.25,
+        "away_win": 0.1,
+        "sources": 5
+      },
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
         "lineup_confidence": "high"
       }
     },
@@ -133,6 +133,31 @@
       }
     },
     {
+      "match_id": 78,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-06-29",
+      "kickoff": "2026-06-29T21:30:00+01:00",
+      "home_team": "Germany",
+      "away_team": "Paraguay",
+      "status": "scheduled",
+      "venue": "Foxborough, Massachusetts",
+      "stage": "R32",
+      "score": null,
+      "odds": null,
+      "market_probabilities": {
+        "home_win": 0.7,
+        "draw": 0.2,
+        "away_win": 0.1,
+        "sources": 5
+      },
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "high"
+      }
+    },
+    {
       "match_id": 79,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
@@ -154,6 +179,56 @@
       "context": {
         "home_advantage": 0.1,
         "injury_count": 0,
+        "lineup_confidence": "high"
+      }
+    },
+    {
+      "match_id": 80,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-07-03",
+      "kickoff": "2026-07-03T23:00:00+01:00",
+      "home_team": "Argentina",
+      "away_team": "Cabo Verde",
+      "status": "scheduled",
+      "venue": "Miami Gardens, Florida",
+      "stage": "R32",
+      "score": null,
+      "odds": null,
+      "market_probabilities": {
+        "home_win": 0.9,
+        "draw": 0.08,
+        "away_win": 0.02,
+        "sources": 5
+      },
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "high"
+      }
+    },
+    {
+      "match_id": 81,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-07-03",
+      "kickoff": "2026-07-03T19:00:00+01:00",
+      "home_team": "Australia",
+      "away_team": "Egypt",
+      "status": "scheduled",
+      "venue": "Arlington, Texas",
+      "stage": "R32",
+      "score": null,
+      "odds": null,
+      "market_probabilities": {
+        "home_win": 0.25,
+        "draw": 0.3,
+        "away_win": 0.45,
+        "sources": 5
+      },
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 4,
         "lineup_confidence": "high"
       }
     },
@@ -233,56 +308,6 @@
       }
     },
     {
-      "match_id": 76,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-07-02",
-      "kickoff": "2026-07-02T01:00:00+01:00",
-      "home_team": "USA",
-      "away_team": "Bosnia and Herzegovina",
-      "status": "scheduled",
-      "venue": "Santa Clara, California",
-      "stage": "R32",
-      "score": null,
-      "odds": null,
-      "market_probabilities": {
-        "home_win": 0.65,
-        "draw": 0.25,
-        "away_win": 0.1,
-        "sources": 5
-      },
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": 87,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-07-02",
-      "kickoff": "2026-07-02T20:00:00+01:00",
-      "home_team": "Spain",
-      "away_team": "Austria",
-      "status": "scheduled",
-      "venue": "Inglewood, California",
-      "stage": "R32",
-      "score": null,
-      "odds": null,
-      "market_probabilities": {
-        "home_win": 0.7,
-        "draw": 0.2,
-        "away_win": 0.1,
-        "sources": 5
-      },
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
       "match_id": 85,
       "competition": "FIFA World Cup 2026",
       "season": "2026",
@@ -299,81 +324,6 @@
         "home_win": 0.5,
         "draw": 0.3,
         "away_win": 0.2,
-        "sources": 5
-      },
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": 88,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-07-03",
-      "kickoff": "2026-07-03T04:00:00+01:00",
-      "home_team": "Switzerland",
-      "away_team": "Algeria",
-      "status": "scheduled",
-      "venue": "Vancouver",
-      "stage": "R32",
-      "score": null,
-      "odds": null,
-      "market_probabilities": {
-        "home_win": 0.38,
-        "draw": 0.32,
-        "away_win": 0.3,
-        "sources": 5
-      },
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 0,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": 81,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-07-03",
-      "kickoff": "2026-07-03T19:00:00+01:00",
-      "home_team": "Australia",
-      "away_team": "Egypt",
-      "status": "scheduled",
-      "venue": "Arlington, Texas",
-      "stage": "R32",
-      "score": null,
-      "odds": null,
-      "market_probabilities": {
-        "home_win": 0.25,
-        "draw": 0.3,
-        "away_win": 0.45,
-        "sources": 5
-      },
-      "context": {
-        "home_advantage": 0.1,
-        "injury_count": 4,
-        "lineup_confidence": "high"
-      }
-    },
-    {
-      "match_id": 80,
-      "competition": "FIFA World Cup 2026",
-      "season": "2026",
-      "date": "2026-07-03",
-      "kickoff": "2026-07-03T23:00:00+01:00",
-      "home_team": "Argentina",
-      "away_team": "Cabo Verde",
-      "status": "scheduled",
-      "venue": "Miami Gardens, Florida",
-      "stage": "R32",
-      "score": null,
-      "odds": null,
-      "market_probabilities": {
-        "home_win": 0.9,
-        "draw": 0.08,
-        "away_win": 0.02,
         "sources": 5
       },
       "context": {
@@ -416,10 +366,15 @@
       "score": null,
       "odds": null,
       "market_probabilities": {
-        "home_win": 0.72,
-        "draw": 0.18,
+        "home_win": 0.7,
+        "draw": 0.2,
         "away_win": 0.1,
         "sources": 5
+      },
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "high"
       }
     },
     {
@@ -436,10 +391,15 @@
       "score": null,
       "odds": null,
       "market_probabilities": {
-        "home_win": 0.45,
-        "draw": 0.3,
-        "away_win": 0.25,
+        "home_win": 0.38,
+        "draw": 0.32,
+        "away_win": 0.3,
         "sources": 5
+      },
+      "context": {
+        "home_advantage": 0.1,
+        "injury_count": 0,
+        "lineup_confidence": "high"
       }
     }
   ],

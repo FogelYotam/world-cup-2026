@@ -259,6 +259,19 @@ def _round_goals(x: float) -> int:
     return int(x) + (1 if (x - int(x)) > 0.5 else 0)
 
 
+def _market_adjusted_xg(home_xg: float, away_xg: float, model_probs: dict,
+                        blended_probs: dict, k: float = 1.6) -> tuple[float, float]:
+    """מזיז את ה-xG של *הניחוש המוצג* לכיוון השוק — כך שגם ספירת השערים (ולא רק
+    1X2/האמון) משקפת את ההימורים. אם השוק פחות בולט לטובת הבית, ה-xG הביתי יורד
+    והיריב עולה. בלי שוק (blended==model) אין שינוי."""
+    if not blended_probs or not model_probs:
+        return home_xg, away_xg
+    model_lean = model_probs.get("home_win", 0.0) - model_probs.get("away_win", 0.0)
+    blend_lean = blended_probs.get("home_win", 0.0) - blended_probs.get("away_win", 0.0)
+    shift = (blend_lean - model_lean) * k          # שערים להזזה בעקבות השוק
+    return max(0.2, home_xg + shift / 2), max(0.2, away_xg - shift / 2)
+
+
 def _realistic_scoreline(home_xg: float, away_xg: float, probs: dict,
                          cap: int = 6) -> str:
     """ניחוש מגוון/ריאלי לדוח: ספירת השערים מעיגול (שמרני) של ה-xG, אך הכיוון לפי
@@ -269,7 +282,9 @@ def _realistic_scoreline(home_xg: float, away_xg: float, probs: dict,
                   probs.get("away_win", 0.0))
     thr = getattr(config, "DRAW_PREDICT_THRESHOLD", 0.27)
     h, a = _round_goals(home_xg), _round_goals(away_xg)
-    if dr >= thr or (dr >= hw and dr >= aw):           # תיקו סביר דיו
+    # תיקו רק כשהוא ה'הכי סביר', או סביר דיו *והמשחק צמוד* (אין פייבוריט ברור) —
+    # כך לא מנחשים תיקו כשצד אחד מועדף בבירור (למשל Colombia 55% מול Ghana).
+    if (dr >= hw and dr >= aw) or (dr >= thr and abs(hw - aw) < 0.12):
         g = min(_round_goals((home_xg + away_xg) / 2), cap)
         return f"{g}-{g}"
     if hw >= aw and h <= a:                              # פייבוריט ביתי מנצח
@@ -317,7 +332,8 @@ def predict_match(match: dict, teams_by_name: dict[str, dict]) -> dict:
 
     # ניחוש לדוח — מגוון וריאלי: ספירת שערים מעיגול ה-xG, אבל הכיוון (נצחון/תיקו)
     # לפי ההסתברות 1X2 המשוקללת. כך פחות 1-0, יותר שערים, ותיקו כשהוא הסביר ביותר.
-    predicted = _realistic_scoreline(home_xg, away_xg, probs)
+    adj_home_xg, adj_away_xg = _market_adjusted_xg(home_xg, away_xg, model_probs, probs)
+    predicted = _realistic_scoreline(adj_home_xg, adj_away_xg, probs)
 
     return {
         "match_id": match.get("match_id"),

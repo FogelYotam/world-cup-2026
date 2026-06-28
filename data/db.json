@@ -394,7 +394,53 @@
       "venue": "Kansas City, Missouri",
       "stage": "R32",
       "score": null,
-      "odds": null
+      "odds": null,
+      "market_probabilities": {
+        "home_win": 0.55,
+        "draw": 0.28,
+        "away_win": 0.17,
+        "sources": 5
+      }
+    },
+    {
+      "match_id": 87,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-07-02",
+      "kickoff": "2026-07-02T20:00:00+01:00",
+      "home_team": "Spain",
+      "away_team": "Austria",
+      "status": "scheduled",
+      "venue": "Inglewood, California",
+      "stage": "R32",
+      "score": null,
+      "odds": null,
+      "market_probabilities": {
+        "home_win": 0.72,
+        "draw": 0.18,
+        "away_win": 0.1,
+        "sources": 5
+      }
+    },
+    {
+      "match_id": 88,
+      "competition": "FIFA World Cup 2026",
+      "season": "2026",
+      "date": "2026-07-03",
+      "kickoff": "2026-07-03T04:00:00+01:00",
+      "home_team": "Switzerland",
+      "away_team": "Algeria",
+      "status": "scheduled",
+      "venue": "Vancouver",
+      "stage": "R32",
+      "score": null,
+      "odds": null,
+      "market_probabilities": {
+        "home_win": 0.45,
+        "draw": 0.3,
+        "away_win": 0.25,
+        "sources": 5
+      }
     }
   ],
   "teams": [

@@ -451,14 +451,17 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
 
     sb_thr = getattr(config, "SCOUTING_BONUS_OWNERSHIP", 5.0)
     sb_pts = getattr(config, "SCOUTING_BONUS_POINTS", 2.0)
+    sb_w = getattr(config, "DIFFERENTIAL_SCOUTING_WEIGHT", 1.0)
 
     def _scouting_bonus(p, eff_points):
         # תוחלת ה-scouting bonus: רק שחקנים מתחת ל-5% בעלות זכאים, והבונוס מותנה
-        # בכך שיזכו 4+ נקודות. מקרבים את ההסתברות לכך לפי תוחלת הנקודות האפקטיבית.
+        # בכך שיזכו 4+ נקודות. מקרבים את ההסתברות לכך לפי תוחלת הנקודות האפקטיבית
+        # (שכוללת את קלות-המשחק = פרוקסי לסיכוי העפלה). מוגבר ב-sb_w כדי להדגיש
+        # דיפרנציאלים *טובים* מתחת ל-5% בראש הרשימה.
         if _num(p.get("ownership"), 999) >= sb_thr:
             return 0.0
         p_return = min(1.0, eff_points / 8.0)          # eff≈8 → כמעט בטוח 4+
-        return sb_pts * p_return
+        return sb_pts * p_return * sb_w
 
     def _value(p):
         # קושי המשחק *מכפיל* את תוחלת הנקודות (משחק קשה מקטין סיכוי לנקד),
@@ -479,6 +482,8 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
     for pos, n in counts.items():
         # מועמד = בעמדה, זמין (לא פצוע/מורחק/הוצא מהסגל) ולא ספסלן *ידוע*,
         # ובעלות מתחת לתקרה. בין מחזורים אין הרכב מאומת — לא מסננים על כך.
+        # (לא מסננים על "קבוצה עם משחק קרוב": בשלב המעבר לנוקאאוט יריבי ה-R32 של
+        #  חלק מהקבוצות החזקות עדיין TBD בפיד, וסינון כזה היה מפיל אותן בטעות.)
         cands = [p for p in pool
                  if p.get("position") == pos
                  and p.get("injury_status") not in ("out", "injured")

@@ -83,7 +83,6 @@ def run(days_ahead: int = 3, send_mail: bool = True, scrape: bool = True,
     # משחקים **שטרם התקיימו** (לא הסתיימו ולא 'playing'), ורק את הסיבוב הקרוב.
     report_predictions = predictions
     try:
-        import scraper
         _rounds = scraper.fetch_official_rounds()
         _p2r = scraper.round_by_pair(_rounds) if _rounds else {}
         _played = {frozenset((scraper._norm(r.get("home")), scraper._norm(r.get("away"))))

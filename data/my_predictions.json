@@ -1019,6 +1019,188 @@
       "user_exact_ok": false,
       "model_outcome_ok": false,
       "model_exact_ok": false
+    },
+    {
+      "settled": true,
+      "home": "South Africa",
+      "away": "Canada",
+      "date": "2026-06-28",
+      "user_home": 0,
+      "user_away": 2,
+      "model_home": 1,
+      "model_away": 2,
+      "saved_at": "2026-06-29T04:12:11.043611+00:00",
+      "actual_home": 0,
+      "actual_away": 1,
+      "user_outcome_ok": true,
+      "user_exact_ok": false,
+      "model_outcome_ok": true,
+      "model_exact_ok": false
+    },
+    {
+      "settled": false,
+      "home": "Brazil",
+      "away": "Japan",
+      "date": "2026-06-29",
+      "user_home": 2,
+      "user_away": 1,
+      "model_home": 1,
+      "model_away": 0,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Netherlands",
+      "away": "Morocco",
+      "date": "2026-06-30",
+      "user_home": 2,
+      "user_away": 2,
+      "model_home": 3,
+      "model_away": 2,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "USA",
+      "away": "Bosnia and Herzegovina",
+      "date": "2026-07-02",
+      "user_home": 3,
+      "user_away": 1,
+      "model_home": 4,
+      "model_away": 2,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Côte d'Ivoire",
+      "away": "Norway",
+      "date": "2026-06-30",
+      "user_home": 1,
+      "user_away": 2,
+      "model_home": 1,
+      "model_away": 1,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Germany",
+      "away": "Paraguay",
+      "date": "2026-06-29",
+      "user_home": 2,
+      "user_away": 1,
+      "model_home": 3,
+      "model_away": 1,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "France",
+      "away": "Sweden",
+      "date": "2026-06-30",
+      "user_home": 3,
+      "user_away": 0,
+      "model_home": 3,
+      "model_away": 1,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Argentina",
+      "away": "Cabo Verde",
+      "date": "2026-07-03",
+      "user_home": 3,
+      "user_away": 0,
+      "model_home": 2,
+      "model_away": 0,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Australia",
+      "away": "Egypt",
+      "date": "2026-07-03",
+      "user_home": 1,
+      "user_away": 2,
+      "model_home": 0,
+      "model_away": 1,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Mexico",
+      "away": "Ecuador",
+      "date": "2026-07-01",
+      "user_home": 1,
+      "user_away": 0,
+      "model_home": 2,
+      "model_away": 1,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "England",
+      "away": "Congo DR",
+      "date": "2026-07-01",
+      "user_home": 3,
+      "user_away": 1,
+      "model_home": 2,
+      "model_away": 0,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Belgium",
+      "away": "Senegal",
+      "date": "2026-07-01",
+      "user_home": 2,
+      "user_away": 1,
+      "model_home": 3,
+      "model_away": 2,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Portugal",
+      "away": "Croatia",
+      "date": "2026-07-03",
+      "user_home": 1,
+      "user_away": 1,
+      "model_home": 2,
+      "model_away": 1,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Colombia",
+      "away": "Ghana",
+      "date": "2026-07-04",
+      "user_home": 2,
+      "user_away": 1,
+      "model_home": 1,
+      "model_away": 0,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Spain",
+      "away": "Austria",
+      "date": "2026-07-02",
+      "user_home": 2,
+      "user_away": 0,
+      "model_home": 2,
+      "model_away": 0,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+    },
+    {
+      "settled": false,
+      "home": "Switzerland",
+      "away": "Algeria",
+      "date": "2026-07-03",
+      "user_home": 2,
+      "user_away": 1,
+      "model_home": 3,
+      "model_away": 2,
+      "saved_at": "2026-06-29T05:22:49.866677+00:00"
     }
   ]
 }

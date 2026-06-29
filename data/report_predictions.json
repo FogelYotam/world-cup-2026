@@ -277,7 +277,7 @@
     "model_home": 1,
     "model_away": 0,
     "date": "2026-06-29",
-    "saved_at": "2026-06-28T15:16:40.608140+00:00"
+    "saved_at": "2026-06-29T08:58:07.333074+00:00"
   },
   "netherlands|morocco": {
     "home": "Netherlands",
@@ -285,7 +285,7 @@
     "model_home": 3,
     "model_away": 2,
     "date": "2026-06-30",
-    "saved_at": "2026-06-28T15:16:40.608140+00:00"
+    "saved_at": "2026-06-29T08:58:07.333102+00:00"
   },
   "usa|bosnia and herzegovina": {
     "home": "USA",
@@ -293,23 +293,23 @@
     "model_home": 4,
     "model_away": 2,
     "date": "2026-07-02",
-    "saved_at": "2026-06-28T15:16:40.610148+00:00"
+    "saved_at": "2026-06-29T08:58:07.333169+00:00"
   },
   "germany|paraguay": {
     "home": "Germany",
     "away": "Paraguay",
-    "model_home": 3,
-    "model_away": 1,
+    "model_home": 2,
+    "model_away": 0,
     "date": "2026-06-29",
-    "saved_at": "2026-06-28T15:16:40.610148+00:00"
+    "saved_at": "2026-06-29T08:58:07.333090+00:00"
   },
   "cote d'ivoire|norway": {
     "home": "Côte d'Ivoire",
     "away": "Norway",
-    "model_home": 1,
-    "model_away": 1,
+    "model_home": 3,
+    "model_away": 2,
     "date": "2026-06-30",
-    "saved_at": "2026-06-28T15:16:40.610148+00:00"
+    "saved_at": "2026-06-29T08:58:07.333115+00:00"
   },
   "france|sweden": {
     "home": "France",
@@ -317,7 +317,7 @@
     "model_home": 3,
     "model_away": 1,
     "date": "2026-06-30",
-    "saved_at": "2026-06-28T15:16:40.612157+00:00"
+    "saved_at": "2026-06-29T08:58:07.333126+00:00"
   },
   "mexico|ecuador": {
     "home": "Mexico",
@@ -325,15 +325,15 @@
     "model_home": 2,
     "model_away": 1,
     "date": "2026-07-01",
-    "saved_at": "2026-06-28T15:16:40.614594+00:00"
+    "saved_at": "2026-06-29T08:58:07.333135+00:00"
   },
   "england|congo dr": {
     "home": "England",
     "away": "Congo DR",
-    "model_home": 2,
+    "model_home": 1,
     "model_away": 0,
     "date": "2026-07-01",
-    "saved_at": "2026-06-28T15:16:40.614594+00:00"
+    "saved_at": "2026-06-29T08:58:07.333145+00:00"
   },
   "belgium|senegal": {
     "home": "Belgium",
@@ -341,7 +341,7 @@
     "model_home": 3,
     "model_away": 2,
     "date": "2026-07-01",
-    "saved_at": "2026-06-28T15:16:40.616603+00:00"
+    "saved_at": "2026-06-29T08:58:07.333158+00:00"
   },
   "spain|austria": {
     "home": "Spain",
@@ -349,7 +349,7 @@
     "model_home": 2,
     "model_away": 0,
     "date": "2026-07-02",
-    "saved_at": "2026-06-28T15:16:40.617612+00:00"
+    "saved_at": "2026-06-29T08:58:07.333178+00:00"
   },
   "portugal|croatia": {
     "home": "Portugal",
@@ -357,7 +357,7 @@
     "model_home": 2,
     "model_away": 1,
     "date": "2026-07-03",
-    "saved_at": "2026-06-28T15:16:40.616603+00:00"
+    "saved_at": "2026-06-29T08:58:07.333187+00:00"
   },
   "switzerland|algeria": {
     "home": "Switzerland",
@@ -365,15 +365,15 @@
     "model_home": 3,
     "model_away": 2,
     "date": "2026-07-03",
-    "saved_at": "2026-06-28T15:16:40.617612+00:00"
+    "saved_at": "2026-06-29T08:58:07.333195+00:00"
   },
   "australia|egypt": {
     "home": "Australia",
     "away": "Egypt",
-    "model_home": 0,
+    "model_home": 1,
     "model_away": 1,
     "date": "2026-07-03",
-    "saved_at": "2026-06-28T15:16:40.613608+00:00"
+    "saved_at": "2026-06-29T08:58:07.333203+00:00"
   },
   "argentina|cabo verde": {
     "home": "Argentina",
@@ -381,7 +381,7 @@
     "model_home": 2,
     "model_away": 0,
     "date": "2026-07-03",
-    "saved_at": "2026-06-28T15:16:40.612157+00:00"
+    "saved_at": "2026-06-29T08:58:07.333212+00:00"
   },
   "colombia|ghana": {
     "home": "Colombia",
@@ -389,6 +389,6 @@
     "model_home": 1,
     "model_away": 0,
     "date": "2026-07-04",
-    "saved_at": "2026-06-28T15:16:40.617612+00:00"
+    "saved_at": "2026-06-29T08:58:07.333220+00:00"
   }
 }

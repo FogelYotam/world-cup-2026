@@ -1,7 +1,6 @@
 {
-  "generated_at": "2026-06-28T15:16:40.581104+00:00",
+  "generated_at": "2026-06-29T08:58:07.332779+00:00",
   "fixtures": [
-    "73",
     "74",
     "75",
     "76",
@@ -191,7 +190,6 @@
     "Derrick Etienne|Haiti",
     "Deveron Fonville|Curaçao",
     "Diego González|Paraguay",
-    "Diego Gómez|Paraguay",
     "Diego Lainez|Mexico",
     "Diego León|Paraguay",
     "Dominic Hyam|Scotland",
@@ -257,6 +255,7 @@
     "Grant Hanley|Scotland",
     "Guido Rodríguez|Argentina",
     "Guillermo Varela|Uruguay",
+    "Gustavo Gómez|Paraguay",
     "Hadi Habibinejad|IR Iran",
     "Hadj Mahmoud|Tunisia",
     "Hakan Çalhanoglu|Türkiye",
@@ -289,6 +288,7 @@
     "Ismail Yüksek|Türkiye",
     "Ismaël Baouf|Morocco",
     "Ismaël Gharbi|Tunisia",
+    "Ismaël Koné|Canada",
     "Issa Laye|Qatar",
     "Iván Anderson|Panama",
     "JD Gunn|Panama",
@@ -297,6 +297,7 @@
     "Jakhongir Urozov|Uzbekistan",
     "Jalal Hassan|Iraq",
     "Jaloliddin Masharipov|Uzbekistan",
+    "Jamal Musiala|Germany",
     "Jamie Knight-Lebel|Canada",
     "Jamshid Iskanderov|Uzbekistan",
     "Jan Kuchta|Czechia",
@@ -319,7 +320,6 @@
     "Jo Hyeon-Woo|Korea Republic",
     "Joaquín Piquerez|Uruguay",
     "Joe Bell|New Zealand",
-    "Joe Gauci|Australia",
     "John McGinn|Scotland",
     "John Mercado|Ecuador",
     "John Souttar|Scotland",
@@ -375,6 +375,7 @@
     "Kim Tae-Hyeon|Korea Republic",
     "Kosta Barbarouses|New Zealand",
     "Kumel Saadi|Iraq",
+    "Kye Rowles|Australia",
     "Lachlan Bayliss|New Zealand",
     "Ladislav Krejcí|Czechia",
     "Lautaro Di Lollo|Argentina",
@@ -425,7 +426,6 @@
     "Mateo Gamarra|Paraguay",
     "Mateo Pellegrino|Argentina",
     "Mathías Olivera|Uruguay",
-    "Mathías Villasanti|Paraguay",
     "Matthew Garbett|New Zealand",
     "Matías Soulé|Argentina",
     "Matías Viña|Uruguay",
@@ -445,6 +445,7 @@
     "Michael Boxall|New Zealand",
     "Michael Woud|New Zealand",
     "Michal Sadílek|Czechia",
+    "Miguel Almirón|Paraguay",
     "Milad Mohammadi|IR Iran",
     "Milton Delgado|Argentina",
     "Mohamed Amine Ben Hmida|Tunisia",
@@ -464,6 +465,7 @@
     "Mohammed Muntari|Qatar",
     "Mohammed Waad|Qatar",
     "Mohanad Ali|Iraq",
+    "Mohanad Lasheen|Egypt",
     "Mohannad Abu Taha|Jordan",
     "Mojmír Chytil|Czechia",
     "Montassar Talbi|Tunisia",
@@ -481,7 +483,6 @@
     "Máximo Perrone|Argentina",
     "Nando Pijnaker|New Zealand",
     "Nasser Al Dawsari|Saudi Arabia",
-    "Nathan Ngoy|Belgium",
     "Nathan Patterson|Scotland",
     "Nawaf Al Aqidi|Saudi Arabia",
     "Nawaf Bu Washl|Saudi Arabia",
@@ -537,7 +538,6 @@
     "Ricardo Velho|Portugal",
     "Richard Ledezma|Mexico",
     "Riechedly Bazoer|Curaçao",
-    "Riley McGree|Australia",
     "Robert Morales|Paraguay",
     "Robert Piris Da Motta|Paraguay",
     "Robin Hranác|Czechia",
@@ -594,7 +594,6 @@
     "Sherzod Temirov|Uzbekistan",
     "Shoja Khalilzadeh|IR Iran",
     "Shurandy Sambo|Curaçao",
-    "Sidny Cabral|Cabo Verde",
     "Sofiane Boufal|Morocco",
     "Sohaib Nair|Algeria",
     "Solomon Agbasi|Ghana",
@@ -677,69 +676,65 @@
     "Óscar Romero|Paraguay"
   ],
   "odds": {
-    "73": {
-      "favorite": "away_win",
-      "prob": 0.401
-    },
     "74": {
       "favorite": "home_win",
-      "prob": 0.637
-    },
-    "75": {
-      "favorite": "home_win",
-      "prob": 0.461
-    },
-    "76": {
-      "favorite": "home_win",
-      "prob": 0.655
-    },
-    "77": {
-      "favorite": "home_win",
-      "prob": 0.346
+      "prob": 0.677
     },
     "78": {
       "favorite": "home_win",
-      "prob": 0.728
+      "prob": 0.752
+    },
+    "75": {
+      "favorite": "home_win",
+      "prob": 0.489
+    },
+    "77": {
+      "favorite": "home_win",
+      "prob": 0.477
     },
     "79": {
       "favorite": "home_win",
       "prob": 0.719
     },
-    "80": {
-      "favorite": "home_win",
-      "prob": 0.882
-    },
-    "81": {
-      "favorite": "away_win",
-      "prob": 0.42
-    },
     "82": {
       "favorite": "home_win",
-      "prob": 0.446
+      "prob": 0.462
     },
     "83": {
       "favorite": "home_win",
-      "prob": 0.765
+      "prob": 0.748
     },
     "84": {
       "favorite": "home_win",
-      "prob": 0.49
+      "prob": 0.53
     },
-    "85": {
+    "76": {
       "favorite": "home_win",
-      "prob": 0.541
-    },
-    "86": {
-      "favorite": "home_win",
-      "prob": 0.545
+      "prob": 0.655
     },
     "87": {
       "favorite": "home_win",
       "prob": 0.733
     },
+    "85": {
+      "favorite": "home_win",
+      "prob": 0.517
+    },
     "88": {
       "favorite": "home_win",
-      "prob": 0.46
+      "prob": 0.54
+    },
+    "81": {
+      "favorite": "draw",
+      "prob": 0.348
+    },
+    "80": {
+      "favorite": "home_win",
+      "prob": 0.842
+    },
+    "86": {
+      "favorite": "home_win",
+      "prob": 0.577
     }
   }
 }

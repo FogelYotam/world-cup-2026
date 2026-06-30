@@ -97,6 +97,8 @@ def settle_with_results(results: list[dict]) -> int:
         # תאריך אוטומטי מהתוצאה הרשמית — מונע backfill ידני בעתיד (שיפור #3)
         if not rec.get("date") and r.get("date"):
             rec["date"] = r["date"]
+        if r.get("stage"):                  # שלב — למכפיל הניקוד (×2/×3)
+            rec["stage"] = r["stage"]
         act = _outcome(ah, aa)
         uh, ua = rec.get("user_home"), rec.get("user_away")
         mh, ma = rec.get("model_home"), rec.get("model_away")
@@ -112,10 +114,28 @@ def settle_with_results(results: list[dict]) -> int:
     return changed
 
 
+# מכפיל הניקוד לפי שלב: בתים ×1 · R32/R16 ×2 · רבע-גמר עד הגמר ×3
+_STAGE_MULT = {
+    "GROUP": 1, "R32": 2, "R16": 2, "QF": 3, "SF": 3, "FINAL": 3, "F": 3,
+    "ROUND-OF-32": 2, "ROUND-OF-16": 2, "QUARTER-FINAL": 3, "SEMI-FINAL": 3,
+}
+
+
+def _stage_mult(stage) -> int:
+    s = str(stage or "").upper().replace("_", "-").strip()
+    if s in _STAGE_MULT:
+        return _STAGE_MULT[s]
+    if any(k in s for k in ("FINAL", "SEMI", "QUARTER", "QF", "SF")):
+        return 3
+    if any(k in s for k in ("R32", "R16", "OF-32", "OF-16")):
+        return 2
+    return 1
+
+
 def _points(ph, pa, ah, aa) -> int | None:
-    """ניקוד KICKOFF: מדויק=3, כיוון נכון=1, **הפך-מדויק (מראה)=−1**, אחרת=0.
-    קנס (−1) חל רק כשהניחוש הוא ההפך המדויק של התוצאה (ניחשת 2-1, יצא 1-2);
-    כיוון שגוי שאינו מראה = פספוס (0)."""
+    """ניקוד KICKOFF (לפני מכפיל-שלב): מדויק=3, כיוון נכון=1, **הפך-מדויק (מראה)=−1**,
+    אחרת=0. קנס (−1) חל רק כשהניחוש הוא ההפך המדויק של התוצאה (ניחשת 2-1, יצא 1-2);
+    כיוון שגוי שאינו מראה = פספוס (0). המכפיל (×2/×3) מוחל ב-summary לפי השלב."""
     if None in (ph, pa, ah, aa):
         return None
     if ph == ah and pa == aa:
@@ -138,12 +158,13 @@ def summary() -> dict:
 
     user_pts = model_pts = 0
     for p in settled:
+        mult = _stage_mult(p.get("stage"))           # ×1 בתים · ×2 R32/R16 · ×3 רבע+
         up = _points(p.get("user_home"), p.get("user_away"),
                      p.get("actual_home"), p.get("actual_away"))
         mp = _points(p.get("model_home"), p.get("model_away"),
                      p.get("actual_home"), p.get("actual_away"))
-        user_pts += up or 0
-        model_pts += mp or 0
+        user_pts += (up or 0) * mult
+        model_pts += (mp or 0) * mult
 
     return {
         "total": len(d["predictions"]),
@@ -167,9 +188,14 @@ def format_summary_he(s: dict | None = None) -> str:
     mo_h, mo_n = s["model_outcome"]
     me_h, me_n = s["model_exact"]
     up, mp = s.get("user_points", 0), s.get("model_points", 0)
-    lead = "🤝 תיקו" if up == mp else ("🟢 אתה מוביל" if up > mp else "🔴 המודל מוביל")
+    if up == mp:
+        lead = "🤝 תיקו"
+    else:
+        who = "🟢 אתה מוביל" if up > mp else "🔴 המודל מוביל"
+        lead = f"{who} ב-{abs(up - mp)}"
     return (
-        f"<b>📈 ניחושים — אתה מול המערכת</b> ({s['settled']} משחקים)\n"
+        f"<b>📈 ניחושים — אתה מול המערכת</b> ({s['settled']} משחקים · "
+        f"בתים ×1 · R32/R16 ×2 · רבע→גמר ×3)\n"
         f"🏆 <b>ניקוד: אתה {up} · המערכת {mp}</b> ({lead})\n"
         f"אתה: מנצח {uo_h}/{uo_n} · מדויק {ue_h}/{ue_n}\n"
         f"המערכת: מנצח {mo_h}/{mo_n} · מדויק {me_h}/{me_n}"

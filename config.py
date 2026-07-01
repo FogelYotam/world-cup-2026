@@ -131,6 +131,13 @@ FIFA_FANTASY_PLAYERS_URL = "https://play.fifa.com/json/fantasy/players.json"
 FIFA_FANTASY_SQUADS_URL = "https://play.fifa.com/json/fantasy/squads.json"
 FIFA_FANTASY_ROUNDS_URL = "https://play.fifa.com/json/fantasy/rounds.json"
 
+# --- מקור סטטיסטיקות מתקדמות: 15MHUB (wc.15mhub.com) ---
+# API ציבורי (בלי אימות, אבל מסנן לפי User-Agent → שולחים UA של דפדפן). מספק
+# xG/xGI/xA/npxG/xGOT פר-שחקן, סיכויי שער/בישול/שער-נקי, ו-xG + אי-ספיגה קבוצתיים.
+# ראה stats_15mhub.py. Endpoints: /players · /clean-sheet-odds/teams ·
+# /expected-goals/teams · /involvement/table · /top-scorers/table · /advance/bracket
+HUB15M_BASE = "https://wc.15mhub.com/api/v1"
+
 # --- תחרות ---
 COMPETITION = "FIFA World Cup 2026"
 SEASON = "2026"

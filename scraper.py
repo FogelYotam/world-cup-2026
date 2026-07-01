@@ -497,8 +497,14 @@ def official_differentials(pool: list[dict], counts: dict | None = None,
             "expected_points": p.get("recent_points"),
             "expected_start": p.get("expected_start"),
             "scouting_bonus": _num(p.get("ownership"), 999) < sb_thr,
+            # סטטיסטיקות מתקדמות מ-15mhub (אם הועשרו) — xG/xGI ושער-נקי קבוצתי
+            "xg": p.get("xg"), "xgi": p.get("xgi"), "xa": p.get("xa"),
+            "hub_team_cs": p.get("hub_team_cs"),
             "reason": (f"ממוצע {p.get('recent_points')} נק' · "
                        f"{_diff_label(_ease(p.get('team')))} · בעלות {p.get('ownership')}%"
+                       + (f" · xGI {p['xgi']:.1f}" if p.get("xgi") is not None else "")
+                       + (f" · ש\"נ {p['hub_team_cs']:.0f}%"
+                          if p.get("hub_team_cs") is not None else "")
                        + (f" · ⭐ scouting bonus (<{sb_thr:g}%)"
                           if _num(p.get("ownership"), 999) < sb_thr else "")),
         } for p in cands[:n]]
@@ -1139,6 +1145,13 @@ def collect(days_ahead: int = 3) -> dict:
     squads = fetch_official_squads()
     rounds = fetch_official_rounds()
     official_pool = fetch_official_pool()
+    # העשרה בסטטיסטיקות מתקדמות מ-15MHUB (xG/xGI/xA + שער-נקי קבוצתי) — best-effort
+    if official_pool:
+        try:
+            import stats_15mhub
+            stats_15mhub.merge_into_pool(official_pool)
+        except Exception as exc:  # noqa: BLE001
+            log.warning("העשרת 15mhub נכשלה: %s", exc)
     if squads:
         seed_teams_from_squads(db, squads)     # 48 נבחרות, תוך שמירת חוזק שנלמד
     if official_pool:

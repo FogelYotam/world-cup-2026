@@ -1244,11 +1244,11 @@
       "home": "England",
       "away": "Congo DR",
       "date": "2026-07-01",
-      "user_home": 3,
-      "user_away": 1,
+      "user_home": 2,
+      "user_away": 0,
       "model_home": 2,
       "model_away": 0,
-      "saved_at": "2026-06-29T05:22:49.866677+00:00"
+      "saved_at": "2026-07-01T19:12:12.733793+00:00"
     },
     {
       "settled": false,

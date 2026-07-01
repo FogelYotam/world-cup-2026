@@ -156,9 +156,15 @@ def summary() -> dict:
         vals = [p.get(key) for p in settled if p.get(key) is not None]
         return (sum(1 for v in vals if v), len(vals))
 
-    user_pts = model_pts = 0
+    # בסיס שלב-הבתים מעוגן למספרים הרשמיים מהאפליקציה — המעקב כיסה רק 60/72 משחקי
+    # בתים, אז סכימה ישירה מחטיאה. משתמש 62 (רשמי מהאפליקציה); מודל 58 (אומדן הוגן,
+    # קצב ניחוש-מראש 0.81/משחק × 72). משחקי נוקאאוט נספרים ישירות מעל הבסיס.
+    base = getattr(config, "PREDICTION_GROUP_BASELINE", {"user": 62, "model": 58})
+    user_pts, model_pts = base.get("user", 0), base.get("model", 0)
     for p in settled:
         mult = _stage_mult(p.get("stage"))           # ×1 בתים · ×2 R32/R16 · ×3 רבע+
+        if mult == 1:                                # בתים כבר בבסיס — לא לספור שוב
+            continue
         up = _points(p.get("user_home"), p.get("user_away"),
                      p.get("actual_home"), p.get("actual_away"))
         mp = _points(p.get("model_home"), p.get("model_away"),

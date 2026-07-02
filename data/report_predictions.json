@@ -349,7 +349,7 @@
     "model_home": 2,
     "model_away": 0,
     "date": "2026-07-02",
-    "saved_at": "2026-07-01T08:56:02.287031+00:00"
+    "saved_at": "2026-07-02T08:55:41.940372+00:00"
   },
   "portugal|croatia": {
     "home": "Portugal",
@@ -357,7 +357,7 @@
     "model_home": 2,
     "model_away": 1,
     "date": "2026-07-03",
-    "saved_at": "2026-07-01T08:56:02.287040+00:00"
+    "saved_at": "2026-07-02T08:55:41.940389+00:00"
   },
   "switzerland|algeria": {
     "home": "Switzerland",
@@ -365,15 +365,15 @@
     "model_home": 3,
     "model_away": 2,
     "date": "2026-07-03",
-    "saved_at": "2026-07-01T08:56:02.287048+00:00"
+    "saved_at": "2026-07-02T08:55:41.940401+00:00"
   },
   "australia|egypt": {
     "home": "Australia",
     "away": "Egypt",
-    "model_home": 1,
+    "model_home": 0,
     "model_away": 1,
     "date": "2026-07-03",
-    "saved_at": "2026-07-01T08:56:02.287055+00:00"
+    "saved_at": "2026-07-02T08:55:41.940412+00:00"
   },
   "argentina|cabo verde": {
     "home": "Argentina",
@@ -381,7 +381,7 @@
     "model_home": 2,
     "model_away": 0,
     "date": "2026-07-03",
-    "saved_at": "2026-07-01T08:56:02.287067+00:00"
+    "saved_at": "2026-07-02T08:55:41.940424+00:00"
   },
   "colombia|ghana": {
     "home": "Colombia",
@@ -389,7 +389,7 @@
     "model_home": 1,
     "model_away": 0,
     "date": "2026-07-04",
-    "saved_at": "2026-07-01T08:56:02.287075+00:00"
+    "saved_at": "2026-07-02T08:55:41.940434+00:00"
   },
   "canada|morocco": {
     "home": "Canada",
@@ -397,7 +397,7 @@
     "model_home": 1,
     "model_away": 1,
     "date": "2026-07-04",
-    "saved_at": "2026-07-01T08:56:02.287083+00:00"
+    "saved_at": "2026-07-02T08:55:41.940443+00:00"
   },
   "paraguay|france": {
     "home": "Paraguay",
@@ -405,7 +405,7 @@
     "model_home": 0,
     "model_away": 2,
     "date": "2026-07-04",
-    "saved_at": "2026-07-01T08:56:02.287089+00:00"
+    "saved_at": "2026-07-02T08:55:41.940457+00:00"
   },
   "brazil|norway": {
     "home": "Brazil",
@@ -413,6 +413,22 @@
     "model_home": 3,
     "model_away": 1,
     "date": "2026-07-05",
-    "saved_at": "2026-07-01T08:56:02.287096+00:00"
+    "saved_at": "2026-07-02T08:55:41.940466+00:00"
+  },
+  "mexico|england": {
+    "home": "Mexico",
+    "away": "England",
+    "model_home": 1,
+    "model_away": 2,
+    "date": "2026-07-06",
+    "saved_at": "2026-07-02T08:55:41.940475+00:00"
+  },
+  "usa|belgium": {
+    "home": "USA",
+    "away": "Belgium",
+    "model_home": 1,
+    "model_away": 1,
+    "date": "2026-07-07",
+    "saved_at": "2026-07-02T08:55:41.940484+00:00"
   }
 }
